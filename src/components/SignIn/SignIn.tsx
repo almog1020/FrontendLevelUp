@@ -7,20 +7,19 @@ import {toast, ToastContainer} from "react-toastify";
 import {type SubmitHandler, useForm} from 'react-hook-form';
 import type {FormValues} from "../../interfaces/textField.interface.ts";
 import {login} from "../../services/apis/users.ts";
-import LoginButton from "../LoginButton/LoginButton.tsx";
-
-
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import LoginButton from "./LoginButton/LoginButton.tsx";
 
 export const SignIn = () => {
     const [open, setOpen] = useState(false);
     const {register,handleSubmit,reset} = useForm<FormValues>()
+
     const onSubmit:SubmitHandler<FormValues> = async (data) => {
         try {
             const {email,password} = data
             const result = await login(email, password)
-            if (!result) {
+            if (!result)
                 toast.error('The user doesnt found')
-            }
             else {
                 reset()
                 handleOpen()
@@ -85,7 +84,9 @@ export const SignIn = () => {
                 </div>
 
                 <div className={styles.sign_in_dialog__social}>
-                    <LoginButton/>
+                    <GoogleOAuthProvider clientId={import.meta.env.VITE_CLIENT_ID}>
+                        <LoginButton/>
+                    </GoogleOAuthProvider>
                 </div>
             </Dialog>
         </>

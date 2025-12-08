@@ -194,8 +194,7 @@ $social-border: #111827;
 
 // === Social buttons ===
 .sign_in_dialog__social {
-  display: flex;
-  gap: 10px;
+  width: 100%;
 }
 
 .sign_in_dialog__social_btn {
