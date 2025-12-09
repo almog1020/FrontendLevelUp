@@ -1,0 +1,222 @@
+// SignIn.module.scss
+@use "sass:color";
+
+// === Colors ===
+$bg-main: #020617;      // רקע הכרטיס
+$bg-input: #020617;
+$border-input: #1f2937;
+$text-main: #e5e7eb;
+$text-muted: #9ca3af;
+$text-link: #60a5fa;
+$primary: #3b82f6;
+$primary-hover: #2563eb;
+$divider: #1f2937;
+$button-dark: #020617;
+$social-border: #111827;
+
+.signInButton {
+  border: none ;
+  background: $bg-main ;
+  text-transform: none;
+  padding: 6px 14px ;
+  min-width: unset ;
+  font-size: 14px ;
+  color: white ;
+  &:hover {
+    border: none ;
+    background: #22c55e ;
+  }
+}
+
+// === Container ===
+.sign_in_dialog {
+  position: relative;
+  width: 460px;
+  background-color: $bg-main !important;
+  border-radius: 16px;
+  padding: 28px 32px 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  color: $text-main;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+// X (close)
+.sign_in_dialog__close {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  background: transparent;
+  border: none;
+  color: $text-muted;
+  font-size: 18px;
+  cursor: pointer;
+
+  &:hover {
+    color: color.adjust($text-muted, $lightness: 5%);
+  }
+}
+
+// === Header ===
+.sign_in_dialog__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sign_in_dialog__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin-bottom: 14px;
+  img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+  }
+}
+
+.sign_in_dialog__title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.sign_in_dialog__subtitle {
+  margin-top: 6px;
+  font-size: 14px;
+  color: $text-muted;
+}
+
+// === Form ===
+.sign_in_dialog__form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.sign_in_dialog__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sign_in_dialog__label {
+  font-size: 13px;
+  font-weight: 500;
+  color: $text-main;
+}
+
+.sign_in_dialog__input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid $border-input;
+  background-color: $bg-input;
+  color: $text-main;
+  font-size: 14px;
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+  }
+}
+
+// remember + forgot
+.sign_in_dialog__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.sign_in_dialog__forgot {
+  color: $text-link;
+  cursor: pointer;
+  font-weight: 500;
+
+  &:hover {
+    color: color.adjust($text-link, $lightness: 8%);
+  }
+}
+
+// === Sign in button ===
+.sign_in_dialog__submit {
+  width: 100%;
+  margin-top: 4px;
+  padding: 10px 0;
+  border-radius: 6px;
+  border: none;
+  background-color: $primary;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $primary-hover;
+  }
+}
+
+// === Divider: OR CONTINUE WITH ===
+.sign_in_dialog__divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0 14px;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: $text-muted;
+}
+
+.sign_in_dialog__divider_line {
+  flex: 1;
+  height: 1px;
+  background-color: $divider;
+}
+
+.sign_in_dialog__divider_text {
+  letter-spacing: 0.08em;
+}
+
+// === Social buttons ===
+.sign_in_dialog__social {
+  width: 100%;
+}
+
+.sign_in_dialog__social_btn {
+  flex: 1;
+  padding: 10px 0;
+  border-radius: 8px;
+  border: 1px solid $social-border;
+  background-color: $button-dark;
+  color: $text-main;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  img,
+  svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+  }
+
+  &:hover {
+    background-color: color.adjust($button-dark, $lightness: 4%);
+  }
+}
