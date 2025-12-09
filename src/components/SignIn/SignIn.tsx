@@ -18,9 +18,7 @@ export const SignIn = () => {
         try {
             const {email,password} = data
             const result = await login(email, password)
-            if (!result)
-                toast.error('The user doesnt found')
-            else {
+            if (result) {
                 reset()
                 handleOpen()
             }
