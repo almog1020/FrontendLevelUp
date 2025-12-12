@@ -1,4 +1,6 @@
 import {GoogleLogin} from "@react-oauth/google";
+import {instance} from "../../../services/apis/config.ts";
+import {toast} from "react-toastify";
 
 const LoginButton = () => {
     return (
@@ -7,16 +9,18 @@ const LoginButton = () => {
                     async credentialResponse => {
                         const token = credentialResponse.credential;
 
-                        const res = await fetch("http://127.0.0.1:8000/auth/google", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ token }),
-                        });
-                        const data = await res.json();
-                        console.log("Server response:", data);
+                        try {
+                            const res = await instance.post("/auth/google", { token });
+                            toast.success("Authentication successful!");
+                            console.log("Server response:", res.data);
+                        } catch (error: unknown) {
+                            toast.error((error as Error).message || "Authentication failed");
+                        }
                     }
                 }
-                onError={() => console.log("Login Failed")}
+                onError={() => {
+                    toast.error("Google authentication failed");
+                }}
             />
     );
 };
