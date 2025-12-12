@@ -1,7 +1,8 @@
 import styles from "../SignIn/SignIn.module.scss";
 import type {ITextField} from "../../interfaces/textField.interface.ts";
+import type {FieldValues} from "react-hook-form";
 
-export const TextField = (textField:ITextField) => {
+export const TextField = <T extends FieldValues>(textField:ITextField<T>) => {
     const {title,type,required,name,register} = textField
 
     return (
