@@ -1,0 +1,170 @@
+
+  .allUsers {
+    margin-top: 24px;
+    background: #020617;
+    border-radius: 18px;
+    padding: 24px 26px;
+    border: 1px solid #1f2937;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+    color: #e5e7eb;
+  }
+
+  .topRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    width: 100%;
+  }
+
+  .title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .subtitle {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: #9ca3af;
+  }
+
+  .searchWrapper {
+    position: relative;
+  }
+
+  .searchIcon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    .icon {
+      width: 15px;
+    }
+  }
+
+  .searchInput {
+    padding: 9px 12px 9px 30px;
+    border-radius: 10px;
+    border: 1px solid #1f2937;
+    background: #020617;
+    color: #e5e7eb;
+    font-size: 14px;
+
+    &::placeholder {
+      color: #6b7280;
+    }
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 8px;
+  }
+
+  .table thead th {
+    font-weight: 500;
+    color: #9ca3af;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #1f2937;
+  }
+
+  .table tbody td {
+    padding: 14px 0;
+    border-bottom: 1px solid #1f2937;
+  }
+
+
+  /* User cell */
+  .userCell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+  }
+
+  .userText {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .userName {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .userEmail {
+    font-size: 13px;
+    color: #9ca3af;
+  }
+
+  /* Badges */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    text-transform: lowercase;
+  }
+
+  .badgeAdmin {
+    background: #1d4ed8;
+    color: #bfdbfe;
+  }
+
+  .badgeUser {
+    background: #374151;
+    color: #e5e7eb;
+  }
+
+  .badgeActive {
+    background: #1d4ed8;
+    color: #bfdbfe;
+  }
+
+  .badgeSuspended {
+    background: #dc2626;
+    color: #fee2e2;
+  }
+
+  .purchase {
+    color: #9ca3af;
+  }
+
+  /* Actions */
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .iconButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    color: #e5e7eb;
+    transition: opacity 0.15s ease;
+    width: 40px;
+    height: 40px;
+  }
+  .icon{
+    width: 18px;
+  }
+  .iconButton:hover {
+    background: green;
+  }
