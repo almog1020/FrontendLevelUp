@@ -1,9 +1,14 @@
+export type UserRole = "admin" | "user"
+export type UserStatus = "active" | "suspended"
+
 export interface User {
+    id: number;
     name: string;
     email: string;
-    role: "admin" | "user";
-    status: "active" | "suspended";
+    password: string;
+    role: UserRole;
+    status: UserStatus;
     joined: string;
     lastActive: string;
-    wishlist: string;
+    purchase: string;
 }

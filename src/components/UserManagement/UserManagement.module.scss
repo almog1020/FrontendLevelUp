@@ -59,6 +59,7 @@
   .cardsRow {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 100px;
+    gap: 50px;
+    width: 100%;
   }
 

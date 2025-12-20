@@ -1,5 +1,5 @@
 export interface StatsCard {
     title: string;
-    value: string;
+    value: number;
     icon: string;
 }

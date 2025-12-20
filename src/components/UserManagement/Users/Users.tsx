@@ -1,20 +1,45 @@
-import * as React from "react";
 import styles from "./Users.module.scss";
-import {usersTemp} from "../../../consts/users.const.ts";
 import {ActionButton} from "./ActionButton/ActionButton.tsx";
-import editButton from '../../../assets/editButton.png'
+import editStatus from '../../../assets/editStatus.png'
 import protectButton from '../../../assets/protectButton.png'
 import deleteButton from '../../../assets/deleteButton.png'
 import search from '../../../assets/search.png'
 import type {User} from "../../../interfaces/user.interface.ts";
+import {useMemo, useState} from "react";
+import {deleteUser, updateUser} from "../../../services/apis/users.ts";
+import {toast} from "react-toastify";
 
-const Users: React.FC = () => {
-    const [users, setUsers] = React.useState<User[]>(usersTemp)
-    const handleUsersFilter = (text:string) => {
-        if (text)
-            setUsers(users.filter(user => user.name.toLowerCase().includes(text)))
-        else
-            setUsers(usersTemp)
+function Users({users}: {users: User[]}) {
+    const [text,setText] = useState<string>('');
+
+    const usersFilter = useMemo(() => {
+        if(text)
+            return users.filter(user => user.name.toLowerCase().includes(text))
+        return users
+    }, [text,users]);
+
+    const handleDelete = async (index:number) => {
+        try {
+            await deleteUser(users[index].email)
+            toast.success("User Deleted Successfully!");
+        }catch(e){
+            toast.error((e as Error).message);
+        }
+    }
+    const handleUpdate = async (index:number,fieldName:keyof User) => {
+        try {
+            const editUser = {...users[index]};
+            if(fieldName === 'role')
+                editUser.role = users[index].role === 'admin' ? 'user' : 'admin'
+
+            if(fieldName === 'status')
+                editUser.status = users[index].status === 'suspended' ? 'active' : 'suspended'
+
+            await updateUser(users[index].email,editUser)
+
+        }catch (e) {
+            toast.error((e as Error).message);
+        }
     }
     return (
         <section className={styles.allUsers}>
@@ -30,7 +55,7 @@ const Users: React.FC = () => {
                     <input
                         className={styles.searchInput}
                         placeholder="Search users..."
-                        onChange={(event) => handleUsersFilter(event.target.value)}
+                        onChange={(event) => setText(event.target.value)}
                     />
                 </div>
             </div>
@@ -42,13 +67,12 @@ const Users: React.FC = () => {
                     <th>Role</th>
                     <th>Status</th>
                     <th>Joined</th>
-                    <th>Last Active</th>
-                    <th>Wishlist</th>
+                    <th>Purchases</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                {users.map((user) => (
+                {usersFilter.map((user,index:number) => (
                     <tr>
                         <td>
                             <div className={styles.userCell}>
@@ -83,14 +107,13 @@ const Users: React.FC = () => {
                         </td>
 
                         <td>{user.joined}</td>
-                        <td>{user.lastActive}</td>
-                        <td className={styles.wishlist}>{user.wishlist}</td>
+                        <td className={styles.purchase}>{user.purchase}</td>
 
                         <td>
                             <div className={styles.actions}>
-                                <ActionButton icon={editButton} title={'Edit'}/>
-                                <ActionButton icon={protectButton} title={'Protect'}/>
-                                <ActionButton icon={deleteButton} title={'Delete'}/>
+                                <ActionButton icon={editStatus} title={'role'} onClick={handleUpdate} index={index}/>
+                                <ActionButton icon={protectButton} title={'status'} onClick={handleUpdate} index={index}/>
+                                <ActionButton icon={deleteButton} title={'delete'} onClick={handleDelete} index={index} />
                             </div>
                         </td>
                     </tr>
@@ -99,6 +122,6 @@ const Users: React.FC = () => {
             </table>
         </section>
     );
-};
+}
 
 export default Users;
