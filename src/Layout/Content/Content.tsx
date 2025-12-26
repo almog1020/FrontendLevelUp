@@ -12,11 +12,11 @@ const Content:React.FC = () => {
     return (
         <AuthProvider>
             <Routes>
-                <Route path={"/"} element={isLogin ? <Navigate to={"/userpopup"}/> : <App/>}/>
+                <Route path={"/"} element={isLogin ? <Navigate to={"/user"}/> : <App/>}/>
                 <Route path={"/admin/management"} element={<UserManagement/>}/>
                 <Route path={"/login"} element={<SignIn/>}/>
                 <Route element={<PrivateRoute />}>
-                    <Route path="/userpopup" element={<UserPopup />} />
+                    <Route path="/user" element={<UserPopup />} />
                 </Route>
             </Routes>
         </AuthProvider>

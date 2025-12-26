@@ -2,6 +2,7 @@ import {createContext, type ReactNode} from "react";
 import { useNavigate } from "react-router-dom";
 import {login} from "../../services/apis/users.ts";
 import {toast} from "react-toastify";
+import {googleLogout} from "@react-oauth/google";
 
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -16,7 +17,7 @@ const AuthProvider = ({ children }:{children:ReactNode}) => {
             const token = await login(email, password);
             localStorage.setItem("user", email)
             localStorage.setItem("token", token)
-            navigate("/userpopup");
+            navigate("/user");
         } catch (err) {
             toast.error((err as Error).message);
         }
@@ -25,6 +26,7 @@ const AuthProvider = ({ children }:{children:ReactNode}) => {
     const logOut = () => {
         localStorage.removeItem("user");
         localStorage.removeItem("token");
+        googleLogout()
         navigate("/login");
     };
 
