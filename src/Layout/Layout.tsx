@@ -1,4 +1,4 @@
-import Content from "../Content/Content.tsx";
+import Content from "./Content/Content.tsx";
 import * as React from "react";
 
 const Layout: React.FC = () => {
