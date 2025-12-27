@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import styles from './Header.module.scss';
-import { useAuth } from '../../contexts/AuthContext';
+import { useDialog } from '../../contexts/DialogContext';
 import { SignIn } from '../SignIn/SignIn';
 import { ETLTrigger } from '../ETLTrigger/ETLTrigger';
 
 export const Header = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const cartItemCount = 0; // Mock cart count
-  const { openDialog } = useAuth();
+  const { openDialog } = useDialog();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('authToken'));
 

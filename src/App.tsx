@@ -1,11 +1,11 @@
 import './App.css'
-import {SignIn} from "./components/SignIn/SignIn.tsx";
+import {Homepage} from "./components/Homepage/Homepage.tsx";
 
 function App() {
 
   return (
     <>
-        <SignIn/>
+        <Homepage/>
     </>
   )
 }

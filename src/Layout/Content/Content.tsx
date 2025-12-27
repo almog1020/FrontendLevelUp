@@ -6,19 +6,22 @@ import PrivateRoute from "../../components/PrivateRoute/PrivateRoute.tsx";
 import {SignIn} from "../../components/SignIn/SignIn.tsx";
 import UserPopup from "../../components/UserPopup/UserPopup.tsx";
 import AuthProvider from "../../components/AuthProvider/AuthProvider.tsx";
+import {DialogProvider} from "../../contexts/DialogContext.tsx";
 
 const Content:React.FC = () => {
     const isLogin = localStorage.getItem("token")
     return (
         <AuthProvider>
-            <Routes>
-                <Route path={"/"} element={isLogin ? <Navigate to={"/user"}/> : <App/>}/>
-                <Route path={"/admin/management"} element={<UserManagement/>}/>
-                <Route path={"/login"} element={<SignIn/>}/>
-                <Route element={<PrivateRoute />}>
-                    <Route path="/user" element={<UserPopup />} />
-                </Route>
-            </Routes>
+            <DialogProvider>
+                <Routes>
+                    <Route path={"/"} element={isLogin ? <Navigate to={"/user"}/> : <App/>}/>
+                    <Route path={"/admin/management"} element={<UserManagement/>}/>
+                    <Route path={"/login"} element={<SignIn/>}/>
+                    <Route element={<PrivateRoute />}>
+                        <Route path="/user" element={<UserPopup />} />
+                    </Route>
+                </Routes>
+            </DialogProvider>
         </AuthProvider>
 
     )
