@@ -1,15 +1,11 @@
-import {instance} from "./config.ts";
+import {instance, instanceAuth} from "./config.ts";
 import {AxiosError} from "axios";
 import type {RegisterResponse} from "../../interfaces/sign.interface.ts";
 import type {User} from "../../interfaces/user.interface.ts";
 
-export async function login(email: string, password: string):Promise<{id:number,email:string,password:string}> {
-
+export async function login(username: string, password: string) {
     try {
-        return (
-            await instance.post('/users/login',{email: email, password: password})
-        ).data;
-
+        return (await instanceAuth.post('/auth/token',{username,password})).data
     }catch(e:unknown) {
         if (e instanceof AxiosError) {
             if (e.status === 422)
@@ -18,7 +14,6 @@ export async function login(email: string, password: string):Promise<{id:number,
         }
         throw e;
     }
-
 }
 
 export async function register(email: string, password: string, name: string): Promise<RegisterResponse> {

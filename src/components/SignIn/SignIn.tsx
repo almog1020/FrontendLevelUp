@@ -1,5 +1,5 @@
 import Dialog from '@mui/material/Dialog';
-import {useState} from "react";
+import {useContext, useState} from "react";
 import styles from './SignIn.module.scss'
 import remoteIcon from '../../assets/remote.png'
 import {TextField} from "../TextField/TextField.tsx";
@@ -7,9 +7,10 @@ import {toast, ToastContainer} from "react-toastify";
 import {type SubmitHandler, useForm} from 'react-hook-form';
 import type {FormValues} from "../../interfaces/textField.interface.ts";
 import type {SignUpFormValues} from "../../interfaces/sign.interface.ts";
-import {login, register} from "../../services/apis/users.ts";
+import {register} from "../../services/apis/users.ts";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import LoginButton from "./LoginButton/LoginButton.tsx";
+import {AuthContext} from "../AuthProvider/AuthProvider.tsx";
 
 type AuthMode = 'signin' | 'signup';
 
@@ -18,21 +19,13 @@ export const SignIn = () => {
     const [mode, setMode] = useState<AuthMode>('signin');
     const {register: registerSignIn, handleSubmit: handleSignInSubmit, reset: resetSignIn} = useForm<FormValues>();
     const {register: registerSignUp, handleSubmit: handleSignUpSubmit, reset: resetSignUp, watch, formState: {errors}} = useForm<SignUpFormValues>();
+    const auth = useContext(AuthContext);
 
     const password = watch('password');
 
     const onSignInSubmit: SubmitHandler<FormValues> = async (data) => {
-        try {
-            const {email, password} = data;
-            const result = await login(email, password);
-            if (result) {
-                resetSignIn();
-                handleOpen();
-                toast.success('Signed in successfully!');
-            }
-        } catch (error: unknown) {
-            toast.error((error as Error).message);
-        }
+        const {email, password} = data;
+        auth!.loginAction(email, password);
     };
 
     const onSignUpSubmit: SubmitHandler<SignUpFormValues> = async (data) => {
