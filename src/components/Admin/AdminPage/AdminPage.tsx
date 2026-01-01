@@ -1,13 +1,16 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
-import QuickActionsNav from "../QuickActionsNav/QuickActionsNav.tsx";
+import { useEffect, useState, useMemo } from "react";
+import QuickActionsNav from "./QuickActionsNav/QuickActionsNav.tsx";
 import StatCard from "../../UserManagement/StatCard/StatCard.tsx";
-import { fetchAllUsersCount, triggerGamesEtl } from "../../../services/apis/adminDashboard.ts";
+import { fetchAllUsersCount } from "../../../services/apis/adminDashboard.ts";
+import { getAllGames, type Game } from "../../../services/apis/games.ts";
 import styles from "./AdminPage.module.scss";
 import user from "../../../assets/users.png";
 import activeUser from "../../../assets/activeUsers.png";
 import suspendedUsers from "../../../assets/suspendedUsers.png";
 import admin from "../../../assets/admin.png";
+import PopularGenre from "./PopularGenre/PopularGenre.tsx";
+import type { GenreStats } from "./PopularGenre/PopularGenre.tsx";
 
 interface Stats {
   totalUsers: number;
@@ -26,11 +29,6 @@ interface DiscountData {
   count: number;
 }
 
-interface GenreData {
-  genre: string;
-  count: number;
-}
-
 const AdminPage: React.FC = () => {
   const [stats, setStats] = useState<Stats>({
     totalUsers: 0,
@@ -38,9 +36,9 @@ const AdminPage: React.FC = () => {
     totalStores: 0,
     pendingReviews: 0,
   });
+  const [games, setGames] = useState<Game[]>([]);
   const [weeklyBestsellers, setWeeklyBestsellers] = useState<WeeklyData[]>([]);
   const [topDiscounts, setTopDiscounts] = useState<DiscountData[]>([]);
-  const [genreStats, setGenreStats] = useState<GenreData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,20 +51,23 @@ const AdminPage: React.FC = () => {
         // Fetch users count
         const usersCount = await fetchAllUsersCount();
 
-        // Fetch games data
-        const gamesData = await triggerGamesEtl();
+        // Fetch games from in-memory store (GET /games/)
+        const gamesData = await getAllGames();
+      
+      
+        setGames(gamesData);
 
         // Calculate total games
         const totalGames = gamesData.length;
 
-        // Calculate total stores (extract unique store IDs)
+        // Calculate total stores (extract unique store IDs from game IDs)
         const storeIds = new Set<string>();
-        gamesData.forEach((game: any) => {
-          if (game.storeID) storeIds.add(String(game.storeID));
-          if (game.storeId) storeIds.add(String(game.storeId));
-          if (game.store_id) storeIds.add(String(game.store_id));
+        gamesData.forEach((game) => {
+          // Extract store from game ID prefix (cs_, rawg_, etc.)
+          if (game.id.startsWith("cs_")) storeIds.add("CheapShark");
+          if (game.id.startsWith("rawg_")) storeIds.add("RAWG");
         });
-        const totalStores = storeIds.size;
+        const totalStores = storeIds.size || 1; // At least 1 store
 
         // Update stats
         setStats({
@@ -76,62 +77,21 @@ const AdminPage: React.FC = () => {
           pendingReviews: 0, // Until backend provides it
         });
 
-        // Generate weekly bestsellers data (7 days)
+        // Generate weekly bestsellers data (7 days) - placeholder for now
         const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
         const weeklyData: WeeklyData[] = days.map((day, index) => {
-          // Use sales from game data if available, otherwise use deterministic pseudo-random
-          const gameIndex = index % gamesData.length;
-          const game = gamesData[gameIndex];
-          let sales = 0;
-          if (game && typeof game.sales === "number") {
-            sales = game.sales;
-          } else if (game && typeof game.salePrice === "number") {
-            sales = Math.floor(game.salePrice * 10); // Convert to sales count
-          } else {
-            // Deterministic pseudo-random based on index
-            sales = ((index * 17 + 23) % 100) + 10;
-          }
+          // Placeholder data - can be enhanced with real sales data later
+          const sales = ((index * 17 + 23) % 100) + 10;
           return { day, sales };
         });
         setWeeklyBestsellers(weeklyData);
 
-        // Generate top discounts data
+        // Generate top discounts data - placeholder for now
         const discountData: DiscountData[] = days.map((day, index) => {
-          // Count items with savings/discount >= 50
-          const discountThreshold = 50;
-          let count = 0;
-          gamesData.forEach((game: any) => {
-            const savings = game.savings || game.discount || 0;
-            if (typeof savings === "string") {
-              const numSavings = parseFloat(savings.replace("%", ""));
-              if (numSavings >= discountThreshold) count++;
-            } else if (typeof savings === "number" && savings >= discountThreshold) {
-              count++;
-            }
-          });
-          // Distribute counts across days deterministically
-          const dayCount = Math.floor((count / 7) + (index % 3));
+          const dayCount = Math.floor((gamesData.length / 7) + (index % 3));
           return { day, count: dayCount };
         });
         setTopDiscounts(discountData);
-
-        // Generate genre stats
-        const genres = ["Action", "RPG", "Adventure", "Open World", "Fantasy"];
-        const genreData: GenreData[] = genres.map((genre, index) => {
-          // Count games with this genre, or distribute deterministically
-          let count = 0;
-          gamesData.forEach((game: any) => {
-            if (game.genre && game.genre.toLowerCase().includes(genre.toLowerCase())) {
-              count++;
-            }
-          });
-          // If no genre data, distribute evenly
-          if (count === 0) {
-            count = Math.floor(gamesData.length / genres.length) + (index % 2);
-          }
-          return { genre, count };
-        });
-        setGenreStats(genreData);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load dashboard data");
       } finally {
@@ -141,6 +101,46 @@ const AdminPage: React.FC = () => {
 
     loadData();
   }, []);
+
+  // Compute genre distribution for chart from real games data
+  const genreStats = useMemo(() => {
+    console.log("Computing genreStats, games.length:", games.length);
+    if (games.length === 0) {
+      console.log("No games, returning empty array");
+      return [];
+    }
+
+    // Count games per genre, treating missing/empty genre as "Unknown"
+    const genreCounts: Record<string, number> = {};
+    
+    games.forEach((game) => {
+      const genre = game.genre?.trim() || "Unknown";
+      genreCounts[genre] = (genreCounts[genre] || 0) + 1;
+    });
+
+    console.log("Genre counts:", genreCounts);
+
+    // Convert to array and sort by count descending
+    const genreArray: GenreStats[] = Object.entries(genreCounts)
+      .map(([genre, count]) => ({ genre, count }))
+      .sort((a, b) => b.count - a.count);
+
+    console.log("Genre array before top 5:", genreArray);
+
+    // Take top 5 genres and merge the rest into "Other"
+    if (genreArray.length <= 5) {
+      console.log("Returning all genres (<=5):", genreArray);
+      return genreArray;
+    }
+
+    const top5 = genreArray.slice(0, 5);
+    const others = genreArray.slice(5);
+    const otherCount = others.reduce((sum, item) => sum + item.count, 0);
+    const result = [...top5, { genre: "Other", count: otherCount }];
+    
+    console.log("Final genreStats:", result);
+    return result;
+  }, [games]);
 
   const statCards = [
     {
@@ -194,6 +194,7 @@ const AdminPage: React.FC = () => {
       </div>
 
       <QuickActionsNav />
+      <PopularGenre genreStats={genreStats} />
 
       {/* Chart data is available in state but UI components not implemented yet */}
       {/* weeklyBestsellers, topDiscounts, genreStats are ready for chart rendering */}

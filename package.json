@@ -25,6 +25,7 @@
     "react-router-dom": "^7.10.1",
     "react-toastify": "^11.0.5",
     "react-use-websocket": "^4.13.0",
+    "recharts": "^3.6.0",
     "scss": "^0.2.4",
     "tailwindcss": "^4.1.17",
     "ws": "^8.18.3"
