@@ -1,5 +1,5 @@
 import Dialog from '@mui/material/Dialog';
-import {useContext, useState} from "react";
+import {useContext, useState, useEffect} from "react";
 import styles from './SignIn.module.scss'
 import remoteIcon from '../../assets/remote.png'
 import {TextField} from "../TextField/TextField.tsx";
@@ -11,12 +11,20 @@ import {register} from "../../services/apis/users.ts";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import LoginButton from "./LoginButton/LoginButton.tsx";
 import {AuthContext} from "../AuthProvider/AuthProvider.tsx";
+import {useDialog} from "../../contexts/DialogContext.tsx";
 
 type AuthMode = 'signin' | 'signup';
 
 export const SignIn = () => {
+    const dialog = useDialog();
     const [open, setOpen] = useState(false);
     const [mode, setMode] = useState<AuthMode>('signin');
+    
+    // Sync with dialog context
+    useEffect(() => {
+        setOpen(dialog.isOpen);
+        setMode(dialog.mode);
+    }, [dialog.isOpen, dialog.mode]);
     const {register: registerSignIn, handleSubmit: handleSignInSubmit, reset: resetSignIn} = useForm<FormValues>();
     const {register: registerSignUp, handleSubmit: handleSignUpSubmit, reset: resetSignUp, watch, formState: {errors}} = useForm<SignUpFormValues>();
     const auth = useContext(AuthContext);
@@ -34,7 +42,7 @@ export const SignIn = () => {
             const result = await register(email, password, name);
             if (result) {
                 resetSignUp();
-                handleOpen();
+                dialog.closeDialog();
                 toast.success('Account created successfully!');
             }
         } catch (error: unknown) {
@@ -43,12 +51,13 @@ export const SignIn = () => {
     };
 
     const handleOpen = () => {
-        setOpen(!open);
-        if (!open) {
+        if (open) {
+            dialog.closeDialog();
+        } else {
+            dialog.openDialog('signin');
             // Reset forms when opening
             resetSignIn();
             resetSignUp();
-            setMode('signin');
         }
     };
 
@@ -66,9 +75,9 @@ export const SignIn = () => {
             <ToastContainer/>
             <Dialog
                 open={open}
-                onClose={handleOpen}
+                onClose={dialog.closeDialog}
                 slotProps={{ paper: { className: styles.sign_in_dialog } }}>
-                <button className={styles.sign_in_dialog__close} onClick={handleOpen}>✕</button>
+                <button className={styles.sign_in_dialog__close} onClick={dialog.closeDialog}>✕</button>
                 <div className={styles.sign_in_dialog__header}>
                     <div className={styles.sign_in_dialog__icon}>
                         <img src={remoteIcon} alt={"Logo"}/>

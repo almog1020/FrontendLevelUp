@@ -1,0 +1,122 @@
+.hero {
+  width: 100%;
+  padding: 60px 24px;
+  background: linear-gradient(135deg, #4C1D95 0%, #1E1B4B 100%);
+  border-radius: 24px;
+  margin: 24px auto;
+  max-width: 1400px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(124, 142, 248, 0.2) 0%, transparent 50%);
+    pointer-events: none;
+  }
+}
+
+.hero__container {
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(30, 41, 59, 0.8);
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(10px);
+}
+
+.hero__badgeIcon {
+  font-size: 18px;
+}
+
+.hero__badgeText {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.hero__title {
+  margin: 0 0 16px 0;
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+
+.hero__description {
+  margin: 0 0 32px 0;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 600px;
+}
+
+.hero__cta {
+  padding: 14px 32px;
+  background-color: var(--primary-blue);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 4px 12px rgba(124, 142, 248, 0.3);
+
+  &:hover {
+    background-color: #6B7EE8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(124, 142, 248, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .hero {
+    padding: 40px 16px;
+    margin: 16px;
+    border-radius: 16px;
+  }
+
+  .hero__title {
+    font-size: 36px;
+  }
+
+  .hero__description {
+    font-size: 16px;
+  }
+
+  .hero__cta {
+    padding: 12px 24px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero__title {
+    font-size: 28px;
+  }
+
+  .hero__description {
+    font-size: 14px;
+  }
+}
+

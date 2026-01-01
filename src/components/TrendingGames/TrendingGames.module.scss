@@ -1,0 +1,67 @@
+.trendingGames {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px 40px;
+}
+
+.trendingGames__header {
+  margin-bottom: 24px;
+}
+
+.trendingGames__headerContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.trendingGames__icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.trendingGames__title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.trendingGames__subtitle {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.trendingGames__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .trendingGames {
+    padding: 0 16px 32px;
+  }
+
+  .trendingGames__title {
+    font-size: 24px;
+  }
+}
+
