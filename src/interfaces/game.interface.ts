@@ -11,3 +11,4 @@ export interface Game {
   isDealOfDay: boolean;
 }
 
+
