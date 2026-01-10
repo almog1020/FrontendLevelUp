@@ -14,11 +14,18 @@ const AuthProvider = ({ children }:{children:ReactNode}) => {
 
     const loginAction = async (email:string,password:string) => {
         try {
+            console.log('1. Login starting...', email);
             const token = await login(email, password);
+            console.log('2. Token received:', token);
+            
             localStorage.setItem("user", email)
             localStorage.setItem("token", token)
+            console.log('3. Token stored in localStorage');
+            
             navigate("/user");
+            console.log('4. Navigating to /user');
         } catch (err) {
+            console.error('Login error:', err);
             toast.error((err as Error).message);
         }
     };

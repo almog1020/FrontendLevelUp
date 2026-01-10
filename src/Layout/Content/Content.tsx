@@ -4,8 +4,8 @@ import App from "../../App.tsx";
 import UserManagement from "../../components/UserManagement/UserManagement.tsx";
 import PrivateRoute from "../../components/PrivateRoute/PrivateRoute.tsx";
 import {SignIn} from "../../components/SignIn/SignIn.tsx";
-import UserPopup from "../../components/UserPopup/UserPopup.tsx";
 import AuthProvider from "../../components/AuthProvider/AuthProvider.tsx";
+import {UserDashboard} from "../../components/UserDashboard/UserDashboard.tsx";
 
 const Content:React.FC = () => {
     const isLogin = localStorage.getItem("token")
@@ -16,7 +16,7 @@ const Content:React.FC = () => {
                 <Route path={"/admin/management"} element={<UserManagement/>}/>
                 <Route path={"/login"} element={<SignIn/>}/>
                 <Route element={<PrivateRoute />}>
-                    <Route path="/user" element={<UserPopup />} />
+                    <Route path="/user" element={<UserDashboard />} />
                 </Route>
             </Routes>
         </AuthProvider>

@@ -5,7 +5,7 @@ import type {User} from "../../interfaces/user.interface.ts";
 
 export async function login(username: string, password: string) {
     try {
-        return (await instanceAuth.post('/auth/token',{username,password})).data
+        return (await instanceAuth.post('/auth/token',{username,password})).data.access_token  // Add .access_token
     }catch(e:unknown) {
         if (e instanceof AxiosError) {
             if (e.status === 422)
@@ -46,6 +46,25 @@ export async function updateUser(email:string,editUser:User): Promise<void> {
     }catch(e:unknown) {
         if (e instanceof AxiosError)
             throw new Error(e.response!.data.detail);
+        throw e;
+    }
+}
+
+export async function getCurrentUser() {
+    try {
+        const token = localStorage.getItem('token');
+        return (await instance.get('/users/me', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })).data;
+    } catch (e: unknown) {
+        if (e instanceof AxiosError) {
+            if (e.response?.status === 401) {
+                throw new Error('Unauthorized. Please log in again.');
+            }
+            throw new Error(e.response?.data?.detail || 'Failed to fetch user data');
+        }
         throw e;
     }
 }
