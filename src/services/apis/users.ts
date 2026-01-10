@@ -1,9 +1,10 @@
 import {instance, instanceAuth} from "./config.ts";
-import {AxiosError} from "axios";
+import axios, {AxiosError} from "axios";
 import type {RegisterResponse} from "../../interfaces/sign.interface.ts";
-import type {User} from "../../interfaces/user.interface.ts";
+import type {User, UserResponse, UserStatus} from "../../interfaces/user.interface.ts";
+import type {Token} from "../../interfaces/token.interface.ts";
 
-export async function login(username: string, password: string) {
+export async function login(username: string, password: string):Promise<Token> {
     try {
         return (await instanceAuth.post('/auth/token',{username,password})).data
     }catch(e:unknown) {
@@ -43,6 +44,34 @@ export async function deleteUser(email:string): Promise<void> {
 export async function updateUser(email:string,editUser:User): Promise<void> {
     try {
         await instance.put(`/users/${email}`,{...editUser})
+    }catch(e:unknown) {
+        if (e instanceof AxiosError)
+            throw new Error(e.response!.data.detail);
+        throw e;
+    }
+}
+export async function logout(email:string,disable:UserStatus): Promise<void> {
+    try {
+        await instance.put(`/users/${email}/logout?disable=${disable}`)
+    }catch(e:unknown) {
+        if (e instanceof AxiosError)
+            throw new Error(e.response!.data.detail);
+        throw e;
+    }
+}
+export async function getMe(token:Token): Promise<UserResponse> {
+    try {
+        return (await axios.create({
+            baseURL: 'http://127.0.0.1:8000/',
+            timeout: 1000,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Authorization': `Bearer ${token.access_token}`,
+            },
+        }).get('/users/me')).data;
+
     }catch(e:unknown) {
         if (e instanceof AxiosError)
             throw new Error(e.response!.data.detail);

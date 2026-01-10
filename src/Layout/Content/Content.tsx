@@ -8,7 +8,7 @@ import UserPopup from "../../components/UserPopup/UserPopup.tsx";
 import AuthProvider from "../../components/AuthProvider/AuthProvider.tsx";
 
 const Content:React.FC = () => {
-    const isLogin = localStorage.getItem("token")
+    const isLogin = localStorage.getItem("user")
     return (
         <AuthProvider>
             <Routes>
