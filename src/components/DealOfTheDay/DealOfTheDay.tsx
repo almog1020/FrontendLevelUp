@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import styles from './DealOfTheDay.module.scss';
 import type { Game } from '../../interfaces/game.interface';
 
@@ -6,9 +7,10 @@ interface DealOfTheDayProps {
 }
 
 export const DealOfTheDay = ({ game }: DealOfTheDayProps) => {
+  const navigate = useNavigate();
+
   const handleViewDeal = () => {
-    console.log('View deal clicked for:', game.title);
-    // Future: Navigate to game details page
+    navigate(`/game/${game.id}`);
   };
 
   return (

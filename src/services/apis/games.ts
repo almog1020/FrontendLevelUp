@@ -1,5 +1,7 @@
 import { instance } from "./config.ts";
 import { AxiosError } from "axios";
+import { mockGames } from "../../data/mockGames.ts";
+import type { Game } from "../../interfaces/game.interface.ts";
 
 export interface ETLResponse {
   games_processed: number;
@@ -22,6 +24,13 @@ export async function triggerETL(searchTerm?: string): Promise<ETLResponse> {
     }
     throw e;
   }
+}
+
+export async function getGameById(id: string): Promise<Game | null> {
+  // For now, use mock data lookup
+  // TODO: Replace with actual API call when backend endpoint is available
+  const game = mockGames.find(g => g.id === id);
+  return game || null;
 }
 
 

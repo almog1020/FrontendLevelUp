@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './TrendingGames.module.scss';
 import { GameCard } from '../GameCard/GameCard';
 import type { Game } from '../../interfaces/game.interface';
@@ -8,6 +9,7 @@ interface TrendingGamesProps {
 }
 
 export const TrendingGames = ({ games }: TrendingGamesProps) => {
+  const navigate = useNavigate();
   const [wishlistedGames, setWishlistedGames] = useState<Set<string>>(new Set());
 
   const handleWishlistToggle = (gameId: string) => {
@@ -23,8 +25,7 @@ export const TrendingGames = ({ games }: TrendingGamesProps) => {
   };
 
   const handleGameClick = (game: Game) => {
-    console.log('Game clicked:', game.title);
-    // Future: Navigate to game details page
+    navigate(`/game/${game.id}`);
   };
 
   return (

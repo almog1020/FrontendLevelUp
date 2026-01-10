@@ -13,6 +13,8 @@
   --primary-blue: #3b82f6;
   --accent-orange: #f97316;
   --border-color: rgba(255, 255, 255, 0.1);
+  --text-main: rgba(255, 255, 255, 0.87);
+  --text-muted: rgba(255, 255, 255, 0.6);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
