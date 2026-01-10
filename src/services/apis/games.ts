@@ -9,10 +9,12 @@ export interface ETLResponse {
 
 export async function triggerETL(searchTerm?: string): Promise<ETLResponse> {
   try {
-    const endpoint = searchTerm ? '/etl/trigger' : '/etl/trigger';
-    const payload = searchTerm ? { search_term: searchTerm } : {};
+    const endpoint = '/games/etl';
+    const config = searchTerm 
+      ? { params: { search: searchTerm } }
+      : {};
     
-    const response = await instance.post(endpoint, payload);
+    const response = await instance.post(endpoint, {}, config);
     return response.data;
   } catch (e: unknown) {
     if (e instanceof AxiosError) {
@@ -21,5 +23,7 @@ export async function triggerETL(searchTerm?: string): Promise<ETLResponse> {
     throw e;
   }
 }
+
+
 
 

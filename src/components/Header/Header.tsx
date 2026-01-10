@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
 import styles from './Header.module.scss';
-import { useDialog } from '../../contexts/DialogContext';
 import { SignIn } from '../SignIn/SignIn';
 import { ETLTrigger } from '../ETLTrigger/ETLTrigger';
 
 export const Header = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const cartItemCount = 0; // Mock cart count
-  const { openDialog } = useDialog();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('authToken'));
 
@@ -121,16 +119,7 @@ export const Header = () => {
               <span className={styles.header__cartBadge}>{cartItemCount}</span>
             )}
           </button>
-          <SignIn 
-            buttonText="Sign In"
-            buttonClassName={styles.header__signInButton}
-          />
-          <button 
-            className={styles.header__signUpButton}
-            onClick={() => openDialog('signup')}
-          >
-            Sign Up
-          </button>
+          <SignIn />
         </div>
       </div>
     </header>
