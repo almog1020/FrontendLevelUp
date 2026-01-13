@@ -63,7 +63,7 @@ export async function logout(email:string,disable:UserStatus): Promise<void> {
 export async function getMe(token:Token): Promise<UserResponse> {
     try {
         return (await axios.create({
-            baseURL: 'http://127.0.0.1:8000/',
+            baseURL: 'https://backend-level-up.vercel.app/',
             timeout: 1000,
             headers: {
                 'Accept': 'application/json',
