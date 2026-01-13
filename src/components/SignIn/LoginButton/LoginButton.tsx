@@ -3,7 +3,6 @@ import {instance} from "../../../services/apis/config.ts";
 import {toast} from "react-toastify";
 import type {UserResponse} from "../../../interfaces/user.interface.ts";
 import {useNavigate} from "react-router-dom";
-import axios from "axios";
 
 const LoginButton = () => {
     const navigate = useNavigate();
