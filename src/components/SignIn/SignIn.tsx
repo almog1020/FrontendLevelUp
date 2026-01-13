@@ -34,7 +34,6 @@ export const SignIn = () => {
 
     const onSignInSubmit: SubmitHandler<FormValues> = async (data) => {
         const {email, password} = data;
-        console.log(password);
         auth!.loginAction(email, password);
     };
 
