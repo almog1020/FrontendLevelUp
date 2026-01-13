@@ -8,6 +8,7 @@ export async function login(username: string, password: string):Promise<Token> {
     try {
         return (await instanceAuth.post('/auth/token',{username,password})).data
     }catch(e:unknown) {
+        console.error(e)
         if (e instanceof AxiosError) {
             if (e.status === 422)
                 throw new Error('Password incorrect');

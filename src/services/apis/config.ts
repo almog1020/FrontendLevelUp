@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 export const instance =  axios.create({
-    baseURL: 'http://127.0.0.1:8000/',
-    timeout: 1000,
+    baseURL: 'https://backend-level-up.vercel.app/',
+    timeout: 10000,
     headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -10,8 +10,8 @@ export const instance =  axios.create({
     },
 });
 export const instanceAuth =  axios.create({
-    baseURL: 'http://127.0.0.1:8000/',
-    timeout: 1000,
+    baseURL: 'https://backend-level-up.vercel.app/',
+    timeout: 10000,
     headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/x-www-form-urlencoded',

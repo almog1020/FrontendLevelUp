@@ -32,6 +32,7 @@ export const Header = () => {
   };
 
   const handleETLSuccess = () => {
+    console.log(refreshTrigger)
     // Trigger a refresh of the homepage data
     setRefreshTrigger((prev) => prev + 1);
     // Dispatch custom event that Homepage can listen to
