@@ -1,7 +1,6 @@
 import { instance } from "./config.ts";
 import { AxiosError } from "axios";
-import { mockGames } from "../../data/mockGames.ts";
-import type { Game } from "../../interfaces/game.interface.ts";
+import type { Game } from "../../interfaces/game.interface";
 
 export interface ETLResponse {
   games_processed: number;
@@ -26,11 +25,78 @@ export async function triggerETL(searchTerm?: string): Promise<ETLResponse> {
   }
 }
 
-export async function getGameById(id: string): Promise<Game | null> {
-  // For now, use mock data lookup
-  // TODO: Replace with actual API call when backend endpoint is available
-  const game = mockGames.find(g => g.id === id);
-  return game || null;
+export async function getAllGames(): Promise<Game[]> {
+  try {
+    const response = await instance.get<Game[]>('/games/');
+    return response.data;
+  } catch (e: unknown) {
+    if (e instanceof AxiosError) {
+      throw new Error(e.response?.data?.detail || 'Failed to fetch games');
+    }
+    throw e;
+  }
+}
+
+export async function getTrendingGames(): Promise<Game[]> {
+  try {
+    const response = await instance.get<Game[]>('/games/trending');
+    return response.data;
+  } catch (e: unknown) {
+    if (e instanceof AxiosError) {
+      // Log more details for debugging
+      console.error('Trending games error:', {
+        status: e.response?.status,
+        statusText: e.response?.statusText,
+        data: e.response?.data,
+        message: e.message,
+        code: e.code
+      });
+      throw new Error(e.response?.data?.detail || e.message || 'Failed to fetch trending games');
+    }
+    console.error('Unknown error fetching trending games:', e);
+    throw e;
+  }
+}
+
+export async function getDealOfTheDay(): Promise<Game | null> {
+  try {
+    const response = await instance.get<Game>('/games/deal-of-the-day');
+    return response.data;
+  } catch (e: unknown) {
+    if (e instanceof AxiosError) {
+      if (e.response?.status === 404) {
+        return null;
+      }
+      // Log more details for debugging
+      console.error('Deal of the day error:', {
+        status: e.response?.status,
+        statusText: e.response?.statusText,
+        data: e.response?.data,
+        message: e.message,
+        code: e.code
+      });
+      throw new Error(e.response?.data?.detail || e.message || 'Failed to fetch deal of the day');
+    }
+    console.error('Unknown error fetching deal of the day:', e);
+    throw e;
+  }
+}
+
+export async function searchGames(query: string): Promise<Game[]> {
+  try {
+    if (!query || !query.trim()) {
+      return [];
+    }
+    const response = await instance.get<Game[]>('/games/search', {
+      params: { q: query.trim() }
+    });
+    return response.data;
+  } catch (e: unknown) {
+    if (e instanceof AxiosError) {
+      throw new Error(e.response?.data?.detail || 'Failed to search games');
+    }
+    throw e;
+  }
 }
 
 
