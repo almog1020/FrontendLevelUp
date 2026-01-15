@@ -13,12 +13,16 @@ export const UserDashboard = () => {
 
     useEffect(() => {
         getCurrentUser()
-            .then(data => setUser(data))
+            .then(data => setUserData(data))
             .catch(err => {
                 console.error(err);
-                setError(err.message);
-            })
-            .finally(() => setLoading(false));
+                // If unauthorized, clear token and redirect to login
+                if (err.message.includes('Unauthorized')) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = '/login';
+                }
+            });
     }, []);
 
     if (loading) {
