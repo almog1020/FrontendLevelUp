@@ -9,5 +9,71 @@
   background-color: #0f172a;
 }
 
+.skeletonSection {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px 40px;
+}
+
+.skeletonSection__header {
+  margin-bottom: 24px;
+}
+
+.skeletonSection__headerContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.skeletonSection__icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.skeletonSection__title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.skeletonSection__subtitle {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.skeletonSection__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .skeletonSection {
+    padding: 0 16px 32px;
+  }
+
+  .skeletonSection__title {
+    font-size: 24px;
+  }
+}
+
 
 

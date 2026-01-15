@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './Header.module.scss';
 import { SignIn } from '../SignIn/SignIn';
 import { ETLTrigger } from '../ETLTrigger/ETLTrigger';
@@ -6,6 +7,7 @@ import { searchGames } from '../../services/apis/games';
 import type { Game } from '../../interfaces/game.interface';
 
 export const Header = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const cartItemCount = 0; // Mock cart count
@@ -68,7 +70,19 @@ export const Header = () => {
     <header className={styles.header}>
       <div className={styles.header__container}>
         {/* Logo and Branding */}
-        <div className={styles.header__logo}>
+        <div 
+          className={styles.header__logo}
+          onClick={() => navigate('/')}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              navigate('/');
+            }
+          }}
+          aria-label="Go to homepage"
+        >
           <div className={styles.header__logoIcon}>
             <svg
               width="32"

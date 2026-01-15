@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Header } from '../Header/Header';
+import { GameDetailSkeleton } from '../GameDetailSkeleton/GameDetailSkeleton';
 import { getGameById } from '../../services/apis/games';
 import type { Game } from '../../interfaces/game.interface';
 import styles from './GameDetail.module.scss';
@@ -47,7 +48,7 @@ export const GameDetail = () => {
     return (
       <div className={styles.gameDetail}>
         <Header />
-        <div className={styles.loading}>Loading...</div>
+        <GameDetailSkeleton />
       </div>
     );
   }
