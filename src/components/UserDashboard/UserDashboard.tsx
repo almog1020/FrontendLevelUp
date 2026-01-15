@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../../services/apis/users';
 import type { UserResponse } from '../../interfaces/user.interface';
+import styles from './UserDashboard.module.scss';
 
 export const UserDashboard = () => {
     const [user, setUser] = useState<UserResponse | null>(null);
@@ -19,7 +20,7 @@ export const UserDashboard = () => {
             });
     }, []);
 
-    if (!user) return <div style={{padding: '20px'}}>Loading...</div>;
+    if (!user) return <div className={styles.loading}>Loading...</div>;
 
     // Placeholder stats (will connect to backend later)
     const stats = {
@@ -51,265 +52,119 @@ export const UserDashboard = () => {
     ];
 
     return (
-        <div style={{
-            padding: '40px',
-            fontFamily: 'Arial, sans-serif',
-            maxWidth: '1200px',
-            margin: '0 auto',
-            background: '#f5f5f5',
-            minHeight: '100vh'
-        }}>
+        <div className={styles.container}>
             {/* Header with Back Button */}
-            <div style={{ 
-                marginBottom: '30px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start'
-            }}>
-                <div>
-                    <h1 style={{ fontSize: '32px', marginBottom: '8px', color: '#1f2937' }}>
-                        Dashboard
-                    </h1>
-                    <p style={{ color: '#6b7280', fontSize: '16px' }}>
+            <div className={styles.header}>
+                <div className={styles.headerContent}>
+                    <h1 className={styles.title}>Dashboard</h1>
+                    <p className={styles.subtitle}>
                         Welcome back, {user.name}! Here's what's new
                     </p>
                 </div>
                 <button
                     onClick={() => navigate('/')}
-                    style={{
-                        padding: '10px 20px',
-                        background: '#3b82f6',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        fontSize: '14px',
-                        fontWeight: '500',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        transition: 'background 0.2s'
-                    }}
-                    onMouseOver={(e) => e.currentTarget.style.background = '#2563eb'}
-                    onMouseOut={(e) => e.currentTarget.style.background = '#3b82f6'}
+                    className={styles.backButton}
                 >
                     <span>←</span> Back to Home
                 </button>
             </div>
 
             {/* Stats Overview */}
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                gap: '20px',
-                marginBottom: '30px'
-            }}>
+            <div className={styles.statsGrid}>
                 {/* Wishlist Items Card */}
-                <div style={{
-                    background: 'white',
-                    padding: '24px',
-                    borderRadius: '12px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                }}>
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '16px'
-                    }}>
-                        <h3 style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>Wishlist Items</h3>
-                        <span style={{ fontSize: '20px' }}>❤️</span>
+                <div className={styles.statCard}>
+                    <div className={styles.statCardHeader}>
+                        <h3 className={styles.statCardTitle}>Wishlist Items</h3>
+                        <span className={styles.statCardIcon}>❤️</span>
                     </div>
-                    <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#1f2937', marginBottom: '8px' }}>
+                    <div className={styles.statCardValue}>
                         {stats.wishlistItems}
                     </div>
-                    <p style={{ fontSize: '12px', color: '#6b7280', margin: 0 }}>
+                    <p className={styles.statCardSubtext}>
                         +2 from last month
                     </p>
                 </div>
 
                 {/* Price Drops Card */}
-                <div style={{
-                    background: 'white',
-                    padding: '24px',
-                    borderRadius: '12px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                }}>
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '16px'
-                    }}>
-                        <h3 style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>Price Drops</h3>
-                        <span style={{ fontSize: '20px' }}>📉</span>
+                <div className={styles.statCard}>
+                    <div className={styles.statCardHeader}>
+                        <h3 className={styles.statCardTitle}>Price Drops</h3>
+                        <span className={styles.statCardIcon}>📉</span>
                     </div>
-                    <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#1f2937', marginBottom: '8px' }}>
+                    <div className={styles.statCardValue}>
                         {stats.priceDrops}
                     </div>
-                    <p style={{ fontSize: '12px', color: '#6b7280', margin: 0 }}>
+                    <p className={styles.statCardSubtext}>
                         Active deals now
                     </p>
                 </div>
 
                 {/* Total Saved Card */}
-                <div style={{
-                    background: 'white',
-                    padding: '24px',
-                    borderRadius: '12px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                }}>
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '16px'
-                    }}>
-                        <h3 style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>Total Saved</h3>
-                        <span style={{ fontSize: '20px' }}>🛒</span>
+                <div className={styles.statCard}>
+                    <div className={styles.statCardHeader}>
+                        <h3 className={styles.statCardTitle}>Total Saved</h3>
+                        <span className={styles.statCardIcon}>🛒</span>
                     </div>
-                    <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#1f2937', marginBottom: '8px' }}>
+                    <div className={styles.statCardValue}>
                         ${stats.totalSaved}
                     </div>
-                    <p style={{ fontSize: '12px', color: '#6b7280', margin: 0 }}>
+                    <p className={styles.statCardSubtext}>
                         This year
                     </p>
                 </div>
 
                 {/* Games Tracked Card */}
-                <div style={{
-                    background: 'white',
-                    padding: '24px',
-                    borderRadius: '12px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                }}>
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '16px'
-                    }}>
-                        <h3 style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>Games Tracked</h3>
-                        <span style={{ fontSize: '20px' }}>⭐</span>
+                <div className={styles.statCard}>
+                    <div className={styles.statCardHeader}>
+                        <h3 className={styles.statCardTitle}>Games Tracked</h3>
+                        <span className={styles.statCardIcon}>⭐</span>
                     </div>
-                    <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#1f2937', marginBottom: '8px' }}>
+                    <div className={styles.statCardValue}>
                         {stats.gamesTracked}
                     </div>
-                    <p style={{ fontSize: '12px', color: '#6b7280', margin: 0 }}>
+                    <p className={styles.statCardSubtext}>
                         All time
                     </p>
                 </div>
             </div>
 
             {/* Two Column Layout */}
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-                gap: '24px',
-                marginBottom: '30px'
-            }}>
+            <div className={styles.twoColumnLayout}>
                 {/* Recent Price Drops */}
-                <div style={{
-                    background: 'white',
-                    padding: '24px',
-                    borderRadius: '12px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                }}>
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '20px'
-                    }}>
-                        <h2 style={{ fontSize: '20px', color: '#1f2937', margin: 0 }}>Recent Price Drops</h2>
-                        <button
-                            style={{
-                                padding: '6px 12px',
-                                background: 'transparent',
-                                border: '1px solid #e5e7eb',
-                                borderRadius: '6px',
-                                cursor: 'pointer',
-                                fontSize: '12px',
-                                color: '#6b7280'
-                            }}
-                        >
+                <div className={styles.sectionCard}>
+                    <div className={styles.sectionHeader}>
+                        <h2 className={styles.sectionTitle}>Recent Price Drops</h2>
+                        <button className={styles.ghostButton}>
                             View All
                         </button>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div className={styles.priceDropsList}>
                         {priceDrops.map((drop) => (
                             <div
                                 key={drop.id}
-                                style={{
-                                    display: 'flex',
-                                    gap: '16px',
-                                    padding: '12px',
-                                    borderRadius: '8px',
-                                    background: '#f9fafb',
-                                    cursor: 'pointer',
-                                    transition: 'background 0.2s'
-                                }}
-                                onMouseOver={(e) => e.currentTarget.style.background = '#f3f4f6'}
-                                onMouseOut={(e) => e.currentTarget.style.background = '#f9fafb'}
+                                className={styles.priceDropItem}
                             >
                                 <img
                                     src={drop.image}
                                     alt={drop.title}
-                                    style={{
-                                        width: '80px',
-                                        height: '80px',
-                                        borderRadius: '8px',
-                                        objectFit: 'cover'
-                                    }}
+                                    className={styles.priceDropImage}
                                 />
-                                <div style={{ flex: 1, minWidth: 0 }}>
-                                    <h4 style={{
-                                        fontSize: '16px',
-                                        fontWeight: '500',
-                                        color: '#1f2937',
-                                        margin: '0 0 8px 0',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'nowrap'
-                                    }}>
+                                <div className={styles.priceDropContent}>
+                                    <h4 className={styles.priceDropTitle}>
                                         {drop.title}
                                     </h4>
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '8px',
-                                        marginBottom: '4px'
-                                    }}>
-                                        <span style={{
-                                            fontSize: '14px',
-                                            color: '#9ca3af',
-                                            textDecoration: 'line-through'
-                                        }}>
+                                    <div className={styles.priceDropPrices}>
+                                        <span className={styles.priceOld}>
                                             ${drop.oldPrice}
                                         </span>
-                                        <span style={{
-                                            fontSize: '16px',
-                                            fontWeight: '600',
-                                            color: '#10b981'
-                                        }}>
+                                        <span className={styles.priceNew}>
                                             ${drop.newPrice}
                                         </span>
-                                        <span style={{
-                                            padding: '2px 8px',
-                                            background: '#dcfce7',
-                                            color: '#16a34a',
-                                            borderRadius: '4px',
-                                            fontSize: '12px',
-                                            fontWeight: '500'
-                                        }}>
+                                        <span className={styles.discountBadge}>
                                             -{drop.discount}%
                                         </span>
                                     </div>
-                                    <p style={{
-                                        fontSize: '12px',
-                                        color: '#9ca3af',
-                                        margin: 0
-                                    }}>
+                                    <p className={styles.priceDropTime}>
                                         {drop.timeAgo}
                                     </p>
                                 </div>
@@ -319,176 +174,73 @@ export const UserDashboard = () => {
                 </div>
 
                 {/* Favorite Store Performance */}
-                <div style={{
-                    background: 'white',
-                    padding: '24px',
-                    borderRadius: '12px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                }}>
-                    <h2 style={{ fontSize: '20px', color: '#1f2937', margin: '0 0 8px 0' }}>
-                        Favorite Store Performance
-                    </h2>
-                    <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 20px 0' }}>
+                <div className={styles.sectionCard}>
+                    <h2 className={styles.sectionTitle}>Favorite Store Performance</h2>
+                    <p className={styles.sectionSubtitle}>
                         Steam - Your preferred store
                     </p>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <div className={styles.progressSection}>
                         {/* Progress Bar 1 */}
-                        <div>
-                            <div style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                marginBottom: '8px'
-                            }}>
-                                <span style={{ fontSize: '14px', color: '#1f2937' }}>Best deals this month</span>
-                                <span style={{ fontSize: '14px', color: '#1f2937', fontWeight: '500' }}>87%</span>
+                        <div className={styles.progressItem}>
+                            <div className={styles.progressHeader}>
+                                <span className={styles.progressLabel}>Best deals this month</span>
+                                <span className={styles.progressValue}>87%</span>
                             </div>
-                            <div style={{
-                                width: '100%',
-                                height: '8px',
-                                background: '#e5e7eb',
-                                borderRadius: '4px',
-                                overflow: 'hidden'
-                            }}>
-                                <div style={{
-                                    width: '87%',
-                                    height: '100%',
-                                    background: '#3b82f6',
-                                    borderRadius: '4px'
-                                }} />
+                            <div className={styles.progressBarContainer}>
+                                <div className={`${styles.progressBar} ${styles.progressBarBlue}`} style={{ width: '87%' }} />
                             </div>
                         </div>
                         {/* Progress Bar 2 */}
-                        <div>
-                            <div style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                marginBottom: '8px'
-                            }}>
-                                <span style={{ fontSize: '14px', color: '#1f2937' }}>Price competitiveness</span>
-                                <span style={{ fontSize: '14px', color: '#1f2937', fontWeight: '500' }}>72%</span>
+                        <div className={styles.progressItem}>
+                            <div className={styles.progressHeader}>
+                                <span className={styles.progressLabel}>Price competitiveness</span>
+                                <span className={styles.progressValue}>72%</span>
                             </div>
-                            <div style={{
-                                width: '100%',
-                                height: '8px',
-                                background: '#e5e7eb',
-                                borderRadius: '4px',
-                                overflow: 'hidden'
-                            }}>
-                                <div style={{
-                                    width: '72%',
-                                    height: '100%',
-                                    background: '#10b981',
-                                    borderRadius: '4px'
-                                }} />
+                            <div className={styles.progressBarContainer}>
+                                <div className={`${styles.progressBar} ${styles.progressBarGreen}`} style={{ width: '72%' }} />
                             </div>
                         </div>
                         {/* Progress Bar 3 */}
-                        <div>
-                            <div style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                marginBottom: '8px'
-                            }}>
-                                <span style={{ fontSize: '14px', color: '#1f2937' }}>Games availability</span>
-                                <span style={{ fontSize: '14px', color: '#1f2937', fontWeight: '500' }}>95%</span>
+                        <div className={styles.progressItem}>
+                            <div className={styles.progressHeader}>
+                                <span className={styles.progressLabel}>Games availability</span>
+                                <span className={styles.progressValue}>95%</span>
                             </div>
-                            <div style={{
-                                width: '100%',
-                                height: '8px',
-                                background: '#e5e7eb',
-                                borderRadius: '4px',
-                                overflow: 'hidden'
-                            }}>
-                                <div style={{
-                                    width: '95%',
-                                    height: '100%',
-                                    background: '#f59e0b',
-                                    borderRadius: '4px'
-                                }} />
+                            <div className={styles.progressBarContainer}>
+                                <div className={`${styles.progressBar} ${styles.progressBarOrange}`} style={{ width: '95%' }} />
                             </div>
                         </div>
                     </div>
-                    <button
-                        style={{
-                            width: '100%',
-                            marginTop: '20px',
-                            padding: '10px',
-                            background: 'transparent',
-                            border: '1px solid #e5e7eb',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            fontSize: '14px',
-                            color: '#1f2937'
-                        }}
-                    >
+                    <button className={styles.outlineButton}>
                         Change Favorite Store
                     </button>
                 </div>
             </div>
 
             {/* Recently Viewed */}
-            <div style={{
-                background: 'white',
-                padding: '24px',
-                borderRadius: '12px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                marginBottom: '30px'
-            }}>
-                <h2 style={{ fontSize: '20px', color: '#1f2937', margin: '0 0 20px 0' }}>
-                    Recently Viewed
-                </h2>
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                    gap: '20px'
-                }}>
+            <div className={styles.sectionCard} style={{ marginBottom: '30px' }}>
+                <h2 className={styles.sectionTitle}>Recently Viewed</h2>
+                <div className={styles.gamesGrid}>
                     {recentlyViewed.map((game) => (
                         <div
                             key={game.id}
-                            style={{
-                                cursor: 'pointer',
-                                transition: 'transform 0.2s'
-                            }}
-                            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
-                            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                            className={styles.gameCard}
                         >
-                            <div style={{
-                                width: '100%',
-                                aspectRatio: '16/9',
-                                borderRadius: '8px',
-                                overflow: 'hidden',
-                                marginBottom: '12px',
-                                background: '#e5e7eb'
-                            }}>
+                            <div className={styles.gameImageContainer}>
                                 <img
                                     src={game.image}
                                     alt={game.title}
-                                    style={{
-                                        width: '100%',
-                                        height: '100%',
-                                        objectFit: 'cover'
-                                    }}
+                                    className={styles.gameImage}
                                 />
                             </div>
-                            <h4 style={{
-                                fontSize: '16px',
-                                fontWeight: '500',
-                                color: '#1f2937',
-                                margin: '0 0 8px 0'
-                            }}>
+                            <h4 className={styles.gameTitle}>
                                 {game.title}
                             </h4>
-                            <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                            <div className={styles.genreTags}>
                                 {game.genre.slice(0, 2).map((genre, idx) => (
                                     <span
                                         key={idx}
-                                        style={{
-                                            padding: '4px 8px',
-                                            background: '#f3f4f6',
-                                            color: '#6b7280',
-                                            borderRadius: '4px',
-                                            fontSize: '12px'
-                                        }}
+                                        className={styles.genreTag}
                                     >
                                         {genre}
                                     </span>
@@ -500,105 +252,46 @@ export const UserDashboard = () => {
             </div>
 
             {/* Recommended for You */}
-            <div style={{
-                background: 'white',
-                padding: '24px',
-                borderRadius: '12px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                marginBottom: '30px'
-            }}>
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    marginBottom: '20px'
-                }}>
+            <div className={styles.sectionCard} style={{ marginBottom: '30px' }}>
+                <div className={styles.sectionHeader}>
                     <div>
-                        <h2 style={{ fontSize: '20px', color: '#1f2937', margin: '0 0 4px 0' }}>
-                            Recommended for You
-                        </h2>
-                        <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
+                        <h2 className={styles.sectionTitle}>Recommended for You</h2>
+                        <p className={styles.sectionSubtitle} style={{ margin: 0 }}>
                             Based on your purchase history and wishlist
                         </p>
                     </div>
-                    <button
-                        style={{
-                            padding: '6px 12px',
-                            background: 'transparent',
-                            border: '1px solid #e5e7eb',
-                            borderRadius: '6px',
-                            cursor: 'pointer',
-                            fontSize: '12px',
-                            color: '#6b7280'
-                        }}
-                    >
+                    <button className={styles.ghostButton}>
                         Refresh
                     </button>
                 </div>
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                    gap: '20px'
-                }}>
+                <div className={styles.gamesGrid}>
                     {recommendedGames.map((game) => (
                         <div
                             key={game.id}
-                            style={{
-                                cursor: 'pointer',
-                                transition: 'transform 0.2s'
-                            }}
-                            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
-                            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                            className={styles.gameCard}
                         >
-                            <div style={{
-                                width: '100%',
-                                aspectRatio: '16/9',
-                                borderRadius: '8px',
-                                overflow: 'hidden',
-                                marginBottom: '12px',
-                                background: '#e5e7eb'
-                            }}>
+                            <div className={styles.gameImageContainer}>
                                 <img
                                     src={game.image}
                                     alt={game.title}
-                                    style={{
-                                        width: '100%',
-                                        height: '100%',
-                                        objectFit: 'cover'
-                                    }}
+                                    className={styles.gameImage}
                                 />
                             </div>
-                            <h4 style={{
-                                fontSize: '16px',
-                                fontWeight: '500',
-                                color: '#1f2937',
-                                margin: '0 0 8px 0'
-                            }}>
+                            <h4 className={styles.gameTitle}>
                                 {game.title}
                             </h4>
-                            <div style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center'
-                            }}>
-                                <div style={{ display: 'flex', gap: '2px' }}>
+                            <div className={styles.gameRatingPrice}>
+                                <div className={styles.starRating}>
                                     {[...Array(5)].map((_, i) => (
                                         <span
                                             key={i}
-                                            style={{
-                                                fontSize: '14px',
-                                                color: i < Math.floor(game.rating) ? '#f59e0b' : '#d1d5db'
-                                            }}
+                                            className={`${styles.star} ${i < Math.floor(game.rating) ? styles.starFilled : styles.starEmpty}`}
                                         >
                                             ★
                                         </span>
                                     ))}
                                 </div>
-                                <span style={{
-                                    fontSize: '14px',
-                                    fontWeight: '600',
-                                    color: '#10b981'
-                                }}>
+                                <span className={styles.gamePrice}>
                                     ${game.price}
                                 </span>
                             </div>
@@ -608,45 +301,28 @@ export const UserDashboard = () => {
             </div>
 
             {/* User Info Card */}
-            <div style={{
-                background: 'white',
-                padding: '24px',
-                borderRadius: '12px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-            }}>
-                <h2 style={{ fontSize: '20px', marginBottom: '20px', color: '#1f2937' }}>
-                    Your Profile
-                </h2>
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                    gap: '20px'
-                }}>
-                    <div>
-                        <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 4px 0' }}>Email</p>
-                        <p style={{ fontSize: '16px', color: '#1f2937', margin: 0, fontWeight: '500' }}>{user.email}</p>
+            <div className={styles.profileCard}>
+                <h2 className={styles.profileTitle}>Your Profile</h2>
+                <div className={styles.profileGrid}>
+                    <div className={styles.profileField}>
+                        <p className={styles.profileLabel}>Email</p>
+                        <p className={styles.profileValue}>{user.email}</p>
                     </div>
-                    <div>
-                        <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 4px 0' }}>Role</p>
-                        <p style={{ fontSize: '16px', color: '#1f2937', margin: 0, fontWeight: '500' }}>
+                    <div className={styles.profileField}>
+                        <p className={styles.profileLabel}>Role</p>
+                        <p className={styles.profileValue}>
                             {user.role.toUpperCase()}
                         </p>
                     </div>
-                    <div>
-                        <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 4px 0' }}>Status</p>
-                        <p style={{
-                            fontSize: '16px',
-                            color: user.status === 'active' ? '#10b981' : '#ef4444',
-                            margin: 0,
-                            fontWeight: '500',
-                            textTransform: 'capitalize'
-                        }}>
-                            {user.status}
+                    <div className={styles.profileField}>
+                        <p className={styles.profileLabel}>Status</p>
+                        <p className={`${styles.profileValue} ${user.status === 'active' ? styles.statusActive : styles.statusSuspended}`}>
+                            {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
                         </p>
                     </div>
-                    <div>
-                        <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 4px 0' }}>Total Purchases</p>
-                        <p style={{ fontSize: '16px', color: '#1f2937', margin: 0, fontWeight: '500' }}>
+                    <div className={styles.profileField}>
+                        <p className={styles.profileLabel}>Total Purchases</p>
+                        <p className={styles.profileValue}>
                             {user.purchase}
                         </p>
                     </div>
