@@ -43,17 +43,8 @@ export async function getTrendingGames(): Promise<Game[]> {
     return response.data;
   } catch (e: unknown) {
     if (e instanceof AxiosError) {
-      // Log more details for debugging
-      console.error('Trending games error:', {
-        status: e.response?.status,
-        statusText: e.response?.statusText,
-        data: e.response?.data,
-        message: e.message,
-        code: e.code
-      });
       throw new Error(e.response?.data?.detail || e.message || 'Failed to fetch trending games');
     }
-    console.error('Unknown error fetching trending games:', e);
     throw e;
   }
 }
@@ -67,17 +58,8 @@ export async function getDealOfTheDay(): Promise<Game | null> {
       if (e.response?.status === 404) {
         return null;
       }
-      // Log more details for debugging
-      console.error('Deal of the day error:', {
-        status: e.response?.status,
-        statusText: e.response?.statusText,
-        data: e.response?.data,
-        message: e.message,
-        code: e.code
-      });
       throw new Error(e.response?.data?.detail || e.message || 'Failed to fetch deal of the day');
     }
-    console.error('Unknown error fetching deal of the day:', e);
     throw e;
   }
 }
