@@ -10,6 +10,7 @@ export const GameDetail = () => {
   const navigate = useNavigate();
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<'description' | 'price' | 'reviews'>('description');
   const [isWishlisted, setIsWishlisted] = useState(false);
@@ -23,15 +24,17 @@ export const GameDetail = () => {
 
       try {
         setLoading(true);
+        setError(null);
         const gameData = await getGameById(id);
         if (!gameData) {
-          navigate('/');
+          setError('Game not found. It may no longer be available.');
+          setLoading(false);
           return;
         }
         setGame(gameData);
       } catch (error) {
         console.error('Failed to fetch game:', error);
-        navigate('/');
+        setError(error instanceof Error ? error.message : 'Failed to load game details');
       } finally {
         setLoading(false);
       }
@@ -49,8 +52,32 @@ export const GameDetail = () => {
     );
   }
 
-  if (!game) {
-    return null;
+  if (error || !game) {
+    return (
+      <div className={styles.gameDetail}>
+        <Header />
+        <main className={styles.main}>
+          <div style={{ padding: '2rem', textAlign: 'center' }}>
+            <h2>Game Not Found</h2>
+            <p>{error || 'The game you are looking for is not available.'}</p>
+            <button 
+              onClick={() => navigate('/')}
+              style={{ 
+                marginTop: '1rem', 
+                padding: '0.5rem 1rem', 
+                cursor: 'pointer',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px'
+              }}
+            >
+              Return to Homepage
+            </button>
+          </div>
+        </main>
+      </div>
+    );
   }
 
   const images = game.images && game.images.length > 0 ? game.images : [game.image];

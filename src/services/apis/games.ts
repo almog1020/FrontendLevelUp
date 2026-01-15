@@ -99,6 +99,21 @@ export async function searchGames(query: string): Promise<Game[]> {
   }
 }
 
+export async function getGameById(id: string): Promise<Game | null> {
+  try {
+    const response = await instance.get<Game>(`/games/${id}`);
+    return response.data;
+  } catch (e: unknown) {
+    if (e instanceof AxiosError) {
+      if (e.response?.status === 404) {
+        return null;
+      }
+      throw new Error(e.response?.data?.detail || 'Failed to fetch game');
+    }
+    throw e;
+  }
+}
+
 
 
 
