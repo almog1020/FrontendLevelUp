@@ -72,12 +72,18 @@ export const Header = () => {
         {/* Logo and Branding */}
         <div 
           className={styles.header__logo}
-          onClick={() => navigate('/')}
+          onClick={() => {
+            setSearchQuery(''); // Clear search query
+            window.dispatchEvent(new CustomEvent('games-refresh')); // Reset homepage
+            navigate('/');
+          }}
           role="button"
           tabIndex={0}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
+              setSearchQuery(''); // Clear search query
+              window.dispatchEvent(new CustomEvent('games-refresh')); // Reset homepage
               navigate('/');
             }
           }}

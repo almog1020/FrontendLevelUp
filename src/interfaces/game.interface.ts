@@ -1,6 +1,7 @@
 export interface PriceComparison {
   store: string;
   price: number;
+  url?: string;
 }
 
 export interface Review {

@@ -14,7 +14,7 @@ export const DealOfTheDay = ({ game }: DealOfTheDayProps) => {
   };
 
   return (
-    <section className={styles.dealOfTheDay}>
+    <section id="deal-of-the-day" className={styles.dealOfTheDay}>
       <div className={styles.dealOfTheDay__header}>
         <div className={styles.dealOfTheDay__headerContent}>
           <span className={styles.dealOfTheDay__icon}>🔥</span>

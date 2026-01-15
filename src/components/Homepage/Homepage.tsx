@@ -74,6 +74,8 @@ export const Homepage = () => {
   // Listen for games refresh event from Header/ETL
   useEffect(() => {
     const handleGamesRefresh = () => {
+      setSearchQuery(''); // Clear search query
+      setSearchResults(null); // Clear search results
       fetchGames();
     };
 
@@ -117,7 +119,7 @@ export const Homepage = () => {
     <div className={styles.homepage}>
       <Header />
       <main className={styles.main}>
-        <Hero />
+        {searchResults === null && <Hero />}
         {error && (
           <div style={{ padding: '2rem', textAlign: 'center', color: 'red' }}>
             Error: {error}
@@ -133,7 +135,7 @@ export const Homepage = () => {
               </div>
             )}
             {searchResults.length > 0 ? (
-              <TrendingGames games={searchResults} />
+              <TrendingGames games={searchResults} hideHeader />
             ) : (
               <div style={{ padding: '2rem', textAlign: 'center' }}>
                 No games found for "{searchQuery}"

@@ -6,9 +6,10 @@ import type { Game } from '../../interfaces/game.interface';
 
 interface TrendingGamesProps {
   games: Game[];
+  hideHeader?: boolean;
 }
 
-export const TrendingGames = ({ games }: TrendingGamesProps) => {
+export const TrendingGames = ({ games, hideHeader = false }: TrendingGamesProps) => {
   const navigate = useNavigate();
   const [wishlistedGames, setWishlistedGames] = useState<Set<string>>(new Set());
 
@@ -30,15 +31,17 @@ export const TrendingGames = ({ games }: TrendingGamesProps) => {
 
   return (
     <section className={styles.trendingGames}>
-      <div className={styles.trendingGames__header}>
-        <div className={styles.trendingGames__headerContent}>
-          <span className={styles.trendingGames__icon}>📈</span>
-          <div>
-            <h2 className={styles.trendingGames__title}>Trending Games</h2>
-            <p className={styles.trendingGames__subtitle}>Most popular games right now</p>
+      {!hideHeader && (
+        <div className={styles.trendingGames__header}>
+          <div className={styles.trendingGames__headerContent}>
+            <span className={styles.trendingGames__icon}>📈</span>
+            <div>
+              <h2 className={styles.trendingGames__title}>Trending Games</h2>
+              <p className={styles.trendingGames__subtitle}>Most popular games right now</p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className={styles.trendingGames__grid}>
         {games.map((game) => (

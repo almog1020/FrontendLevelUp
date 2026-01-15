@@ -3,7 +3,7 @@ import styles from './DealOfTheDaySkeleton.module.scss';
 
 export const DealOfTheDaySkeleton = () => {
   return (
-    <section className={styles.dealOfTheDaySkeleton}>
+    <section id="deal-of-the-day" className={styles.dealOfTheDaySkeleton}>
       <div className={styles.dealOfTheDaySkeleton__header}>
         <div className={styles.dealOfTheDaySkeleton__headerContent}>
           <Skeleton width={32} height={32} borderRadius="4px" />

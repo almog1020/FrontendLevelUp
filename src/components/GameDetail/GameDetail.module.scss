@@ -1,7 +1,10 @@
 .gameDetail {
+  width: 100%;
+  max-width: 100%;
   min-height: 100vh;
   background-color: var(--bg-dark);
   color: var(--text-main);
+  overflow-x: hidden;
 }
 
 .loading {
@@ -14,9 +17,11 @@
 }
 
 .main {
+  width: 100%;
   max-width: 1400px;
   margin: 0 auto;
   padding: 40px 24px;
+  box-sizing: border-box;
 }
 
 .content {
@@ -247,6 +252,10 @@
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.1s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  box-sizing: border-box;
 
   &:hover {
     background-color: #2563eb;
@@ -425,6 +434,14 @@
     background-color: var(--card-bg);
     border-radius: 8px;
     border: 1px solid var(--border-color);
+    gap: 16px;
+  }
+
+  .priceInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
   }
 
   .priceStore {
@@ -437,6 +454,39 @@
     font-size: 18px;
     font-weight: 700;
     color: #22c55e;
+  }
+
+  .priceComparisonBuyButton {
+    padding: 6px 12px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 12px;
+    transition: background-color 0.2s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    span {
+      display: inline-block;
+    }
+
+    svg {
+      flex-shrink: 0;
+      stroke: currentColor;
+    }
+
+    &:hover {
+      background-color: #0056b3;
+    }
+
+    &:active {
+      background-color: #004085;
+    }
   }
 }
 
