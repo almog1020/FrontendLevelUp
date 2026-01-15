@@ -8,6 +8,12 @@ export interface Game {
   image_url?: string | null;
 }
 
+export interface GamesResponse {
+  games: Game[];
+  total: number;
+  limit: number;
+}
+
 export interface EtlResult {
   status: string;
   timestamp: string;
@@ -16,38 +22,80 @@ export interface EtlResult {
 }
 
 /**
- * Get all games from the in-memory database
+ * Admin game item from /admin/games endpoint
+ */
+export interface AdminGameItem {
+  id: string;
+  title: string;
+  image_url?: string | null;
+  store?: string | null;
+  price?: number | null;
+  currency?: string | null;
+  deal_url?: string | null;
+}
+
+/**
+ * Admin games response from /admin/games endpoint
+ */
+export interface AdminGamesResponse {
+  items: AdminGameItem[];
+  count: number;
+}
+
+/**
+ * Get games from the backend with pagination
+ * @param limit - Number of games to fetch (default: 30)
  * @returns Promise<Game[]> - Array of games
  */
-export async function getAllGames(): Promise<Game[]> {
+export async function getAllGames(limit: number = 30): Promise<Game[]> {
   try {
-    console.log("Fetching games from /games/");
-    const response = await instance.get("/games/");
-    console.log("Response status:", response.status);
-    console.log("Response data:", response.data);
+    const url = `/games/?limit=${limit}`;
+    const response = await instance.get<GamesResponse>(url);
+    
+    
     const data = response.data;
 
-    // Handle different response shapes
-    if (Array.isArray(data)) {
-      console.log("Returning array of games, count:", data.length);
-      return data;
-    }
+    // Handle new response format: { games: Game[], total: number, limit: number }
     if (data && typeof data === "object") {
       if (Array.isArray(data.games)) {
-        console.log("Returning data.games, count:", data.games.length);
         return data.games;
       }
-      if (Array.isArray(data.items)) {
-        console.log("Returning data.items, count:", data.items.length);
-        return data.items;
+      // Fallback for old format compatibility
+      const dataWithItems = data as { items?: Game[] };
+      if (Array.isArray(dataWithItems.items)) {
+        return dataWithItems.items;
       }
     }
-    console.log("No games found, returning empty array");
+    // Fallback for direct array response (backward compatibility)
+    if (Array.isArray(data)) {
+      return data;
+    }
+    
     return [];
   } catch (e: unknown) {
-    console.error("Error fetching games:", e);
     if (e instanceof AxiosError) {
-      console.error("Axios error details:", e.response?.data);
+      // If 404, try without trailing slash
+      if (e.response?.status === 404) {
+        try {
+          const retryUrl = `/games?limit=${limit}`;
+          console.log("[DEBUG] Retrying without trailing slash: http://localhost:8000" + retryUrl);
+          const retryResponse = await instance.get<GamesResponse>(retryUrl);
+          console.log("[DEBUG] Retry response status:", retryResponse.status);
+          const retryData = retryResponse.data;
+          
+          if (retryData && typeof retryData === "object") {
+            if (Array.isArray(retryData.games)) return retryData.games;
+            const retryDataWithItems = retryData as { items?: Game[] };
+            if (Array.isArray(retryDataWithItems.items)) return retryDataWithItems.items;
+          }
+          if (Array.isArray(retryData)) {
+            return retryData;
+          }
+          return [];
+        } catch (retryError) {
+          // Fall through to throw original error
+        }
+      }
       throw new Error(e.response?.data?.detail || "Failed to fetch games");
     }
     throw e;
@@ -55,24 +103,108 @@ export async function getAllGames(): Promise<Game[]> {
 }
 
 /**
- * Trigger ETL pipeline to fetch game data from external APIs
- * @param search - Optional search term to filter games
- * @returns Promise<EtlResult> - ETL result summary
+ * Get games response with pagination metadata
+ * @param limit - Number of games to fetch (default: 30)
+ * @returns Promise<GamesResponse> - Response with games array and metadata
  */
+export async function getGamesResponse(limit: number = 30): Promise<GamesResponse> {
+  try {
+    const url = `/games/?limit=${limit}`;
+    const response = await instance.get<GamesResponse>(url);
+    
+    const data = response.data;
+    
+    // Return the response directly if it matches the expected format
+    if (data && typeof data === "object" && Array.isArray(data.games) && typeof data.total === "number") {
+      return data;
+    }
+    
+    // Fallback: construct response from array
+    if (Array.isArray(data)) {
+      return {
+        games: data,
+        total: data.length,
+        limit: data.length,
+      };
+    }
+    
+    // Fallback: construct from old format
+    if (data && typeof data === "object") {
+      const dataWithItems = data as { games?: Game[]; items?: Game[] };
+      const games = Array.isArray(dataWithItems.games) ? dataWithItems.games : 
+                   Array.isArray(dataWithItems.items) ? dataWithItems.items : [];
+      return {
+        games,
+        total: games.length,
+        limit: games.length,
+      };
+    }
+    
+    return { games: [], total: 0, limit };
+  } catch (e: unknown) {
+    if (e instanceof AxiosError) {
+      if (e.response?.status === 404) {
+        try {
+          const retryUrl = `/games?limit=${limit}`;
+          const retryResponse = await instance.get<GamesResponse>(retryUrl);
+          return retryResponse.data;
+        } catch (retryError) {
+          // Fall through
+        }
+      }
+      throw new Error(e.response?.data?.detail || "Failed to fetch games");
+    }
+    throw e;
+  }
+}
+
 /**
- * Trigger ETL pipeline to fetch game data from external APIs
- * @param search - Optional search term to filter games
- * @returns Promise<EtlResult> - ETL result summary
+ * Fetch admin games from the backend
+ * @param params - Optional parameters: q (search query) and page_size (default: 30, max: 200)
+ * @returns Promise<AdminGamesResponse> - Response with items array and count
  */
+export async function fetchAdminGames(params?: { q?: string; page_size?: number }): Promise<AdminGamesResponse> {
+  try {
+    const page_size = Math.min(params?.page_size ?? 30, 200);
+    let url = `/admin/games?page_size=${page_size}`;
+    
+    if (params?.q) {
+      url += `&q=${encodeURIComponent(params.q)}`;
+    }
+    
+    const response = await instance.get<AdminGamesResponse>(url);
+    const data = response.data;
+    
+    // Handle response with items array
+    if (data && typeof data === "object") {
+      if (Array.isArray(data.items)) {
+        // If count is missing, infer from items.length
+        const count = typeof data.count === "number" ? data.count : data.items.length;
+        return {
+          items: data.items,
+          count,
+        };
+      }
+    }
+    
+    // Safe fallback for malformed response
+    return { items: [], count: 0 };
+  } catch (e: unknown) {
+    if (e instanceof AxiosError) {
+      throw new Error(e.response?.data?.detail || "Failed to fetch admin games");
+    }
+    throw e;
+  }
+}
+
 export async function triggerEtl(search?: string): Promise<EtlResult> {
   try {
-    // Get token from localStorage - using access_token as standard key
-    // If your project uses a different key, update this line
     const token = localStorage.getItem("access_token");
-
     const url = search
       ? `/games/etl?search=${encodeURIComponent(search)}`
       : "/games/etl";
+    
+    console.log("[DEBUG] Requested URL: http://localhost:8000" + url);
 
     const config = token
       ? {
@@ -83,9 +215,11 @@ export async function triggerEtl(search?: string): Promise<EtlResult> {
       : {};
 
     const response = await instance.post(url, {}, config);
+    console.log("[DEBUG] ETL response status:", response.status);
     return response.data;
   } catch (e: unknown) {
     if (e instanceof AxiosError) {
+      console.error("[DEBUG] ETL error:", e.response?.status, e.response?.data);
       if (e.response?.status === 401) {
         throw new Error("Unauthorized - please login");
       }

@@ -36,7 +36,7 @@
 }
 
 .chartSection {
-  // Chart component has its own card styling, just need spacing
+  display: block;
 }
 
 .section {
@@ -50,12 +50,6 @@
   margin: 0 0 16px 0;
   font-size: 20px;
   font-weight: 600;
-}
-
-.etlControls {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
 }
 
 .searchInput,
@@ -75,7 +69,6 @@
   border-color: rgba(88, 166, 255, 0.7);
 }
 
-.etlButton,
 .refreshButton {
   padding: 10px 18px;
   border-radius: 8px;
@@ -88,12 +81,10 @@
   transition: background 0.15s ease;
 }
 
-.etlButton:hover:not(:disabled),
 .refreshButton:hover:not(:disabled) {
   background: rgba(88, 166, 255, 0.2);
 }
 
-.etlButton:disabled,
 .refreshButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -224,5 +215,38 @@
   font-family: monospace;
   font-size: 12px;
   color: rgba(255, 255, 255, 0.6);
+}
+
+.genreBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.genreBadge {
+  padding: 4px 8px;
+  background: rgba(88, 166, 255, 0.15);
+  border: 1px solid rgba(88, 166, 255, 0.3);
+  border-radius: 4px;
+  font-size: 12px;
+  color: #58a6ff;
+  white-space: nowrap;
+}
+
+.noGenre {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+}
+
+.dealLink {
+  color: #58a6ff;
+  text-decoration: none;
+  font-size: 14px;
+  transition: opacity 0.15s ease;
+}
+
+.dealLink:hover {
+  opacity: 0.8;
+  text-decoration: underline;
 }
 
