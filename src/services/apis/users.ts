@@ -1,11 +1,11 @@
 import {instance, instanceAuth} from "./config.ts";
 import {AxiosError} from "axios";
 import type {RegisterResponse} from "../../interfaces/sign.interface.ts";
-import type {User} from "../../interfaces/user.interface.ts";
+import type {User, UserResponse, UserStatus} from "../../interfaces/user.interface.ts";
 
-export async function login(username: string, password: string) {
+export async function login(username: string, password: string):Promise<string> {
     try {
-        return (await instanceAuth.post('/auth/token',{username,password})).data.access_token  // Add .access_token
+        return (await instanceAuth.post('/auth/token',{username,password})).data.access_token
     }catch(e:unknown) {
         if (e instanceof AxiosError) {
             if (e.status === 422)
@@ -49,8 +49,7 @@ export async function updateUser(email:string,editUser:User): Promise<void> {
         throw e;
     }
 }
-
-export async function getCurrentUser() {
+export async function getCurrentUser(): Promise<UserResponse> {
     try {
         const token = localStorage.getItem('token');
         return (await instance.get('/users/me', {
@@ -65,6 +64,16 @@ export async function getCurrentUser() {
             }
             throw new Error(e.response?.data?.detail || 'Failed to fetch user data');
         }
+        throw e;
+    }
+}
+
+export async function logout(email:string,disable:UserStatus): Promise<void> {
+    try {
+        await instance.put(`/users/${email}/logout?disable=${disable}`)
+    }catch(e:unknown) {
+        if (e instanceof AxiosError)
+            throw new Error(e.response!.data.detail);
         throw e;
     }
 }

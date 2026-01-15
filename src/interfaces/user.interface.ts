@@ -1,5 +1,5 @@
 export type UserRole = "admin" | "user"
-export type UserStatus = "active" | "suspended"
+export type UserStatus = "active" | "suspended" | "inactive"
 
 export interface User {
     id: number;

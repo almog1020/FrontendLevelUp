@@ -1,13 +1,14 @@
-import type {UseFormRegister, FieldValues} from "react-hook-form";
+import type {UseFormRegister} from "react-hook-form";
 
 export interface FormValues {
     email: string
     password: string
+    name:string
 }
-export interface ITextField<T extends FieldValues = FormValues> {
+export interface ITextFieldSignIn {
     title: string;
-    type:string;
-    required:boolean
-    name:keyof T;
-    register: UseFormRegister<T>
+    type: string;
+    required: boolean
+    name: keyof FormValues;
+    register: UseFormRegister<FormValues>
 }
