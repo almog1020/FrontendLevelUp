@@ -30,6 +30,34 @@ export const UserDashboard = () => {
         gamesTracked: 47
     };
 
+    // Stat cards data array - DRY approach
+    const statCards = [
+        {
+            title: 'Wishlist Items',
+            value: stats.wishlistItems,
+            icon: '❤️',
+            subtext: '+2 from last month'
+        },
+        {
+            title: 'Price Drops',
+            value: stats.priceDrops,
+            icon: '📉',
+            subtext: 'Active deals now'
+        },
+        {
+            title: 'Total Saved',
+            value: `$${stats.totalSaved}`,
+            icon: '🛒',
+            subtext: 'This year'
+        },
+        {
+            title: 'Games Tracked',
+            value: stats.gamesTracked,
+            icon: '⭐',
+            subtext: 'All time'
+        }
+    ];
+
     // Placeholder data for price drops
     const priceDrops = [
         { id: '1', title: 'Cyberpunk 2077', oldPrice: 59.99, newPrice: 29.99, discount: 50, image: 'https://via.placeholder.com/80', timeAgo: '2 hours ago' },
@@ -49,6 +77,13 @@ export const UserDashboard = () => {
         { id: '1', title: 'Red Dead Redemption 2', rating: 4.5, price: 24.99, image: 'https://via.placeholder.com/300x169' },
         { id: '2', title: 'God of War', rating: 5, price: 19.99, image: 'https://via.placeholder.com/300x169' },
         { id: '3', title: 'Horizon Zero Dawn', rating: 4.5, price: 14.99, image: 'https://via.placeholder.com/300x169' },
+    ];
+
+    // Store performance metrics
+    const storeMetrics = [
+        { label: 'Best deals this month', value: 87, color: 'blue' },
+        { label: 'Price competitiveness', value: 72, color: 'green' },
+        { label: 'Games availability', value: 95, color: 'orange' },
     ];
 
     return (
@@ -71,61 +106,20 @@ export const UserDashboard = () => {
 
             {/* Stats Overview */}
             <div className={styles.statsGrid}>
-                {/* Wishlist Items Card */}
-                <div className={styles.statCard}>
-                    <div className={styles.statCardHeader}>
-                        <h3 className={styles.statCardTitle}>Wishlist Items</h3>
-                        <span className={styles.statCardIcon}>❤️</span>
+                {statCards.map((statCard, index: number) => (
+                    <div key={index} className={styles.statCard}>
+                        <div className={styles.statCardHeader}>
+                            <h3 className={styles.statCardTitle}>{statCard.title}</h3>
+                            <span className={styles.statCardIcon}>{statCard.icon}</span>
+                        </div>
+                        <div className={styles.statCardValue}>
+                            {statCard.value}
+                        </div>
+                        <p className={styles.statCardSubtext}>
+                            {statCard.subtext}
+                        </p>
                     </div>
-                    <div className={styles.statCardValue}>
-                        {stats.wishlistItems}
-                    </div>
-                    <p className={styles.statCardSubtext}>
-                        +2 from last month
-                    </p>
-                </div>
-
-                {/* Price Drops Card */}
-                <div className={styles.statCard}>
-                    <div className={styles.statCardHeader}>
-                        <h3 className={styles.statCardTitle}>Price Drops</h3>
-                        <span className={styles.statCardIcon}>📉</span>
-                    </div>
-                    <div className={styles.statCardValue}>
-                        {stats.priceDrops}
-                    </div>
-                    <p className={styles.statCardSubtext}>
-                        Active deals now
-                    </p>
-                </div>
-
-                {/* Total Saved Card */}
-                <div className={styles.statCard}>
-                    <div className={styles.statCardHeader}>
-                        <h3 className={styles.statCardTitle}>Total Saved</h3>
-                        <span className={styles.statCardIcon}>🛒</span>
-                    </div>
-                    <div className={styles.statCardValue}>
-                        ${stats.totalSaved}
-                    </div>
-                    <p className={styles.statCardSubtext}>
-                        This year
-                    </p>
-                </div>
-
-                {/* Games Tracked Card */}
-                <div className={styles.statCard}>
-                    <div className={styles.statCardHeader}>
-                        <h3 className={styles.statCardTitle}>Games Tracked</h3>
-                        <span className={styles.statCardIcon}>⭐</span>
-                    </div>
-                    <div className={styles.statCardValue}>
-                        {stats.gamesTracked}
-                    </div>
-                    <p className={styles.statCardSubtext}>
-                        All time
-                    </p>
-                </div>
+                ))}
             </div>
 
             {/* Two Column Layout */}
@@ -180,36 +174,23 @@ export const UserDashboard = () => {
                         Steam - Your preferred store
                     </p>
                     <div className={styles.progressSection}>
-                        {/* Progress Bar 1 */}
-                        <div className={styles.progressItem}>
-                            <div className={styles.progressHeader}>
-                                <span className={styles.progressLabel}>Best deals this month</span>
-                                <span className={styles.progressValue}>87%</span>
-                            </div>
-                            <div className={styles.progressBarContainer}>
-                                <div className={`${styles.progressBar} ${styles.progressBarBlue}`} style={{ width: '87%' }} />
-                            </div>
-                        </div>
-                        {/* Progress Bar 2 */}
-                        <div className={styles.progressItem}>
-                            <div className={styles.progressHeader}>
-                                <span className={styles.progressLabel}>Price competitiveness</span>
-                                <span className={styles.progressValue}>72%</span>
-                            </div>
-                            <div className={styles.progressBarContainer}>
-                                <div className={`${styles.progressBar} ${styles.progressBarGreen}`} style={{ width: '72%' }} />
-                            </div>
-                        </div>
-                        {/* Progress Bar 3 */}
-                        <div className={styles.progressItem}>
-                            <div className={styles.progressHeader}>
-                                <span className={styles.progressLabel}>Games availability</span>
-                                <span className={styles.progressValue}>95%</span>
-                            </div>
-                            <div className={styles.progressBarContainer}>
-                                <div className={`${styles.progressBar} ${styles.progressBarOrange}`} style={{ width: '95%' }} />
-                            </div>
-                        </div>
+                        {storeMetrics.map((metric, index) => {
+                            const colorClass = `progressBar${metric.color.charAt(0).toUpperCase() + metric.color.slice(1)}`;
+                            return (
+                                <div key={index} className={styles.progressItem}>
+                                    <div className={styles.progressHeader}>
+                                        <span className={styles.progressLabel}>{metric.label}</span>
+                                        <span className={styles.progressValue}>{metric.value}%</span>
+                                    </div>
+                                    <div className={styles.progressBarContainer}>
+                                        <div 
+                                            className={`${styles.progressBar} ${styles[colorClass]}`} 
+                                            style={{ width: `${metric.value}%` }} 
+                                        />
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
                     <button className={styles.outlineButton}>
                         Change Favorite Store
