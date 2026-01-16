@@ -4,7 +4,6 @@ import styles from './Header.module.scss';
 import { SignIn } from '../SignIn/SignIn';
 import { ETLTrigger } from '../ETLTrigger/ETLTrigger';
 import { searchGames } from '../../services/apis/games';
-import type { Game } from '../../interfaces/game.interface';
 
 export const Header = () => {
   const navigate = useNavigate();
