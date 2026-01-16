@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../../services/apis/users';
 import type { UserResponse } from '../../interfaces/user.interface';
 import styles from './UserDashboard.module.scss';
+import { RecentlyViewed, type RecentlyViewedGame } from './RecentlyViewed/RecentlyViewed';
+import { RecommendedGames, type RecommendedGame } from './RecommendedGames/RecommendedGames';
+import { UserProfile } from './UserProfile/UserProfile';
 
 export const UserDashboard = () => {
     const [user, setUser] = useState<UserResponse | null>(null);
@@ -66,14 +69,14 @@ export const UserDashboard = () => {
     ];
 
     // Placeholder data for recently viewed
-    const recentlyViewed = [
+    const recentlyViewed: RecentlyViewedGame[] = [
         { id: '1', title: 'Baldur\'s Gate 3', genre: ['RPG', 'Fantasy'], image: 'https://via.placeholder.com/300x169' },
         { id: '2', title: 'Starfield', genre: ['RPG', 'Sci-Fi'], image: 'https://via.placeholder.com/300x169' },
         { id: '3', title: 'Hogwarts Legacy', genre: ['Action', 'Adventure'], image: 'https://via.placeholder.com/300x169' },
     ];
 
     // Placeholder data for recommendations
-    const recommendedGames = [
+    const recommendedGames: RecommendedGame[] = [
         { id: '1', title: 'Red Dead Redemption 2', rating: 4.5, price: 24.99, image: 'https://via.placeholder.com/300x169' },
         { id: '2', title: 'God of War', rating: 5, price: 19.99, image: 'https://via.placeholder.com/300x169' },
         { id: '3', title: 'Horizon Zero Dawn', rating: 4.5, price: 14.99, image: 'https://via.placeholder.com/300x169' },
@@ -199,116 +202,13 @@ export const UserDashboard = () => {
             </div>
 
             {/* Recently Viewed */}
-            <div className={styles.sectionCard} style={{ marginBottom: '30px' }}>
-                <h2 className={styles.sectionTitle}>Recently Viewed</h2>
-                <div className={styles.gamesGrid}>
-                    {recentlyViewed.map((game) => (
-                        <div
-                            key={game.id}
-                            className={styles.gameCard}
-                        >
-                            <div className={styles.gameImageContainer}>
-                                <img
-                                    src={game.image}
-                                    alt={game.title}
-                                    className={styles.gameImage}
-                                />
-                            </div>
-                            <h4 className={styles.gameTitle}>
-                                {game.title}
-                            </h4>
-                            <div className={styles.genreTags}>
-                                {game.genre.slice(0, 2).map((genre, idx) => (
-                                    <span
-                                        key={idx}
-                                        className={styles.genreTag}
-                                    >
-                                        {genre}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
+            <RecentlyViewed games={recentlyViewed} />
 
             {/* Recommended for You */}
-            <div className={styles.sectionCard} style={{ marginBottom: '30px' }}>
-                <div className={styles.sectionHeader}>
-                    <div>
-                        <h2 className={styles.sectionTitle}>Recommended for You</h2>
-                        <p className={styles.sectionSubtitle} style={{ margin: 0 }}>
-                            Based on your purchase history and wishlist
-                        </p>
-                    </div>
-                    <button className={styles.ghostButton}>
-                        Refresh
-                    </button>
-                </div>
-                <div className={styles.gamesGrid}>
-                    {recommendedGames.map((game) => (
-                        <div
-                            key={game.id}
-                            className={styles.gameCard}
-                        >
-                            <div className={styles.gameImageContainer}>
-                                <img
-                                    src={game.image}
-                                    alt={game.title}
-                                    className={styles.gameImage}
-                                />
-                            </div>
-                            <h4 className={styles.gameTitle}>
-                                {game.title}
-                            </h4>
-                            <div className={styles.gameRatingPrice}>
-                                <div className={styles.starRating}>
-                                    {[...Array(5)].map((_, i) => (
-                                        <span
-                                            key={i}
-                                            className={`${styles.star} ${i < Math.floor(game.rating) ? styles.starFilled : styles.starEmpty}`}
-                                        >
-                                            ★
-                                        </span>
-                                    ))}
-                                </div>
-                                <span className={styles.gamePrice}>
-                                    ${game.price}
-                                </span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
+            <RecommendedGames games={recommendedGames} />
 
             {/* User Info Card */}
-            <div className={styles.profileCard}>
-                <h2 className={styles.profileTitle}>Your Profile</h2>
-                <div className={styles.profileGrid}>
-                    <div className={styles.profileField}>
-                        <p className={styles.profileLabel}>Email</p>
-                        <p className={styles.profileValue}>{user.email}</p>
-                    </div>
-                    <div className={styles.profileField}>
-                        <p className={styles.profileLabel}>Role</p>
-                        <p className={styles.profileValue}>
-                            {user.role.toUpperCase()}
-                        </p>
-                    </div>
-                    <div className={styles.profileField}>
-                        <p className={styles.profileLabel}>Status</p>
-                        <p className={`${styles.profileValue} ${user.status === 'active' ? styles.statusActive : styles.statusSuspended}`}>
-                            {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
-                        </p>
-                    </div>
-                    <div className={styles.profileField}>
-                        <p className={styles.profileLabel}>Total Purchases</p>
-                        <p className={styles.profileValue}>
-                            {user.purchase}
-                        </p>
-                    </div>
-                </div>
-            </div>
+            <UserProfile user={user} />
         </div>
     );
 };
