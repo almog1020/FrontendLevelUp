@@ -2,8 +2,10 @@ import styles from './Hero.module.scss';
 
 export const Hero = () => {
   const handleBrowseGames = () => {
-    console.log('Browse games clicked');
-    // Future: Navigate to games page or scroll to games section
+    const dealOfTheDayElement = document.getElementById('deal-of-the-day');
+    if (dealOfTheDayElement) {
+      dealOfTheDayElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   return (
