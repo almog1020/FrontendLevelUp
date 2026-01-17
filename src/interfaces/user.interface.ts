@@ -20,4 +20,6 @@ export interface UserResponse {
     role: UserRole;
     google_id: string;
     status: UserStatus;
+    purchase: number;
+    joined: string;
 }

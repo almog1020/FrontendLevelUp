@@ -1,14 +1,12 @@
 import {instance, instanceAuth} from "./config.ts";
-import axios, {AxiosError} from "axios";
+import {AxiosError} from "axios";
 import type {RegisterResponse} from "../../interfaces/sign.interface.ts";
 import type {User, UserResponse, UserStatus} from "../../interfaces/user.interface.ts";
-import type {Token} from "../../interfaces/token.interface.ts";
 
-export async function login(username: string, password: string):Promise<Token> {
+export async function login(username: string, password: string):Promise<string> {
     try {
-        return (await instanceAuth.post('/auth/token',{username,password})).data
+        return (await instanceAuth.post('/auth/token',{username,password})).data.access_token
     }catch(e:unknown) {
-        console.error(e)
         if (e instanceof AxiosError) {
             if (e.status === 422)
                 throw new Error('Password incorrect');
@@ -51,28 +49,28 @@ export async function updateUser(email:string,editUser:User): Promise<void> {
         throw e;
     }
 }
-export async function logout(email:string,disable:UserStatus): Promise<void> {
+export async function getCurrentUser(): Promise<UserResponse> {
     try {
-        await instance.put(`/users/${email}/logout?disable=${disable}`)
-    }catch(e:unknown) {
-        if (e instanceof AxiosError)
-            throw new Error(e.response!.data.detail);
+        const token = localStorage.getItem('token');
+        return (await instance.get('/users/me', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })).data;
+    } catch (e: unknown) {
+        if (e instanceof AxiosError) {
+            if (e.response?.status === 401) {
+                throw new Error('Unauthorized. Please log in again.');
+            }
+            throw new Error(e.response?.data?.detail || 'Failed to fetch user data');
+        }
         throw e;
     }
 }
-export async function getMe(token:Token): Promise<UserResponse> {
-    try {
-        return (await axios.create({
-            baseURL: 'https://backend-level-up.vercel.app/',
-            timeout: 1000,
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Authorization': `Bearer ${token.access_token}`,
-            },
-        }).get('/users/me')).data;
 
+export async function logout(email:string,disable:UserStatus): Promise<void> {
+    try {
+        await instance.put(`/users/${email}/logout?disable=${disable}`)
     }catch(e:unknown) {
         if (e instanceof AxiosError)
             throw new Error(e.response!.data.detail);

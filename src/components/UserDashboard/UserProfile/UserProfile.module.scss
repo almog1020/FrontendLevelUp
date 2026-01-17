@@ -1,0 +1,44 @@
+.profileCard {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profileTitle {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #1f2937;
+  margin-top: 0;
+}
+
+.profileGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.profileField {
+  // Container for profile field
+}
+
+.profileLabel {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 4px 0;
+}
+
+.profileValue {
+  font-size: 16px;
+  color: #1f2937;
+  margin: 0;
+  font-weight: 500;
+}
+
+.statusActive {
+  color: #10b981;
+}
+
+.statusSuspended {
+  color: #ef4444;
+}
