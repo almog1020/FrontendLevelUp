@@ -1,14 +1,14 @@
-import {instance} from "./config.ts";
-import {AxiosError} from "axios";
+import {instance, instanceAuth} from "./config.ts";
+import axios, {AxiosError} from "axios";
 import type {RegisterResponse} from "../../interfaces/sign.interface.ts";
-import type {User} from "../../interfaces/user.interface.ts";
+import type {User, UserResponse, UserStatus} from "../../interfaces/user.interface.ts";
+import type {Token} from "../../interfaces/token.interface.ts";
 
-export async function login(email: string, password: string):Promise<{id:number,email:string,password:string}> {
+export async function login(username: string, password: string):Promise<Token> {
     try {
-        return (
-            await instance.post('/users/login',{email: email, password: password})
-        ).data;
-    } catch (e: unknown) {
+        return (await instanceAuth.post('/auth/token',{username,password})).data
+    }catch(e:unknown) {
+        console.error(e)
         if (e instanceof AxiosError) {
             if (e.response?.status === 422) {
                 throw new Error('Password incorrect');
@@ -36,22 +36,47 @@ export async function register(email: string, password: string, name: string): P
 }
 export async function deleteUser(email:string): Promise<void> {
     try {
-        await instance.delete(`/users/${email}`);
-    } catch (e: unknown) {
-        if (e instanceof AxiosError) {
-            throw new Error(e.response?.data?.detail || 'Failed to delete user');
-        }
+        await instance.delete(`/users/${email}`)
+    }catch(e:unknown) {
+        if (e instanceof AxiosError)
+            throw new Error(e.response!.data.detail);
         throw e;
     }
 }
-
 export async function updateUser(email:string,editUser:User): Promise<void> {
     try {
-        await instance.put(`/users/${email}`,{...editUser});
-    } catch (e: unknown) {
-        if (e instanceof AxiosError) {
-            throw new Error(e.response?.data?.detail || 'Failed to update user');
-        }
+        await instance.put(`/users/${email}`,{...editUser})
+    }catch(e:unknown) {
+        if (e instanceof AxiosError)
+            throw new Error(e.response!.data.detail);
+        throw e;
+    }
+}
+export async function logout(email:string,disable:UserStatus): Promise<void> {
+    try {
+        await instance.put(`/users/${email}/logout?disable=${disable}`)
+    }catch(e:unknown) {
+        if (e instanceof AxiosError)
+            throw new Error(e.response!.data.detail);
+        throw e;
+    }
+}
+export async function getMe(token:Token): Promise<UserResponse> {
+    try {
+        return (await axios.create({
+            baseURL: 'https://backend-level-up.vercel.app/',
+            timeout: 1000,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Authorization': `Bearer ${token.access_token}`,
+            },
+        }).get('/users/me')).data;
+
+    }catch(e:unknown) {
+        if (e instanceof AxiosError)
+            throw new Error(e.response!.data.detail);
         throw e;
     }
 }

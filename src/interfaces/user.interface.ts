@@ -1,5 +1,5 @@
 export type UserRole = "admin" | "user"
-export type UserStatus = "active" | "suspended"
+export type UserStatus = "active" | "suspended" | "inactive"
 
 export interface User {
     id: number;
@@ -11,4 +11,13 @@ export interface User {
     joined: string;
     lastActive: string;
     purchase: string;
+    google_id: string;
+}
+export interface UserResponse {
+    id: number;
+    name: string;
+    email: string;
+    role: UserRole;
+    google_id: string;
+    status: UserStatus;
 }

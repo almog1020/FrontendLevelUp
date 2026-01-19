@@ -12,39 +12,12 @@ const GameManagement: React.FC = () => {
     items,
     count,
     isLoading,
-    error,
     filterText,
     setFilterText,
     refreshGames,
   } = useGameManagementData();
 
-  // Handle error state
-  if (error === "Admin access only") {
-    return (
-      <section className={styles.page}>
-        <GameManagementHeader />
-        <div className={styles.section}>
-          <div className={styles.error}>
-            <strong>Admin access only</strong>
-            <p>Please sign in with admin credentials to access this page.</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
 
-  if (error) {
-    return (
-      <section className={styles.page}>
-        <GameManagementHeader />
-        <div className={styles.section}>
-          <div className={styles.error}>
-            <strong>Error:</strong> {error}
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section className={styles.page}>
@@ -73,7 +46,7 @@ const GameManagement: React.FC = () => {
         {isLoading ? (
           <GameManagementLoadingState />
         ) : items.length === 0 ? (
-          <GameManagementEmptyState hasGames={false} />
+          <GameManagementEmptyState hasGames={count > 0} />
         ) : (
           <GamesTable games={items} />
         )}

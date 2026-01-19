@@ -43,6 +43,25 @@ export interface AdminGamesResponse {
 }
 
 /**
+ * IGDB game from /games endpoint
+ */
+export interface IgdbGame {
+  name: string;
+  rating?: number | null;
+  release_date?: string | null;
+  genres: string[];
+  image_url?: string | null;
+}
+
+/**
+ * IGDB games response from /games endpoint
+ */
+export interface IgdbGamesResponse {
+  count: number;
+  games: IgdbGame[];
+}
+
+/**
  * Get games from the backend with pagination
  * @param limit - Number of games to fetch (default: 30)
  * @returns Promise<Game[]> - Array of games
@@ -197,6 +216,25 @@ export async function fetchAdminGames(params?: { q?: string; page_size?: number 
   }
 }
 
+/**
+ * Fetch IGDB games from the backend
+ * @param limit - Number of games to fetch (default: 500, max: 500)
+ * @returns Promise<IgdbGamesResponse> - Response with games array and count
+ */
+export async function fetchIgdbGames(limit: number = 500): Promise<IgdbGamesResponse> {
+  try {
+    const cappedLimit = Math.min(limit, 500);
+    const url = `/games/?limit=${cappedLimit}`;
+    const response = await instance.get<IgdbGamesResponse>(url);
+    return response.data;
+  } catch (e: unknown) {
+    if (e instanceof AxiosError) {
+      throw new Error(e.response?.data?.detail || "Failed to fetch IGDB games");
+    }
+    throw e;
+  }
+}
+
 export async function triggerEtl(search?: string): Promise<EtlResult> {
   try {
     const token = localStorage.getItem("access_token");
@@ -230,4 +268,7 @@ export async function triggerEtl(search?: string): Promise<EtlResult> {
     throw e;
   }
 }
+
+// Export alias for backward compatibility with ETLTrigger component
+export const triggerETL = triggerEtl;
 

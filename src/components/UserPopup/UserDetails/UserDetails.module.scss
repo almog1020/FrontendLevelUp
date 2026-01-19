@@ -1,0 +1,64 @@
+.user_menu {
+  width: 260px;
+  background: #0f172a;
+  border-radius: 14px;
+  padding: 14px;
+  color: #e5e7eb;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  text-align: left;
+}
+
+.user_info {
+  padding: 8px 10px 12px;
+  border-bottom: 1px solid #1f2937;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.user_name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.user_role {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.menu_items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-bottom: 1px solid #1f2937;
+}
+
+.menu_item {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  background: transparent;
+  border: none;
+  color: #e5e7eb;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  align-items: center;
+  width: 100%;
+
+  .menu_item_icon{
+    display: flex;
+    width: 16px;
+    height: 16px;
+    align-items: center;
+    justify-content: center;
+    filter: invert(50%);
+  }
+  .title{
+    font-size: 14px;
+  }
+}
+
+.menu_item:hover {
+  background: #16a34a;
+  color: #ffffff;
+}

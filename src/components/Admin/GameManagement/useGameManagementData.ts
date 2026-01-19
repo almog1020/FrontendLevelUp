@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { fetchAdminGames } from "../../../services/apis/games";
-import type { AdminGameItem } from "../../../services/apis/games";
+import { fetchIgdbGames } from "../../../services/apis/games";
+import type { IgdbGame } from "../../../services/apis/games";
 import { toast } from "react-toastify";
 
 export interface UseGameManagementDataReturn {
-  items: AdminGameItem[];
+  items: IgdbGame[];
   count: number;
   isLoading: boolean;
   error: string | null;
@@ -14,45 +14,67 @@ export interface UseGameManagementDataReturn {
 }
 
 export function useGameManagementData(): UseGameManagementDataReturn {
-  const [items, setItems] = useState<AdminGameItem[]>([]);
+  const [allItems, setAllItems] = useState<IgdbGame[]>([]);
+  const [items, setItems] = useState<IgdbGame[]>([]);
   const [count, setCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [filterText, setFilterText] = useState<string>("");
 
-  const load = useCallback(async (q: string) => {
+  // Client-side filtering function
+  const applyFilter = useCallback((games: IgdbGame[], searchText: string): IgdbGame[] => {
+    if (!searchText.trim()) {
+      return games;
+    }
+
+    const lowerSearch = searchText.toLowerCase().trim();
+    return games.filter((game) => {
+      // Filter by name (case-insensitive)
+      if (game.name.toLowerCase().includes(lowerSearch)) {
+        return true;
+      }
+      // Filter by genres (case-insensitive)
+      if (game.genres && Array.isArray(game.genres)) {
+        return game.genres.some((genre) => genre.toLowerCase().includes(lowerSearch));
+      }
+      return false;
+    });
+  }, []);
+
+  // Load games from server
+  const loadFromServer = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      // Fetch games from /admin/games endpoint with server-side search
-      const response = await fetchAdminGames({
-        q: q.trim() || undefined,
-        page_size: 30,
-      });
-
-      setItems(response.items);
-      setCount(response.count);
+      const response = await fetchIgdbGames(500);
+      setAllItems(response.games);
+      setCount(response.count ?? response.games.length);
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Failed to load";
+      const msg = e instanceof Error ? e.message : "Failed to load games";
       setError(msg);
+      setAllItems([]);
       setItems([]);
       setCount(0);
-      // Only show toast for non-auth errors (auth errors will be shown in UI)
-      if (msg !== "Admin access only") {
-        toast.error(msg);
-      }
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Debounce search
+  // Initial load
   useEffect(() => {
-    const t = setTimeout(() => load(filterText || ""), 300);
-    return () => clearTimeout(t);
-  }, [filterText, load]);
+    loadFromServer();
+  }, []); // Only run on mount
 
-  const refreshGames = useCallback(() => load(filterText || ""), [load, filterText]);
+  // Client-side filtering when filterText changes
+  useEffect(() => {
+    const filtered = applyFilter(allItems, filterText);
+    setItems(filtered);
+  }, [filterText, allItems, applyFilter]);
+
+  const refreshGames = useCallback(async () => {
+    await loadFromServer();
+  }, [loadFromServer]);
 
   return useMemo(
     () => ({

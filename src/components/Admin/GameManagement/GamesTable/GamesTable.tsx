@@ -1,14 +1,32 @@
-import type { AdminGameItem } from "../../../../services/apis/games";
+import type { IgdbGame } from "../../../../services/apis/games";
 import styles from "../GameManagement.module.scss";
 
 interface GamesTableProps {
-  games: AdminGameItem[];
+  games: IgdbGame[];
 }
 
 export function GamesTable({ games }: GamesTableProps) {
-  const formatPrice = (price: number | null | undefined, currency: string | null | undefined): string => {
-    if (price == null) return "—";
-    return `${price.toFixed(2)} ${currency || "USD"}`;
+  const formatGenres = (genres: string[]): string => {
+    if (!genres || genres.length === 0) return "—";
+    if (genres.length <= 2) {
+      return genres.join(", ");
+    }
+    return `${genres.slice(0, 2).join(", ")} +${genres.length - 2}`;
+  };
+
+  const formatRating = (rating: number | null | undefined): string => {
+    if (rating == null) return "—";
+    return rating.toFixed(1);
+  };
+
+  const formatDate = (date: string | null | undefined): string => {
+    if (!date) return "—";
+    try {
+      const d = new Date(date);
+      return d.toLocaleDateString();
+    } catch {
+      return date;
+    }
   };
 
   return (
@@ -18,42 +36,29 @@ export function GamesTable({ games }: GamesTableProps) {
           <tr>
             <th>Cover</th>
             <th>Title</th>
-            <th>Store</th>
-            <th>Price</th>
-            <th>Deal</th>
+            <th>Genres</th>
+            <th>Rating</th>
+            <th>Release Date</th>
           </tr>
         </thead>
         <tbody>
-          {games.map((game) => (
-            <tr key={game.id}>
+          {games.map((game, index) => (
+            <tr key={`${game.name}-${index}`}>
               <td>
                 {game.image_url ? (
                   <img
                     src={game.image_url}
-                    alt={game.title}
+                    alt={game.name}
                     className={styles.gameImage}
                   />
                 ) : (
-                  <span className={styles.noImage}>No image</span>
+                  <span className={styles.noImage}>No Image</span>
                 )}
               </td>
-              <td className={styles.titleCell}>{game.title}</td>
-              <td>{game.store || "—"}</td>
-              <td>{formatPrice(game.price, game.currency)}</td>
-              <td>
-                {game.deal_url ? (
-                  <a
-                    href={game.deal_url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={styles.dealLink}
-                  >
-                    Open
-                  </a>
-                ) : (
-                  "—"
-                )}
-              </td>
+              <td className={styles.titleCell}>{game.name}</td>
+              <td>{formatGenres(game.genres)}</td>
+              <td>{formatRating(game.rating)}</td>
+              <td>{formatDate(game.release_date)}</td>
             </tr>
           ))}
         </tbody>
