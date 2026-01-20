@@ -3,8 +3,9 @@
   font-family: Arial, sans-serif;
   max-width: 1200px;
   margin: 0 auto;
-  background: #f5f5f5;
+  background: var(--bg-dark, #020617);
   min-height: 100vh;
+  color: rgba(255, 255, 255, 0.87);
 }
 
 .header {
@@ -21,12 +22,12 @@
 .title {
   font-size: 32px;
   margin-bottom: 8px;
-  color: #1f2937;
+  color: #fff;
   margin-top: 0;
 }
 
 .subtitle {
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.6);
   font-size: 16px;
   margin: 0;
 }
@@ -60,10 +61,11 @@
 
 // Base Card Style
 .card {
-  background: white;
+  background: var(--card-bg, #0f172a);
   padding: 24px;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
 }
 
 .statCard {
@@ -79,7 +81,7 @@
 
 .statCardTitle {
   font-size: 14px;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.6);
   margin: 0;
 }
 
@@ -90,13 +92,13 @@
 .statCardValue {
   font-size: 32px;
   font-weight: bold;
-  color: #1f2937;
+  color: #fff;
   margin-bottom: 8px;
 }
 
 .statCardSubtext {
   font-size: 12px;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.5);
   margin: 0;
 }
 
@@ -121,28 +123,28 @@
 
 .sectionTitle {
   font-size: 20px;
-  color: #1f2937;
+  color: #fff;
   margin: 0;
 }
 
 .sectionSubtitle {
   font-size: 14px;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.6);
   margin: 0 0 20px 0;
 }
 
 .ghostButton {
   padding: 6px 12px;
   background: transparent;
-  border: 1px solid #e5e7eb;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 6px;
   cursor: pointer;
   font-size: 12px;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.7);
   transition: background 0.2s;
 
   &:hover {
-    background: #f9fafb;
+    background: rgba(255, 255, 255, 0.1);
   }
 }
 
@@ -158,12 +160,12 @@
   gap: 16px;
   padding: 12px;
   border-radius: 8px;
-  background: #f9fafb;
+  background: rgba(255, 255, 255, 0.05);
   cursor: pointer;
   transition: background 0.2s;
 
   &:hover {
-    background: #f3f4f6;
+    background: rgba(255, 255, 255, 0.1);
   }
 }
 
@@ -183,7 +185,7 @@
 .priceDropTitle {
   font-size: 16px;
   font-weight: 500;
-  color: #1f2937;
+  color: #fff;
   margin: 0 0 8px 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -199,7 +201,7 @@
 
 .priceOld {
   font-size: 14px;
-  color: #9ca3af;
+  color: rgba(255, 255, 255, 0.4);
   text-decoration: line-through;
 }
 
@@ -220,7 +222,7 @@
 
 .priceDropTime {
   font-size: 12px;
-  color: #9ca3af;
+  color: rgba(255, 255, 255, 0.4);
   margin: 0;
 }
 
@@ -243,19 +245,19 @@
 
 .progressLabel {
   font-size: 14px;
-  color: #1f2937;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .progressValue {
   font-size: 14px;
-  color: #1f2937;
+  color: #fff;
   font-weight: 500;
 }
 
 .progressBarContainer {
   width: 100%;
   height: 8px;
-  background: #e5e7eb;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -282,15 +284,15 @@
   margin-top: 20px;
   padding: 10px;
   background: transparent;
-  border: 1px solid #e5e7eb;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
-  color: #1f2937;
+  color: rgba(255, 255, 255, 0.8);
   transition: background 0.2s;
 
   &:hover {
-    background: #f9fafb;
+    background: rgba(255, 255, 255, 0.1);
   }
 }
 
@@ -316,7 +318,7 @@
   border-radius: 8px;
   overflow: hidden;
   margin-bottom: 12px;
-  background: #e5e7eb;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .gameImage {
@@ -328,7 +330,7 @@
 .gameTitle {
   font-size: 16px;
   font-weight: 500;
-  color: #1f2937;
+  color: #fff;
   margin: 0 0 8px 0;
 }
 
@@ -340,8 +342,8 @@
 
 .genreTag {
   padding: 4px 8px;
-  background: #f3f4f6;
-  color: #6b7280;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
   border-radius: 4px;
   font-size: 12px;
 }
@@ -384,7 +386,7 @@
 .profileTitle {
   font-size: 20px;
   margin-bottom: 20px;
-  color: #1f2937;
+  color: #fff;
   margin-top: 0;
 }
 
@@ -400,13 +402,13 @@
 
 .profileLabel {
   font-size: 14px;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.6);
   margin: 0 0 4px 0;
 }
 
 .profileValue {
   font-size: 16px;
-  color: #1f2937;
+  color: #fff;
   margin: 0;
   font-weight: 500;
 }
@@ -422,4 +424,5 @@
 // Loading state
 .loading {
   padding: 20px;
+  color: rgba(255, 255, 255, 0.8);
 }

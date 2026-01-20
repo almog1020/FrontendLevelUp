@@ -21,12 +21,12 @@ export const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
         },
         {
             label: 'Role',
-            value: user.role.toUpperCase()
+            value: user.role ? user.role.toUpperCase() : 'Unknown'
         },
         {
             label: 'Status',
-            value: user.status.charAt(0).toUpperCase() + user.status.slice(1),
-            valueClassName: user.status === 'active' ? styles.statusActive : styles.statusSuspended
+            value: user.status ? user.status.charAt(0).toUpperCase() + user.status.slice(1) : 'Unknown',
+            valueClassName: user.status === 'active' ? styles.statusActive : user.status === 'suspended' ? styles.statusSuspended : ''
         },
         {
             label: 'Total Purchases',
