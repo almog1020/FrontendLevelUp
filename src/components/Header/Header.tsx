@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './Header.module.scss';
 import { SignIn } from '../SignIn/SignIn';
 import { ETLTrigger } from '../ETLTrigger/ETLTrigger';
 
 export const Header = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const cartItemCount = 0; // Mock cart count
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -92,6 +94,12 @@ export const Header = () => {
             aria-label="Search for games"
           />
         </form>
+
+        {/* Navigation */}
+        <nav className={styles.header__nav}>
+          <button onClick={() => navigate('/')} className={styles.header__navLink}>Home</button>
+          <button onClick={() => navigate('/catalog')} className={styles.header__navLink}>Catalog</button>
+        </nav>
 
         {/* Right Side Actions */}
         <div className={styles.header__actions}>
