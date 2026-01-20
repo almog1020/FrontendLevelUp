@@ -15,9 +15,6 @@ function normalizeLabel(label: string): string {
     .replace(/[-\s_]+/g, "-") // Replace spaces, hyphens, underscores with single hyphen
     .replace(/[^a-z0-9-]/g, ""); // Remove special characters
   
-  // Also create a version without hyphens for matching
-  const withoutHyphens = normalized.replace(/-/g, "");
-  
   return normalized;
 }
 

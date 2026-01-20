@@ -1,4 +1,3 @@
-import * as React from "react";
 import styles from "./PopularGenre.module.scss";
 
 export function PopularGenreEmptyState() {

@@ -2,7 +2,6 @@ import StatCard from "../../../UserManagement/StatCard/StatCard.tsx";
 import styles from "../AdminPage.module.scss";
 import user from "../../../../assets/users.png";
 import activeUser from "../../../../assets/activeUsers.png";
-import suspendedUsers from "../../../../assets/suspendedUsers.png";
 import admin from "../../../../assets/admin.png";
 import type { DashboardStats } from "../../../../services/apis/adminDashboard.ts";
 
