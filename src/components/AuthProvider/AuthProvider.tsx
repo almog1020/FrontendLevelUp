@@ -7,20 +7,16 @@ import {googleLogout} from "@react-oauth/google";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext<undefined |
-    {loginAction(email:string,password:string):void,logOut(email:string):void}>(undefined);
+    {loginAction(email:string,password:string):Promise<void>,logOut(email:string):void}>(undefined);
 
 const AuthProvider = ({ children }:{children:ReactNode}) => {
     const navigate = useNavigate();
 
-    const loginAction = async (email:string,password:string) => {
-        try {
-            const token = await login(email, password);
-            localStorage.setItem("user", email)
-            localStorage.setItem("token", token)
-            navigate("/user");
-        } catch (err) {
-            toast.error((err as Error).message);
-        }
+    const loginAction = async (email:string,password:string): Promise<void> => {
+        const token = await login(email, password);
+        localStorage.setItem("user", email)
+        localStorage.setItem("token", token)
+        navigate("/user");
     };
 
     const logOut = async (email:string) => {

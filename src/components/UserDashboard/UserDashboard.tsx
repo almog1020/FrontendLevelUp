@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../../services/apis/users';
+import { getLastPurchases, type Purchase } from '../../services/apis/games';
 import type { UserResponse } from '../../interfaces/user.interface';
 import styles from './UserDashboard.module.scss';
-import { RecentlyViewed, type RecentlyViewedGame } from './RecentlyViewed/RecentlyViewed';
+import { LastPurchases, type LastPurchaseGame } from './LastPurchases/LastPurchases';
 import { RecommendedGames, type RecommendedGame } from './RecommendedGames/RecommendedGames';
 import { UserProfile } from './UserProfile/UserProfile';
 
 export const UserDashboard = () => {
     const [user, setUser] = useState<UserResponse | null>(null);
+    const [lastPurchases, setLastPurchases] = useState<LastPurchaseGame[]>([]);
+    const [loadingPurchases, setLoadingPurchases] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -20,6 +23,27 @@ export const UserDashboard = () => {
                     localStorage.removeItem('user');
                     window.location.href = '/login';
                 }
+            });
+    }, []);
+
+    useEffect(() => {
+        // Fetch last purchases when component mounts
+        getLastPurchases(10)
+            .then((purchases: Purchase[]) => {
+                // Convert Purchase objects to LastPurchaseGame format
+                const convertedPurchases: LastPurchaseGame[] = purchases.map((purchase) => ({
+                    id: purchase.game_id,
+                    title: purchase.game_title,
+                    genre: purchase.game_genre ? purchase.game_genre.split(',').map(g => g.trim()) : [],
+                    image: purchase.game_image_url || ''
+                }));
+                setLastPurchases(convertedPurchases);
+                setLoadingPurchases(false);
+            })
+            .catch(err => {
+                console.error('Failed to fetch purchases:', err);
+                setLastPurchases([]);
+                setLoadingPurchases(false);
             });
     }, []);
 
@@ -68,12 +92,6 @@ export const UserDashboard = () => {
         { id: '3', title: 'The Witcher 3', oldPrice: 39.99, newPrice: 9.99, discount: 75, image: 'https://via.placeholder.com/80', timeAgo: '1 day ago' },
     ];
 
-    // Placeholder data for recently viewed
-    const recentlyViewed: RecentlyViewedGame[] = [
-        { id: '1', title: 'Baldur\'s Gate 3', genre: ['RPG', 'Fantasy'], image: 'https://via.placeholder.com/300x169' },
-        { id: '2', title: 'Starfield', genre: ['RPG', 'Sci-Fi'], image: 'https://via.placeholder.com/300x169' },
-        { id: '3', title: 'Hogwarts Legacy', genre: ['Action', 'Adventure'], image: 'https://via.placeholder.com/300x169' },
-    ];
 
     // Placeholder data for recommendations
     const recommendedGames: RecommendedGame[] = [
@@ -201,8 +219,15 @@ export const UserDashboard = () => {
                 </div>
             </div>
 
-            {/* Recently Viewed */}
-            <RecentlyViewed games={recentlyViewed} />
+            {/* Last Purchases */}
+            {loadingPurchases ? (
+                <div className={styles.sectionCard}>
+                    <h2 className={styles.sectionTitle}>Last Purchases</h2>
+                    <p>Loading...</p>
+                </div>
+            ) : (
+                <LastPurchases games={lastPurchases} />
+            )}
 
             {/* Recommended for You */}
             <RecommendedGames games={recommendedGames} />

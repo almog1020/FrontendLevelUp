@@ -34,7 +34,16 @@ export const SignIn = () => {
 
     const onSignInSubmit: SubmitHandler<FormValues> = async (data) => {
         const {email, password} = data;
-        auth!.loginAction(email, password);
+        try {
+            await auth!.loginAction(email, password);
+            // Close dialog on successful login
+            dialog.closeDialog();
+            resetSignIn();
+        } catch (err) {
+            // Show error toast
+            toast.error((err as Error).message || 'Login failed');
+            resetSignIn();
+        }
     };
 
     const onSignUpSubmit: SubmitHandler<SignUpFormValues> = async (data) => {

@@ -3,14 +3,21 @@ import {AxiosError} from "axios";
 import type {RegisterResponse} from "../../interfaces/sign.interface.ts";
 import type {User, UserResponse, UserStatus} from "../../interfaces/user.interface.ts";
 
-export async function login(username: string, password: string):Promise<string> {
+export async function login(username: string, password: string): Promise<string> {
     try {
-        return (await instanceAuth.post('/auth/token',{username,password})).data.access_token
-    }catch(e:unknown) {
+        // OAuth2PasswordRequestForm expects form-urlencoded data
+        const params = new URLSearchParams();
+        params.append('username', username);
+        params.append('password', password);
+        
+        const response = await instanceAuth.post('/auth/token', params);
+        return response.data.access_token;
+    } catch (e: unknown) {
         if (e instanceof AxiosError) {
-            if (e.status === 422)
-                throw new Error('Password incorrect');
-            throw new Error(e.response!.data.detail);
+            if (e.response?.status === 401 || e.response?.status === 422) {
+                throw new Error('Incorrect email or password');
+            }
+            throw new Error(e.response?.data?.detail || 'Login failed');
         }
         throw e;
     }

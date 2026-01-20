@@ -1,7 +1,10 @@
 import axios from 'axios';
 
-export const instance =  axios.create({
-    baseURL: 'https://backend-level-up.vercel.app/',
+// Use environment variable for API URL, fallback to localhost for development
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
+export const instance = axios.create({
+    baseURL: API_BASE_URL,
     timeout: 10000,
     headers: {
         'Accept': 'application/json',
@@ -9,8 +12,9 @@ export const instance =  axios.create({
         'Access-Control-Allow-Origin': '*',
     },
 });
-export const instanceAuth =  axios.create({
-    baseURL: 'https://backend-level-up.vercel.app/',
+
+export const instanceAuth = axios.create({
+    baseURL: API_BASE_URL,
     timeout: 10000,
     headers: {
         'Accept': 'application/json',
