@@ -1,0 +1,80 @@
+.dealOfTheDaySkeleton {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px 40px;
+}
+
+.dealOfTheDaySkeleton__header {
+  margin-bottom: 20px;
+}
+
+.dealOfTheDaySkeleton__headerContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dealOfTheDaySkeleton__subtitle {
+  margin-top: 8px;
+}
+
+.dealOfTheDaySkeleton__card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  background-color: var(--card-bg);
+  border-radius: 16px;
+  padding: 24px;
+  border: 2px solid transparent;
+  background-image: 
+    linear-gradient(var(--card-bg), var(--card-bg)),
+    linear-gradient(135deg, var(--accent-orange), #FCD34D);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+.dealOfTheDaySkeleton__imageContainer {
+  position: relative;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--bg-dark);
+  aspect-ratio: 16 / 9;
+}
+
+.dealOfTheDaySkeleton__content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dealOfTheDaySkeleton__genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dealOfTheDaySkeleton__pricing {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .dealOfTheDaySkeleton {
+    padding: 0 16px 32px;
+  }
+
+  .dealOfTheDaySkeleton__card {
+    padding: 20px;
+  }
+}
+
