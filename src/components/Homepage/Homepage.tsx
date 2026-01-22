@@ -6,10 +6,11 @@ import { TrendingGames } from '../TrendingGames/TrendingGames';
 import { mockGames } from '../../data/mockGames';
 import type { Game } from '../../interfaces/game.interface';
 import styles from './Homepage.module.scss';
+import AddReview from "../AddReview/AddReview.tsx";
 
 export const Homepage = () => {
   const [games, setGames] = useState<Game[]>(mockGames);
-
+  const [open, setOpen] = useState(false);
   // Listen for games refresh event from Header/ETL
   useEffect(() => {
     const handleGamesRefresh = () => {
@@ -38,6 +39,14 @@ export const Homepage = () => {
         {dealOfTheDay && <DealOfTheDay game={dealOfTheDay} />}
         {trendingGames.length > 0 && <TrendingGames games={trendingGames} />}
       </main>
+      <button className={styles.addBtn} onClick={() => setOpen(true)}>
+        Open Review
+      </button>
+      <AddReview
+          open={open}
+          gameTitle="test"
+          onClose={() => setOpen(false)}
+      />
     </div>
   );
 };

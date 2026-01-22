@@ -1,6 +1,6 @@
 import * as React from "react";
 import styles from "./UserManagement.module.scss";
-import StatCard from "./StatCard/StatCard.tsx";
+import StatCard from "../StatCard/StatCard.tsx";
 import Users from "./Users/Users.tsx";
 import {useEffect, useMemo, useRef, useState} from "react";
 import type {User} from "../../interfaces/user.interface.ts";
@@ -16,7 +16,7 @@ const UserManagement: React.FC = () => {
     const wsRef = useRef<WebSocket | null>(null);
 
     useEffect(() => {
-        const ws = new WebSocket(`ws://127.0.0.1:8000/ws`);
+        const ws = new WebSocket(`ws://127.0.0.1:8000/users/ws`);
         wsRef.current = ws;
 
         ws.onopen = () => console.log("WebSocket connected");
