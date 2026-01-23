@@ -14,5 +14,5 @@ export interface Review {
 }
 export interface ReviewRecord {
     review: Review;
-    user: User;
+    user: User | null;
 }

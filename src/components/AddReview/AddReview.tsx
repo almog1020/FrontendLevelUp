@@ -15,6 +15,7 @@ import type {ReviewDialogProps} from "../../interfaces/review.interface.ts";
 import {useState} from "react";
 import {create_review} from "../../services/apis/reviews.ts";
 import {toast} from "react-toastify";
+import {getMe} from "../../services/apis/users.ts";
 
 
 
@@ -23,10 +24,13 @@ export default function AddReview({open, gameTitle, onClose}: ReviewDialogProps)
     const [star, setStar] = useState<number | null>(1);
     const [comment, setComment] = useState("");
 
+
     const handleSubmit = async () => {
         if (!star) return;
         try {
-            await create_review(star,comment,gameTitle)
+            const token = localStorage.getItem("token") ?? "guest"
+            const userId = token === "guest" ? null : (await getMe(token)).id
+            await create_review(star,comment,gameTitle,userId)
             toast.success("Review added successfully.")
             setStar(1);
             setComment("");
@@ -45,12 +49,10 @@ export default function AddReview({open, gameTitle, onClose}: ReviewDialogProps)
             classes={{ paper: styles.dialog }}
         >
             <DialogTitle className={styles.title}>
-                Write a Review for {gameTitle}
-
+                Review for {gameTitle}
                 <IconButton
                     onClick={onClose}
-                    className={styles.closeBtn}
-                >
+                    className={styles.closeBtn}>
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>

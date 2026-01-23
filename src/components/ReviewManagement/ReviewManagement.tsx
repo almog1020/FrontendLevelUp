@@ -1,6 +1,6 @@
 import {useEffect, useMemo, useRef, useState} from "react";
 import styles from "./ReviewManagement.module.scss";
-import Stars from "./Stars/Stars";
+import Stars from "../Stars/Stars";
 import StatCard from "../StatCard/StatCard.tsx";
 import type {StatsCard} from "../../interfaces/statsCard.interface.ts";
 import starBlue from '../../assets/star-blue.png'
@@ -15,7 +15,6 @@ import {deleteReview} from "../../services/apis/reviews.ts";
 export default function ReviewManagement() {
     const [results, setResults] = useState<ReviewRecord[]>([]);
     const wsRef = useRef<WebSocket | null>(null);
-
 
     useEffect(() => {
         const ws = new WebSocket(`ws://127.0.0.1:8000/reviews/ws`);
@@ -95,7 +94,7 @@ export default function ReviewManagement() {
                             <tr key={result.review.id}>
                                 <td>
                                     <div className={styles.userCell}>
-                                        <div className={styles.userName}>{result.user.name}</div>
+                                        <div className={styles.userName}>{result.user ? result.user.name : "guest"}</div>
                                     </div>
                                 </td>
 
