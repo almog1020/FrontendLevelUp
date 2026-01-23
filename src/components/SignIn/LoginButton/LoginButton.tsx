@@ -3,6 +3,7 @@ import {instance} from "../../../services/apis/config.ts";
 import {toast} from "react-toastify";
 import type {UserResponse} from "../../../interfaces/user.interface.ts";
 import {useNavigate} from "react-router-dom";
+import {AxiosError} from "axios";
 
 const LoginButton = () => {
     const navigate = useNavigate();
@@ -17,7 +18,17 @@ const LoginButton = () => {
                             localStorage.setItem("token", token!)
                             navigate("/user");
                         } catch (error: unknown) {
-                            toast.error((error as Error).message || "Authentication failed");
+                            if (error instanceof AxiosError) {
+                                if (!error.response) {
+                                    toast.error("Cannot connect to server. Please make sure the backend is running at http://127.0.0.1:8000");
+                                } else {
+                                    toast.error(error.response.data?.detail || "Google authentication failed");
+                                }
+                            } else if (error instanceof Error) {
+                                toast.error(error.message || "Authentication failed");
+                            } else {
+                                toast.error("Authentication failed. Please check if the backend is running.");
+                            }
                         }
                     }
                 }
