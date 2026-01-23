@@ -10,6 +10,7 @@ import deleteIcon from '../../assets/deleteButton.png'
 import type {ReviewRecord} from "../../interfaces/review.interface.ts";
 import {toast} from "react-toastify";
 import {deleteReview} from "../../services/apis/reviews.ts";
+import {API_BASE_URL} from "../../services/apis/config.ts";
 
 
 export default function ReviewManagement() {
@@ -17,7 +18,7 @@ export default function ReviewManagement() {
     const wsRef = useRef<WebSocket | null>(null);
 
     useEffect(() => {
-        const ws = new WebSocket(`ws://127.0.0.1:8000/reviews/ws`);
+        const ws = new WebSocket(`${API_BASE_URL}/reviews/ws`);
         wsRef.current = ws;
 
         ws.onopen = () => console.log("WebSocket connected");
@@ -43,7 +44,8 @@ export default function ReviewManagement() {
             {
                 title: "Average Rating",
                 icon: starYellow,
-                value: total === 0 ? 0 : results.reduce((s, result) => s + result.review.star, 0) / total
+                value: total === 0 ? 0 :
+                    parseFloat((results.reduce((s, result) => s + result.review.star, 0) / total).toFixed(3))
             },
             {
                 title:"5-Star Reviews",
