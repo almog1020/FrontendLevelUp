@@ -1,3 +1,10 @@
+/**
+ * Content Component
+ * Main routing component that defines all application routes
+ * Wraps routes with AuthProvider for authentication context
+ * Uses PrivateRoute wrapper for protected routes that require authentication
+ */
+
 import * as React from "react";
 import {Route, Routes} from "react-router-dom";
 import {Homepage} from "../../components/Homepage/Homepage.tsx";
@@ -6,6 +13,7 @@ import UserManagement from "../../components/UserManagement/UserManagement.tsx";
 import PrivateRoute from "../../components/PrivateRoute/PrivateRoute.tsx";
 import {SignIn} from "../../components/SignIn/SignIn.tsx";
 import UserPopup from "../../components/UserPopup/UserPopup.tsx";
+import Profile from "../../components/Profile/Profile.tsx"; // Profile page component
 import AuthProvider from "../../components/AuthProvider/AuthProvider.tsx";
 import {DialogProvider} from "../../contexts/DialogContext.tsx";
 import ReviewManagement from "../../components/ReviewManagement/ReviewManagement.tsx";
@@ -22,6 +30,8 @@ const Content:React.FC = () => {
                     <Route path={"/login"} element={<SignIn/>}/>
                     <Route element={<PrivateRoute />}>
                         <Route path="/user" element={<UserPopup />} />
+                        {/* Profile page - displays user profile information, statistics, preferences, and activities */}
+                        <Route path="/user/profile" element={<Profile />} />
                     </Route>
                 </Routes>
             </DialogProvider>

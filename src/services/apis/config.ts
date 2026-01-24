@@ -16,8 +16,21 @@ export const instanceAuth =  axios.create({
     timeout: 30000,
     headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
     },
 });
 
+// Add request interceptor to include authentication token
+instanceAuth.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
