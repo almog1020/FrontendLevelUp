@@ -1,0 +1,20 @@
+$amber: #f59e0b;
+
+.stars {
+  display: inline-flex;
+  gap: 4px;
+  transform: translateY(1px);
+}
+
+.star {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.starFilled {
+  color: $amber;
+}
+
+.starEmpty {
+  color: rgba(148, 163, 184, 0.32);
+}

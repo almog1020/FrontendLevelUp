@@ -12,11 +12,16 @@ export const AuthContext = createContext<undefined |
 const AuthProvider = ({ children }:{children:ReactNode}) => {
     const navigate = useNavigate();
 
-    const loginAction = async (email:string,password:string): Promise<void> => {
-        const token = await login(email, password);
-        localStorage.setItem("user", email)
-        localStorage.setItem("token", token)
-        navigate("/user");
+    const loginAction = async (email:string,password:string) => {
+        try {
+            const token = await login(email, password);
+            const user = await getMe(token.access_token);
+            localStorage.setItem("user", user.email)
+            localStorage.setItem("token", token.access_token)
+            navigate("/user");
+        } catch (err) {
+            toast.error((err as Error).message);
+        }
     };
 
     const logOut = async (email:string) => {

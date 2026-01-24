@@ -35,8 +35,23 @@ export const GameCard = ({
     }
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onClick) {
+      onClick();
+    }
+  };
+
   return (
-    <div className={styles.gameCard} onClick={onClick}>
+    <div className={styles.gameCard} onClick={handleCardClick} role="button" tabIndex={0} onKeyDown={(e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (onClick) {
+          onClick();
+        }
+      }
+    }}>
       <div className={styles.gameCard__imageContainer}>
         <img src={image} alt={title} className={styles.gameCard__image} />
         {discount > 0 && (

@@ -1,5 +1,5 @@
-import {instance, instanceAuth} from "./config.ts";
-import {AxiosError} from "axios";
+import {API_BASE_URL, instance, instanceAuth} from "./config.ts";
+import axios, {AxiosError} from "axios";
 import type {RegisterResponse} from "../../interfaces/sign.interface.ts";
 import type {User, UserResponse, UserStatus} from "../../interfaces/user.interface.ts";
 
@@ -74,6 +74,18 @@ export async function getCurrentUser(): Promise<UserResponse> {
         throw e;
     }
 }
+export async function getMe(accessToken:string): Promise<UserResponse> {
+    try {
+        return (await axios.create({
+            baseURL: API_BASE_URL,
+            timeout: 1000,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Authorization': `Bearer ${accessToken}`,
+            },
+        }).get('/users/me')).data;
 
 export async function logout(email:string,disable:UserStatus): Promise<void> {
     try {
