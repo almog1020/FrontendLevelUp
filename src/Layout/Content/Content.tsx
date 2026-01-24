@@ -8,6 +8,7 @@ import {SignIn} from "../../components/SignIn/SignIn.tsx";
 import UserPopup from "../../components/UserPopup/UserPopup.tsx";
 import AuthProvider from "../../components/AuthProvider/AuthProvider.tsx";
 import {DialogProvider} from "../../contexts/DialogContext.tsx";
+import ReviewManagement from "../../components/ReviewManagement/ReviewManagement.tsx";
 
 const Content:React.FC = () => {
     return (
@@ -15,8 +16,9 @@ const Content:React.FC = () => {
             <DialogProvider>
                 <Routes>
                     <Route path={"/"} element={<Homepage/>}/>
+                    <Route path={"/admin/management/user"} element={<UserManagement/>}/>
+                    <Route path={"/admin/management/review"} element={<ReviewManagement/>}/>
                     <Route path={"/game/:id"} element={<GameDetail/>}/>
-                    <Route path={"/admin/management"} element={<UserManagement/>}/>
                     <Route path={"/login"} element={<SignIn/>}/>
                     <Route element={<PrivateRoute />}>
                         <Route path="/user" element={<UserPopup />} />

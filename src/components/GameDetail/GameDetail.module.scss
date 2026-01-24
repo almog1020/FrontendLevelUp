@@ -18,7 +18,7 @@
 
 .main {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1500px;
   margin: 0 auto;
   padding: 40px 24px;
   box-sizing: border-box;
@@ -492,6 +492,11 @@
 
 // Reviews
 .reviewsContent {
+  .header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
   .reviewsList {
     display: flex;
     flex-direction: column;
@@ -510,9 +515,27 @@
     align-items: center;
     gap: 12px;
     margin-bottom: 12px;
-    flex-wrap: wrap;
+    flex-direction: row;
   }
-
+  .reviewContent {
+    width: 100%;
+    .reviewContentHeader {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+  .avatar{
+    background-color: #1f2f53;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-weight: bold;
+  }
   .reviewAuthor {
     font-size: 16px;
     font-weight: 600;
@@ -573,6 +596,29 @@
     padding: 10px 16px;
     font-size: 14px;
     white-space: nowrap;
+  }
+}
+.addBtn {
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  cursor: pointer;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #60a5fa;
+  color: #071225;
+  //box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+  transition: transform 0.12s ease, background 0.12s ease;
+
+  &:hover {
+    background: #3b82f6;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0px);
   }
 }
 

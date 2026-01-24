@@ -24,41 +24,41 @@ export const Homepage = () => {
       setSearchResults(null); // Clear search results when fetching normal games
       setTrendingGames([]); // Clear existing games
       setDealOfTheDay(null); // Clear deal of the day
-      
+
       // Fetch deal of the day first (single game, fast)
       getDealOfTheDay()
-        .then((deal) => {
-          if (deal) {
-            setDealOfTheDay(deal);
-          }
-        })
-        .catch((err) => {
-          console.error('Error fetching deal of the day:', err);
-        });
-      
+          .then((deal) => {
+            if (deal) {
+              setDealOfTheDay(deal);
+            }
+          })
+          .catch((err) => {
+            console.error('Error fetching deal of the day:', err);
+          });
+
       // Fetch trending games and add them one by one as they arrive
       getTrendingGames()
-        .then((trending) => {
-          // Add games one by one for progressive display
-          trending.forEach((game, index) => {
-            setTimeout(() => {
-              setTrendingGames((prev) => {
-                // Check if game already exists to avoid duplicates
-                if (prev.some((g) => g.id === game.id)) {
-                  return prev;
-                }
-                return [...prev, game];
-              });
-            }, index * 30); // Small delay between each game (30ms for smooth appearance)
+          .then((trending) => {
+            // Add games one by one for progressive display
+            trending.forEach((game, index) => {
+              setTimeout(() => {
+                setTrendingGames((prev) => {
+                  // Check if game already exists to avoid duplicates
+                  if (prev.some((g) => g.id === game.id)) {
+                    return prev;
+                  }
+                  return [...prev, game];
+                });
+              }, index * 30); // Small delay between each game (30ms for smooth appearance)
+            });
+            // Mark loading as complete after all games are scheduled
+            setTimeout(() => setLoading(false), trending.length * 30 + 100);
+          })
+          .catch((err) => {
+            setError(err instanceof Error ? err.message : 'Failed to load games');
+            console.error('Error fetching trending games:', err);
+            setLoading(false);
           });
-          // Mark loading as complete after all games are scheduled
-          setTimeout(() => setLoading(false), trending.length * 30 + 100);
-        })
-        .catch((err) => {
-          setError(err instanceof Error ? err.message : 'Failed to load games');
-          console.error('Error fetching trending games:', err);
-          setLoading(false);
-        });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load games');
       console.error('Error fetching games:', err);
@@ -83,7 +83,7 @@ export const Homepage = () => {
       setSearchQuery(e.detail.query);
       setSearchResults([]); // Clear previous results
       setError(null);
-      
+
       // Add games one by one for progressive display
       const results = e.detail.results;
       results.forEach((game, index) => {
@@ -107,7 +107,7 @@ export const Homepage = () => {
     window.addEventListener('games-refresh', handleGamesRefresh);
     window.addEventListener('games-search', handleGamesSearch as EventListener);
     window.addEventListener('games-search-error', handleGamesSearchError as EventListener);
-    
+
     return () => {
       window.removeEventListener('games-refresh', handleGamesRefresh);
       window.removeEventListener('games-search', handleGamesSearch as EventListener);
@@ -116,63 +116,63 @@ export const Homepage = () => {
   }, []);
 
   return (
-    <div className={styles.homepage}>
-      <Header />
-      <main className={styles.main}>
-        {searchResults === null && <Hero />}
-        {error && (
-          <div style={{ padding: '2rem', textAlign: 'center', color: 'red' }}>
-            Error: {error}
-          </div>
-        )}
-        {searchResults !== null ? (
-          // Show search results
-          <>
-            {searchQuery && (
-              <div style={{ padding: '1rem 2rem' }}>
-                <h2>Search Results for "{searchQuery}"</h2>
-                <p>{searchResults.length} game{searchResults.length !== 1 ? 's' : ''} found</p>
+      <div className={styles.homepage}>
+        <Header />
+        <main className={styles.main}>
+          {searchResults === null && <Hero />}
+          {error && (
+              <div style={{ padding: '2rem', textAlign: 'center', color: 'red' }}>
+                Error: {error}
               </div>
-            )}
-            {searchResults.length > 0 ? (
-              <TrendingGames games={searchResults} hideHeader />
-            ) : (
-              <div style={{ padding: '2rem', textAlign: 'center' }}>
-                No games found for "{searchQuery}"
-              </div>
-            )}
-          </>
-        ) : (
-          // Show normal homepage content - games appear progressively
-          <>
-            {loading && !dealOfTheDay ? (
-              <DealOfTheDaySkeleton />
-            ) : (
-              dealOfTheDay && <DealOfTheDay game={dealOfTheDay} />
-            )}
-            {loading && trendingGames.length === 0 ? (
-              <section className={styles.skeletonSection}>
-                <div className={styles.skeletonSection__header}>
-                  <div className={styles.skeletonSection__headerContent}>
-                    <span className={styles.skeletonSection__icon}>📈</span>
-                    <div>
-                      <h2 className={styles.skeletonSection__title}>Trending Games</h2>
-                      <p className={styles.skeletonSection__subtitle}>Most popular games right now</p>
+          )}
+          {searchResults !== null ? (
+              // Show search results
+              <>
+                {searchQuery && (
+                    <div style={{ padding: '1rem 2rem' }}>
+                      <h2>Search Results for "{searchQuery}"</h2>
+                      <p>{searchResults.length} game{searchResults.length !== 1 ? 's' : ''} found</p>
                     </div>
-                  </div>
-                </div>
-                <div className={styles.skeletonSection__grid}>
-                  {Array.from({ length: 6 }).map((_, index) => (
-                    <GameCardSkeleton key={index} />
-                  ))}
-                </div>
-              </section>
-            ) : (
-              trendingGames.length > 0 && <TrendingGames games={trendingGames} />
-            )}
-          </>
-        )}
-      </main>
-    </div>
+                )}
+                {searchResults.length > 0 ? (
+                    <TrendingGames games={searchResults} hideHeader />
+                ) : (
+                    <div style={{ padding: '2rem', textAlign: 'center' }}>
+                      No games found for "{searchQuery}"
+                    </div>
+                )}
+              </>
+          ) : (
+              // Show normal homepage content - games appear progressively
+              <>
+                {loading && !dealOfTheDay ? (
+                    <DealOfTheDaySkeleton />
+                ) : (
+                    dealOfTheDay && <DealOfTheDay game={dealOfTheDay} />
+                )}
+                {loading && trendingGames.length === 0 ? (
+                    <section className={styles.skeletonSection}>
+                      <div className={styles.skeletonSection__header}>
+                        <div className={styles.skeletonSection__headerContent}>
+                          <span className={styles.skeletonSection__icon}>📈</span>
+                          <div>
+                            <h2 className={styles.skeletonSection__title}>Trending Games</h2>
+                            <p className={styles.skeletonSection__subtitle}>Most popular games right now</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className={styles.skeletonSection__grid}>
+                        {Array.from({ length: 6 }).map((_, index) => (
+                            <GameCardSkeleton key={index} />
+                        ))}
+                      </div>
+                    </section>
+                ) : (
+                    trendingGames.length > 0 && <TrendingGames games={trendingGames} />
+                )}
+              </>
+          )}
+        </main>
+      </div>
   );
 };

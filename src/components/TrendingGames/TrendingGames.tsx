@@ -26,7 +26,7 @@ export const TrendingGames = ({ games, hideHeader = false }: TrendingGamesProps)
   };
 
   const handleGameClick = (game: Game) => {
-    navigate(`/game/${game.id}`);
+    navigate(`/game/${game.id}`,{state:{game:game}});
   };
 
   return (

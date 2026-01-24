@@ -1,121 +1,30 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import { useLocation } from 'react-router-dom';
 import { Header } from '../Header/Header';
-import { GameDetailSkeleton } from '../GameDetailSkeleton/GameDetailSkeleton';
-import { getGameById } from '../../services/apis/games';
-import type { Game } from '../../interfaces/game.interface';
+import type {Game} from '../../interfaces/game.interface';
 import styles from './GameDetail.module.scss';
+import AddReview from "../AddReview/AddReview.tsx";
+import type {ReviewRecord} from "../../interfaces/review.interface.ts";
+import {getGameReviews} from "../../services/apis/reviews.ts";
+import Stars from "../Stars/Stars.tsx";
 
 export const GameDetail = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const [game, setGame] = useState<Game | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<'description' | 'price' | 'reviews'>('description');
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [open,setOpen] = useState(false);
+  const location = useLocation();
+  const { game }:{game:Game} = location.state || {};
+  const [results,setResults] = useState<ReviewRecord[]>([])
 
   useEffect(() => {
-    const fetchGame = async () => {
-      if (!id) {
-        navigate('/');
-        return;
-      }
-
-      try {
-        setLoading(true);
-        setError(null);
-        const gameData = await getGameById(id);
-        if (!gameData) {
-          setError('Game not found. It may no longer be available.');
-          setLoading(false);
-          return;
-        }
-        setGame(gameData);
-      } catch (error) {
-        console.error('Failed to fetch game:', error);
-        setError(error instanceof Error ? error.message : 'Failed to load game details');
-      } finally {
-        setLoading(false);
-      }
+    const fetchData = async () => {
+      const results = await getGameReviews(game.title);
+      setResults(results);
     };
+    fetchData();
 
-    fetchGame();
-  }, [id, navigate]);
+  }, [game?.title]);
 
-  if (loading) {
-    return (
-      <div className={styles.gameDetail}>
-        <Header />
-        <GameDetailSkeleton />
-      </div>
-    );
-  }
-
-  if (error || !game) {
-    return (
-      <div className={styles.gameDetail}>
-        <Header />
-        <main className={styles.main}>
-          <div style={{ padding: '2rem', textAlign: 'center' }}>
-            <h2>Game Not Found</h2>
-            <p>{error || 'The game you are looking for is not available.'}</p>
-            <button 
-              onClick={() => navigate('/')}
-              style={{ 
-                marginTop: '1rem', 
-                padding: '0.5rem 1rem', 
-                cursor: 'pointer',
-                backgroundColor: '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px'
-              }}
-            >
-              Return to Homepage
-            </button>
-          </div>
-        </main>
-      </div>
-    );
-  }
-
-  const images = game.images && game.images.length > 0 ? game.images : [game.image];
-  const currentImage = images[selectedImageIndex] || game.image;
-
-  const renderStars = (rating: number) => {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-
-    return (
-      <div className={styles.ratingStars}>
-        {Array.from({ length: fullStars }).map((_, i) => (
-          <span key={`full-${i}`} className={styles.starFull}>★</span>
-        ))}
-        {hasHalfStar && <span className={styles.starHalf}>★</span>}
-        {Array.from({ length: emptyStars }).map((_, i) => (
-          <span key={`empty-${i}`} className={styles.starEmpty}>★</span>
-        ))}
-      </div>
-    );
-  };
-
-  const renderDifficulty = (difficulty: number) => {
-    return (
-      <div className={styles.difficulty}>
-        {Array.from({ length: 5 }).map((_, i) => (
-          <span
-            key={i}
-            className={`${styles.difficultyIcon} ${i < difficulty ? styles.difficultyIconActive : ''}`}
-          >
-            ✕
-          </span>
-        ))}
-      </div>
-    );
-  };
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -130,49 +39,31 @@ export const GameDetail = () => {
       }
     } else {
       // Fallback: copy to clipboard
-      navigator.clipboard.writeText(window.location.href);
+      await navigator.clipboard.writeText(window.location.href);
       alert('Link copied to clipboard!');
     }
   };
 
   return (
     <div className={styles.gameDetail}>
+      <AddReview
+          open={open}
+          gameTitle={game.title}
+          onClose={() => setOpen(false)}
+      />
       <Header />
       <main className={styles.main}>
         <div className={styles.content}>
           {/* Left Side - Image Gallery */}
           <div className={styles.imageSection}>
             <div className={styles.mainImageContainer}>
-              <img src={currentImage} alt={game.title} className={styles.mainImage} />
+              <img src={game.image} alt={game.title} className={styles.mainImage} />
             </div>
-            {images.length > 1 && (
-              <div className={styles.thumbnailContainer}>
-                {images.map((img, index) => (
-                  <button
-                    key={index}
-                    className={`${styles.thumbnail} ${selectedImageIndex === index ? styles.thumbnailActive : ''}`}
-                    onClick={() => setSelectedImageIndex(index)}
-                  >
-                    <img src={img} alt={`${game.title} ${index + 1}`} />
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
 
           {/* Right Side - Game Info */}
           <div className={styles.infoSection}>
             <h1 className={styles.title}>{game.title}</h1>
-
-            {/* Rating */}
-            {game.rating !== undefined && (
-              <div className={styles.rating}>
-                {renderStars(game.rating)}
-                <span className={styles.ratingText}>
-                  {game.rating.toFixed(1)} ({game.reviewCount || 0} reviews)
-                </span>
-              </div>
-            )}
 
             {/* Genre Tags */}
             <div className={styles.genres}>
@@ -239,12 +130,6 @@ export const GameDetail = () => {
                 <div className={styles.detailRow}>
                   <span className={styles.detailLabel}>Release Date:</span>
                   <span className={styles.detailValue}>{game.releaseDate}</span>
-                </div>
-              )}
-              {game.difficulty !== undefined && (
-                <div className={styles.detailRow}>
-                  <span className={styles.detailLabel}>Difficulty:</span>
-                  {renderDifficulty(game.difficulty)}
                 </div>
               )}
               {game.platforms && game.platforms.length > 0 && (
@@ -325,19 +210,32 @@ export const GameDetail = () => {
 
             {activeTab === 'reviews' && (
               <div className={styles.reviewsContent}>
-                <h2 className={styles.sectionTitle}>Reviews</h2>
-                {game.reviews && game.reviews.length > 0 ? (
+                <div className={styles.header}>
+                  <h2 className={styles.sectionTitle}>Reviews</h2>
+                  <button className={styles.addBtn} onClick={() => setOpen(true)}>
+                    Open Review
+                  </button>
+                </div>
+                {results.length > 0 ? (
                   <div className={styles.reviewsList}>
-                    {game.reviews.map((review, index) => (
+                    {results.map((result, index) => (
                       <div key={index} className={styles.reviewItem}>
                         <div className={styles.reviewHeader}>
-                          <span className={styles.reviewAuthor}>{review.author}</span>
-                          <div className={styles.reviewRating}>
-                            {renderStars(review.rating)}
+                            <div className={styles.avatar}>
+                              {result.user ? result.user.name[0].toUpperCase() : "G"}
+                            </div>
+                          <div className={styles.reviewContent}>
+                            <div className={styles.reviewContentHeader}>
+                            <span className={styles.reviewAuthor}>
+                              {result.user ? result.user.name : "guest"}
+                            </span>
+                              <div className={styles.reviewRating}>
+                                <Stars value={result.review.star}/>
+                              </div>
+                            </div>
+                            <p className={styles.reviewComment}>{result.review.comment}</p>
                           </div>
-                          <span className={styles.reviewDate}>{review.date}</span>
                         </div>
-                        <p className={styles.reviewComment}>{review.comment}</p>
                       </div>
                     ))}
                   </div>

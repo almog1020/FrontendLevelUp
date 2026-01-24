@@ -15,8 +15,9 @@ const AuthProvider = ({ children }:{children:ReactNode}) => {
     const loginAction = async (email:string,password:string) => {
         try {
             const token = await login(email, password);
-            const user = await getMe(token);
+            const user = await getMe(token.access_token);
             localStorage.setItem("user", user.email)
+            localStorage.setItem("token", token.access_token)
             navigate("/user");
         } catch (err) {
             toast.error((err as Error).message);
@@ -26,6 +27,7 @@ const AuthProvider = ({ children }:{children:ReactNode}) => {
     const logOut = async (email:string) => {
         await logout(email,"inactive")
         localStorage.removeItem("user");
+        localStorage.removeItem("token");
         googleLogout()
         navigate("/login");
     };
