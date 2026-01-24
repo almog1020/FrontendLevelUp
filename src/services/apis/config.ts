@@ -1,8 +1,10 @@
 import axios from 'axios';
 
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 export const instance =  axios.create({
-    baseURL: 'http://127.0.0.1:8000/',
-    timeout: 10000, // 10 seconds
+    baseURL: API_BASE_URL,
+    timeout: 30000,
     headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -10,8 +12,8 @@ export const instance =  axios.create({
     },
 });
 export const instanceAuth =  axios.create({
-    baseURL: 'http://127.0.0.1:8000/',
-    timeout: 10000, // 10 seconds
+    baseURL: API_BASE_URL,
+    timeout: 30000,
     headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',

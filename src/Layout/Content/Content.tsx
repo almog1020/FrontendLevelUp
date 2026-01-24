@@ -6,36 +6,35 @@
  */
 
 import * as React from "react";
-import {Navigate, Route, Routes} from "react-router-dom";
-import App from "../../App.tsx";
+import {Route, Routes} from "react-router-dom";
+import {Homepage} from "../../components/Homepage/Homepage.tsx";
+import {GameDetail} from "../../components/GameDetail/GameDetail.tsx";
 import UserManagement from "../../components/UserManagement/UserManagement.tsx";
 import PrivateRoute from "../../components/PrivateRoute/PrivateRoute.tsx";
 import {SignIn} from "../../components/SignIn/SignIn.tsx";
 import UserPopup from "../../components/UserPopup/UserPopup.tsx";
 import Profile from "../../components/Profile/Profile.tsx"; // Profile page component
 import AuthProvider from "../../components/AuthProvider/AuthProvider.tsx";
+import {DialogProvider} from "../../contexts/DialogContext.tsx";
+import ReviewManagement from "../../components/ReviewManagement/ReviewManagement.tsx";
 
 const Content:React.FC = () => {
-    const isLogin = localStorage.getItem("token")
     return (
         <AuthProvider>
-            <Routes>
-                {/* Root route: redirects to /user if logged in, otherwise shows SignIn page */}
-                <Route path={"/"} element={isLogin ? <Navigate to={"/user"}/> : <App/>}/>
-                
-                {/* Admin user management page - accessible without PrivateRoute wrapper */}
-                <Route path={"/admin/management"} element={<UserManagement/>}/>
-                
-                {/* Login/SignIn page */}
-                <Route path={"/login"} element={<SignIn/>}/>
-                {/* Protected routes - require authentication via PrivateRoute */}
-                <Route element={<PrivateRoute />}>
-                    {/* User dropdown/popup page */}
-                    <Route path="/user" element={<UserPopup />} />
-                    {/* Profile page - displays user profile information, statistics, preferences, and activities */}
-                    <Route path="/user/profile" element={<Profile />} />
-                </Route>
-            </Routes>
+            <DialogProvider>
+                <Routes>
+                    <Route path={"/"} element={<Homepage/>}/>
+                    <Route path={"/admin/management/user"} element={<UserManagement/>}/>
+                    <Route path={"/admin/management/review"} element={<ReviewManagement/>}/>
+                    <Route path={"/game/:id"} element={<GameDetail/>}/>
+                    <Route path={"/login"} element={<SignIn/>}/>
+                    <Route element={<PrivateRoute />}>
+                        <Route path="/user" element={<UserPopup />} />
+                        {/* Profile page - displays user profile information, statistics, preferences, and activities */}
+                        <Route path="/user/profile" element={<Profile />} />
+                    </Route>
+                </Routes>
+            </DialogProvider>
         </AuthProvider>
 
     )

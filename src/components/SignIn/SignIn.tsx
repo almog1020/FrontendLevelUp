@@ -1,8 +1,8 @@
 import Dialog from '@mui/material/Dialog';
-import {useContext, useState} from "react";
+import {useContext, useState, useEffect} from "react";
 import styles from './SignIn.module.scss'
 import remoteIcon from '../../assets/remote.png'
-import {TextField} from "../TextField/TextField.tsx";
+import {TextFieldSignUp} from "../TextField/TextFieldSignUp.tsx";
 import {toast, ToastContainer} from "react-toastify";
 import {type SubmitHandler, useForm} from 'react-hook-form';
 import type {FormValues} from "../../interfaces/textField.interface.ts";
@@ -11,12 +11,21 @@ import {register} from "../../services/apis/users.ts";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import LoginButton from "./LoginButton/LoginButton.tsx";
 import {AuthContext} from "../AuthProvider/AuthProvider.tsx";
+import {useDialog} from "../../contexts/DialogContext.tsx";
+import {TextFieldSignIn} from "../TextField/TextFieldSignIn.tsx";
 
 type AuthMode = 'signin' | 'signup';
 
 export const SignIn = () => {
+    const dialog = useDialog();
     const [open, setOpen] = useState(false);
     const [mode, setMode] = useState<AuthMode>('signin');
+    
+    // Sync with dialog context
+    useEffect(() => {
+        setOpen(dialog.isOpen);
+        setMode(dialog.mode);
+    }, [dialog.isOpen, dialog.mode]);
     const {register: registerSignIn, handleSubmit: handleSignInSubmit, reset: resetSignIn} = useForm<FormValues>();
     const {register: registerSignUp, handleSubmit: handleSignUpSubmit, reset: resetSignUp, watch, formState: {errors}} = useForm<SignUpFormValues>();
     const auth = useContext(AuthContext);
@@ -34,7 +43,7 @@ export const SignIn = () => {
             const result = await register(email, password, name);
             if (result) {
                 resetSignUp();
-                handleOpen();
+                dialog.closeDialog();
                 toast.success('Account created successfully!');
             }
         } catch (error: unknown) {
@@ -43,12 +52,13 @@ export const SignIn = () => {
     };
 
     const handleOpen = () => {
-        setOpen(!open);
-        if (!open) {
+        if (open) {
+            dialog.closeDialog();
+        } else {
+            dialog.openDialog('signin');
             // Reset forms when opening
             resetSignIn();
             resetSignUp();
-            setMode('signin');
         }
     };
 
@@ -66,9 +76,9 @@ export const SignIn = () => {
             <ToastContainer/>
             <Dialog
                 open={open}
-                onClose={handleOpen}
+                onClose={dialog.closeDialog}
                 slotProps={{ paper: { className: styles.sign_in_dialog } }}>
-                <button className={styles.sign_in_dialog__close} onClick={handleOpen}>✕</button>
+                <button className={styles.sign_in_dialog__close} onClick={dialog.closeDialog}>✕</button>
                 <div className={styles.sign_in_dialog__header}>
                     <div className={styles.sign_in_dialog__icon}>
                         <img src={remoteIcon} alt={"Logo"}/>
@@ -85,21 +95,20 @@ export const SignIn = () => {
                 
                 {isSignIn ? (
                     <form className={styles.sign_in_dialog__form} onSubmit={handleSignInSubmit(onSignInSubmit)}>
-                        <TextField
+                        <TextFieldSignIn
                             title={'Email'}
                             type={'email'}
                             required={true}
                             name={'email'}
                             register={registerSignIn}
                         />
-                        <TextField
+                        <TextFieldSignIn
                             title={'Password'}
                             type={'password'}
                             required={true}
                             name={'password'}
                             register={registerSignIn}
                         />
-
                         <div className={styles.sign_in_dialog__row}>
                             <div className={styles.sign_in_dialog__forgot}>
                                 Forgot password?
@@ -123,21 +132,21 @@ export const SignIn = () => {
                     </form>
                 ) : (
                     <form className={styles.sign_in_dialog__form} onSubmit={handleSignUpSubmit(onSignUpSubmit)}>
-                        <TextField
+                        <TextFieldSignUp
                             title={'Name'}
                             type={'text'}
                             required={true}
                             name={'name'}
                             register={registerSignUp}
                         />
-                        <TextField
+                        <TextFieldSignUp
                             title={'Email'}
                             type={'email'}
                             required={true}
                             name={'email'}
                             register={registerSignUp}
                         />
-                        <TextField
+                        <TextFieldSignUp
                             title={'Password'}
                             type={'password'}
                             required={true}

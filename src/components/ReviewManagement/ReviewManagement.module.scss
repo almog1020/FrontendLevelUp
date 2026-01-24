@@ -1,0 +1,172 @@
+$bg: #070b14;
+$panel: rgba(15, 23, 42, 0.62);
+$border: rgba(148, 163, 184, 0.14);
+$border2: rgba(148, 163, 184, 0.18);
+
+$text: #e5e7eb;
+$muted: #94a3b8;
+
+$blue: #60a5fa;
+$amber: #f59e0b;
+$green: #22c55e;
+
+.page {
+  width: 60%;
+  display: flex;
+  margin: auto;
+  flex-direction: column;
+}
+
+.topRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  text-align: left;
+  color: $blue;
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: $muted;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 165px;
+  margin: 18px 0 18px;
+  width: 100%;
+}
+
+.panel {
+  margin-top: 12px;
+  padding: 18px 18px 10px;
+  border-radius: 14px;
+  background: $panel;
+  border: 1px solid $border;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px);
+}
+
+.panelTitle {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.tableWrap {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.10);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: transparent;
+
+  thead tr {
+    background: rgba(2, 6, 23, 0.20);
+  }
+
+  th,
+  td {
+    padding: 16px 12px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+    text-align: left;
+    font-size: 13px;
+  }
+
+  th {
+    font-weight: 800;
+    color: $text;
+  }
+
+  tbody tr {
+    transition: background 0.12s ease;
+  }
+
+  tbody tr:hover {
+    background: rgba(2, 6, 23, 0.18);
+  }
+}
+
+.right {
+  text-align: right !important;
+  img{
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.userCell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 12px;
+  color: $text;
+  background: rgba(148, 163, 184, 0.14);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.userName {
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.gameName {
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.comment {
+  max-width: 520px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: rgba(226, 232, 240, 0.88);
+  font-size: 13px;
+}
+
+.date {
+  color: rgba(148, 163, 184, 0.92);
+  font-size: 13px;
+}
+
+.trashBtn {
+  border: 0;
+  cursor: pointer;
+  background: transparent;
+  color: #ef4444;
+  font-size: 18px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  transition: background 0.12s ease;
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.12);
+  }
+}
+
+.empty {
+  text-align: center !important;
+  padding: 22px 12px !important;
+  color: $muted;
+}
