@@ -1,60 +1,38 @@
-# Backend Implementation Guide - Profile Page
+# Backend Implementation Guide for Profile Page
 
-## Summary of Frontend Implementation
+## Overview
+This guide provides detailed specifications for implementing the backend API endpoints required by the frontend profile page. The frontend expects specific endpoints, request/response formats, and security requirements.
 
-This guide documents what the frontend expects from the backend for the **Profile Page** functionality. The frontend has been updated to fetch real user data from the database instead of using mock data.
+**Base URL:** `http://127.0.0.1:8000/`
 
----
-
-## What We've Implemented on the Frontend
-
-### 1. **Profile Page Component** (`/user/profile`)
-   - Fetches user profile data on page load
-   - Displays user information, statistics, preferences, and activities
-   - Allows editing personal information (name, email, password)
-   - Allows updating gaming preferences
-   - Shows loading and error states
-   - Handles authentication automatically
-
-### 2. **API Integration**
-   - All API calls use authentication tokens (Bearer token in Authorization header)
-   - Automatic token injection via axios interceptors
-   - Proper error handling with user-friendly messages
-   - Fallback logic if primary endpoint fails
-
-### 3. **Security Implementation**
-   - **Passwords are NEVER received from backend** (hashed or plain text)
-   - Passwords are only sent TO backend in plain text for updates
-   - Backend must hash passwords before storing
-   - All user responses exclude password fields
+**Authentication:** All profile endpoints require Bearer token authentication via `Authorization: Bearer <token>` header.
 
 ---
 
-## Required API Endpoints
+## 🔐 Critical Security Requirements
 
-### Base URL
-```
-http://127.0.0.1:8000
-```
-
-### Authentication
-All endpoints (except login/register) require authentication via Bearer token:
-```
-Authorization: Bearer <token>
-```
+### Password Handling (MANDATORY)
+1. **NEVER return passwords in API responses** - Not hashed, not plain text, not in any form
+2. **Hash passwords before storing** - Use bcrypt, argon2, or similar secure hashing library
+3. **Frontend sends plain text passwords** - Backend must hash them before database storage
+4. **Password verification** - Use `compare(plain_password, hashed_password)` for login, NEVER decode hashes
+5. **Password updates** - If password field is provided in update request, hash it before storing
 
 ---
 
-## Endpoint 1: GET /users/me
+## 📋 Required API Endpoints
 
-**Purpose:** Get current authenticated user's basic information
+### 1. GET `/users/me`
+**Purpose:** Fetch current authenticated user's basic information
 
-**Method:** `GET`
+**Authentication:** Required (Bearer token)
 
-**Headers:**
+**Request:**
 ```
-Authorization: Bearer <token>
-Accept: application/json
+GET /users/me
+Headers:
+  Authorization: Bearer <token>
+  Accept: application/json
 ```
 
 **Response (200 OK):**
@@ -65,37 +43,43 @@ Accept: application/json
   "email": "john@example.com",
   "role": "user",
   "status": "active",
-  "joined": "2024-01-01T00:00:00.000Z",
-  "lastActive": "2024-12-20T10:30:00.000Z",
-  "purchase": "premium",
-  "google_id": "optional_google_id"
+  "joined": "2024-01-15T10:30:00Z",
+  "lastActive": "2024-01-20T14:22:00Z",
+  "purchase": "",
+  "google_id": ""
 }
 ```
 
-**Important:**
-- ❌ **DO NOT** include `password` field in response
-- ✅ Include all other user fields
-- `role` must be either `"admin"` or `"user"`
-- `status` must be either `"active"` or `"suspended"`
-- Dates should be in ISO 8601 format
+**Response Fields:**
+- `id` (number): User ID
+- `name` (string): User's full name
+- `email` (string): User's email address
+- `role` (string): "admin" | "user"
+- `status` (string): "active" | "suspended"
+- `joined` (string): ISO 8601 datetime string
+- `lastActive` (string): ISO 8601 datetime string
+- `purchase` (string): Purchase information
+- `google_id` (string): Google OAuth ID if applicable
 
 **Error Responses:**
-- `401 Unauthorized` - Invalid or missing token
-- `403 Forbidden` - Token valid but insufficient permissions
-- `500 Internal Server Error` - Server error
+- `401 Unauthorized`: Invalid or missing token
+- `403 Forbidden`: Token valid but insufficient permissions
+
+**Important:** Response MUST NOT include `password` field (even hashed).
 
 ---
 
-## Endpoint 2: GET /profile
+### 2. GET `/profile`
+**Purpose:** Fetch complete profile data including statistics, preferences, and activities
 
-**Purpose:** Get complete profile data including statistics, preferences, and activities
+**Authentication:** Required (Bearer token)
 
-**Method:** `GET`
-
-**Headers:**
+**Request:**
 ```
-Authorization: Bearer <token>
-Accept: application/json
+GET /profile
+Headers:
+  Authorization: Bearer <token>
+  Accept: application/json
 ```
 
 **Response (200 OK):**
@@ -107,15 +91,15 @@ Accept: application/json
     "email": "john@example.com",
     "role": "user",
     "avatar": "https://example.com/avatar.jpg",
-    "memberSince": "2024-01-01T00:00:00.000Z",
-    "lastLogin": "2024-12-20T10:30:00.000Z"
+    "memberSince": "2024-01-15T10:30:00Z",
+    "lastLogin": "2024-01-20T14:22:00Z"
   },
   "statistics": {
     "wishlistItems": 12,
-    "totalSaved": 127.50,
-    "gamesTracked": 47,
-    "priceAlerts": 8,
-    "reviewsWritten": 15
+    "totalSaved": 245.50,
+    "gamesTracked": 8,
+    "priceAlerts": 5,
+    "reviewsWritten": 3
   },
   "preferences": {
     "favoriteGenre": "Action",
@@ -127,87 +111,86 @@ Accept: application/json
       "type": "wishlist",
       "description": "Added to wishlist",
       "gameName": "Cyberpunk 2077",
-      "timestamp": "2024-12-20T08:30:00.000Z"
+      "timestamp": "2024-01-20T10:15:00Z"
     },
     {
       "id": 2,
       "type": "purchase",
-      "description": "Purchased from Steam",
-      "gameName": "Elden Ring",
-      "timestamp": "2024-12-19T14:20:00.000Z"
+      "description": "Purchased game",
+      "gameName": "The Witcher 3",
+      "timestamp": "2024-01-19T16:30:00Z"
     }
   ]
 }
 ```
 
-**Field Descriptions:**
+**Response Structure:**
 
-**Profile:**
-- `id` (number, required) - User ID
-- `name` (string, required) - User's full name
-- `email` (string, required) - User's email address
-- `role` (string, required) - Either `"admin"` or `"user"`
-- `avatar` (string, optional) - URL to user's avatar image
-- `memberSince` (string, required) - ISO 8601 date when user joined
-- `lastLogin` (string, required) - ISO 8601 date of last login
+**Profile Object:**
+- `id` (number): User ID
+- `name` (string): User's full name
+- `email` (string): User's email address
+- `role` (string): "admin" | "user"
+- `avatar` (string, optional): URL to user's avatar image
+- `memberSince` (string): ISO 8601 datetime when user joined
+- `lastLogin` (string): ISO 8601 datetime of last login
 
-**Statistics:**
-- `wishlistItems` (number) - Count of games in wishlist
-- `totalSaved` (number) - Total money saved from price drops
-- `gamesTracked` (number) - Number of games being tracked
-- `priceAlerts` (number) - Number of active price alerts
-- `reviewsWritten` (number) - Number of reviews written
+**Statistics Object:**
+- `wishlistItems` (number): Count of items in wishlist
+- `totalSaved` (number): Total money saved from price drops (decimal)
+- `gamesTracked` (number): Number of games being tracked
+- `priceAlerts` (number): Number of active price alerts
+- `reviewsWritten` (number): Number of reviews written
 
-**Preferences:**
-- `favoriteGenre` (string) - User's favorite game genre
-- `preferredStore` (string) - User's preferred game store/platform
+**Preferences Object:**
+- `favoriteGenre` (string): User's favorite game genre
+- `preferredStore` (string): User's preferred game store/platform
 
-**Activities:**
-- `id` (number) - Activity ID
-- `type` (string) - One of: `"wishlist"`, `"purchase"`, `"review"`, `"price_alert"`
-- `description` (string) - Human-readable description
-- `gameName` (string) - Name of the game
-- `timestamp` (string) - ISO 8601 date/time
-
-**Important:**
-- ❌ **DO NOT** include `password` field anywhere in response
-- ✅ Return empty arrays/zero values if data doesn't exist yet
-- Dates must be in ISO 8601 format
+**Activities Array:**
+- Each activity has:
+  - `id` (number): Activity ID
+  - `type` (string): "wishlist" | "purchase" | "review" | "price_alert"
+  - `description` (string): Human-readable description
+  - `gameName` (string): Name of associated game
+  - `timestamp` (string): ISO 8601 datetime
 
 **Error Responses:**
-- `401 Unauthorized` - Invalid or missing token
-- `403 Forbidden` - Token valid but insufficient permissions
-- `500 Internal Server Error` - Server error
+- `401 Unauthorized`: Invalid or missing token
+- `403 Forbidden`: Token valid but insufficient permissions
+- `404 Not Found`: Profile not found (shouldn't happen for authenticated user)
+
+**Important:** Response MUST NOT include `password` field anywhere.
 
 ---
 
-## Endpoint 3: PUT /profile
-
+### 3. PUT `/profile`
 **Purpose:** Update user's profile information (name, email, password)
 
-**Method:** `PUT`
+**Authentication:** Required (Bearer token)
 
-**Headers:**
+**Request:**
 ```
-Authorization: Bearer <token>
-Content-Type: application/json
-Accept: application/json
-```
+PUT /profile
+Headers:
+  Authorization: Bearer <token>
+  Content-Type: application/json
+  Accept: application/json
 
-**Request Body (Partial - only send fields that changed):**
-```json
+Body (all fields optional, only send fields to update):
 {
-  "name": "John Updated",
-  "email": "john.updated@example.com",
-  "password": "newPlainTextPassword123"
+  "name": "Jane Doe",           // Optional: New name
+  "email": "jane@example.com",  // Optional: New email
+  "password": "newpassword123"   // Optional: New password (plain text)
 }
 ```
 
-**Important Password Handling:**
-- ✅ Frontend sends password in **plain text** (this is correct)
-- ✅ Backend **MUST** hash the password using bcrypt or argon2 before storing
-- ❌ Backend **MUST NEVER** return password (hashed or plain) in response
-- ✅ If password is not provided, don't update it (keep existing hashed password)
+**Request Body Rules:**
+- All fields are optional
+- Only include fields that should be updated
+- If `password` is provided, it will be in **plain text** - backend MUST hash it before storing
+- If `password` is NOT provided or is empty string, do NOT update password
+- Email should be validated for format
+- Email should be checked for uniqueness if changed
 
 **Response (200 OK):**
 ```json
@@ -216,54 +199,59 @@ Accept: application/json
 }
 ```
 
-**Or return updated profile (without password):**
-```json
-{
-  "id": 1,
-  "name": "John Updated",
-  "email": "john.updated@example.com",
-  "role": "user",
-  "avatar": "https://example.com/avatar.jpg",
-  "memberSince": "2024-01-01T00:00:00.000Z",
-  "lastLogin": "2024-12-20T10:30:00.000Z"
-}
-```
-
-**Validation:**
-- Validate email format
-- Validate password strength (if provided)
-- Ensure user can only update their own profile (unless admin)
-- Check that email is not already taken by another user
+**Or (204 No Content):** Empty response body
 
 **Error Responses:**
-- `400 Bad Request` - Invalid data (e.g., invalid email format, weak password)
-- `401 Unauthorized` - Invalid or missing token
-- `403 Forbidden` - User trying to update another user's profile
-- `409 Conflict` - Email already exists
-- `500 Internal Server Error` - Server error
+- `400 Bad Request`: Invalid data (e.g., invalid email format, email already in use)
+- `401 Unauthorized`: Invalid or missing token
+- `403 Forbidden`: Token valid but insufficient permissions
+- `422 Unprocessable Entity`: Validation errors
+
+**Password Update Logic:**
+```python
+# Pseudocode example
+if "password" in request_data and request_data["password"]:
+    # Hash the password before storing
+    hashed_password = hash_password(request_data["password"])
+    user.password = hashed_password
+```
+
+**Important:** 
+- Hash password using bcrypt/argon2 before storing
+- NEVER return password (hashed or plain) in response
+- Validate email uniqueness if email is being changed
 
 ---
 
-## Endpoint 4: PUT /profile/preferences
-
+### 4. PUT `/profile/preferences`
 **Purpose:** Update user's gaming preferences
 
-**Method:** `PUT`
+**Authentication:** Required (Bearer token)
 
-**Headers:**
+**Request:**
 ```
-Authorization: Bearer <token>
-Content-Type: application/json
-Accept: application/json
-```
+PUT /profile/preferences
+Headers:
+  Authorization: Bearer <token>
+  Content-Type: application/json
+  Accept: application/json
 
-**Request Body:**
-```json
+Body:
 {
   "favoriteGenre": "RPG",
   "preferredStore": "Epic Games"
 }
 ```
+
+**Request Body:**
+- `favoriteGenre` (string, required): User's favorite game genre
+- `preferredStore` (string, required): User's preferred game store/platform
+
+**Valid Genre Options:**
+- "Action", "Adventure", "RPG", "Strategy", "Simulation", "Sports", "Racing", "Puzzle"
+
+**Valid Store Options:**
+- "Steam", "Epic Games", "GOG", "Ubisoft", "Origin"
 
 **Response (200 OK):**
 ```json
@@ -272,217 +260,279 @@ Accept: application/json
 }
 ```
 
-**Or return updated preferences:**
+**Or (204 No Content):** Empty response body
+
+**Error Responses:**
+- `400 Bad Request`: Invalid preference values
+- `401 Unauthorized`: Invalid or missing token
+- `403 Forbidden`: Token valid but insufficient permissions
+- `422 Unprocessable Entity`: Validation errors
+
+---
+
+## 🔑 Authentication Endpoint (Reference)
+
+### POST `/auth/token`
+**Purpose:** Authenticate user and get access token
+
+**Request:**
+```
+POST /auth/token
+Headers:
+  Content-Type: application/json
+
+Body:
+{
+  "username": "john@example.com",
+  "password": "plaintextpassword"
+}
+```
+
+**Response (200 OK):**
 ```json
 {
-  "favoriteGenre": "RPG",
-  "preferredStore": "Epic Games"
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer"
 }
 ```
 
 **Error Responses:**
-- `400 Bad Request` - Invalid data
-- `401 Unauthorized` - Invalid or missing token
-- `500 Internal Server Error` - Server error
+- `422 Unprocessable Entity`: Invalid credentials (password incorrect)
+- `401 Unauthorized`: Authentication failed
+
+**Important:**
+- Password is sent in **plain text** from frontend
+- Backend must compare plain password with stored hash using `compare(plain, hash)`
+- NEVER decode or decrypt the hash
+- Return token and user data WITHOUT password
 
 ---
 
-## Data Type Definitions
+## 📊 Database Schema Requirements
 
-### UserRole
-```typescript
-type UserRole = "admin" | "user"
+### Users Table
+```sql
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,  -- Hashed password only
+    role VARCHAR(20) DEFAULT 'user',  -- 'admin' or 'user'
+    status VARCHAR(20) DEFAULT 'active',  -- 'active' or 'suspended'
+    joined TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    lastActive TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    purchase TEXT,
+    google_id VARCHAR(255),
+    avatar VARCHAR(500)  -- Optional avatar URL
+);
 ```
 
-### UserStatus
-```typescript
-type UserStatus = "active" | "suspended"
+### User Preferences Table
+```sql
+CREATE TABLE user_preferences (
+    user_id INTEGER PRIMARY KEY,
+    favorite_genre VARCHAR(50) DEFAULT 'Action',
+    preferred_store VARCHAR(50) DEFAULT 'Steam',
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 ```
 
-### ActivityType
-```typescript
-type ActivityType = "wishlist" | "purchase" | "review" | "price_alert"
+### User Statistics Table (or computed from other tables)
+```sql
+-- Statistics can be computed from other tables or stored separately
+-- Example: wishlist_items, tracked_games, price_alerts, reviews tables
+
+CREATE TABLE user_statistics (
+    user_id INTEGER PRIMARY KEY,
+    wishlist_items INTEGER DEFAULT 0,
+    total_saved DECIMAL(10, 2) DEFAULT 0.00,
+    games_tracked INTEGER DEFAULT 0,
+    price_alerts INTEGER DEFAULT 0,
+    reviews_written INTEGER DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 ```
 
----
-
-## Security Requirements
-
-### 1. Password Handling
-- ✅ **NEVER** return password (hashed or plain) in any API response
-- ✅ Hash passwords using bcrypt or argon2 before storing
-- ✅ Accept plain text passwords from frontend (this is normal and secure)
-- ✅ Validate password strength on backend
-- ✅ If password field is missing in update request, don't change existing password
-
-### 2. Authentication
-- ✅ Verify Bearer token on all protected endpoints
-- ✅ Return `401 Unauthorized` if token is invalid or missing
-- ✅ Return `403 Forbidden` if user doesn't have permission
-
-### 3. Authorization
-- ✅ Users can only update their own profile
-- ✅ Admins may have additional permissions (if needed)
-
-### 4. Input Validation
-- ✅ Validate email format
-- ✅ Validate required fields
-- ✅ Sanitize user inputs
-- ✅ Check for SQL injection, XSS attacks
-
----
-
-## Error Response Format
-
-All errors should follow this format:
-
-```json
-{
-  "detail": "Error message describing what went wrong"
-}
-```
-
-**Example:**
-```json
-{
-  "detail": "Email already registered"
-}
-```
-
----
-
-## CORS Configuration
-
-Backend must allow requests from frontend origin:
-```
-Access-Control-Allow-Origin: *
-```
-Or specifically:
-```
-Access-Control-Allow-Origin: http://localhost:5173
+### User Activities Table
+```sql
+CREATE TABLE user_activities (
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    type VARCHAR(20) NOT NULL,  -- 'wishlist', 'purchase', 'review', 'price_alert'
+    description TEXT NOT NULL,
+    game_name VARCHAR(255) NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 ```
 
 ---
 
-## Testing Checklist
+## ✅ Implementation Checklist
 
-Before marking as complete, verify:
+### Security
+- [ ] Passwords are NEVER returned in any API response
+- [ ] Passwords are hashed using bcrypt/argon2 before database storage
+- [ ] Password verification uses `compare()` function, never decryption
+- [ ] All profile endpoints require Bearer token authentication
+- [ ] Token validation is performed on every authenticated request
+- [ ] Email uniqueness is validated when updating email
 
-- [ ] `GET /users/me` returns user data without password
-- [ ] `GET /profile` returns complete profile data without password
-- [ ] `PUT /profile` updates name and email correctly
-- [ ] `PUT /profile` hashes password before storing
-- [ ] `PUT /profile` doesn't return password in response
-- [ ] `PUT /profile/preferences` updates preferences correctly
-- [ ] All endpoints require authentication
-- [ ] Invalid tokens return 401
-- [ ] Users can only update their own profile
-- [ ] Email validation works
-- [ ] Error messages are user-friendly
-- [ ] CORS is properly configured
+### Endpoints
+- [ ] `GET /users/me` - Returns user data without password
+- [ ] `GET /profile` - Returns complete profile data (profile, statistics, preferences, activities)
+- [ ] `PUT /profile` - Updates profile fields (name, email, password)
+- [ ] `PUT /profile/preferences` - Updates user preferences
+
+### Data Validation
+- [ ] Email format validation
+- [ ] Email uniqueness check
+- [ ] Password strength requirements (if applicable)
+- [ ] Genre and store validation for preferences
+- [ ] Required fields validation
+
+### Error Handling
+- [ ] Proper HTTP status codes (200, 204, 400, 401, 403, 404, 422)
+- [ ] Error messages in response body with `detail` field
+- [ ] CORS headers configured correctly
+- [ ] Timeout handling (frontend expects 10 second timeout)
+
+### Database
+- [ ] Users table with all required fields
+- [ ] User preferences table
+- [ ] User statistics table or computed statistics
+- [ ] User activities table
+- [ ] Proper foreign key relationships
+- [ ] Indexes on frequently queried fields (email, user_id)
+
+### Testing
+- [ ] Test authentication with valid/invalid tokens
+- [ ] Test password hashing and verification
+- [ ] Test profile retrieval
+- [ ] Test profile updates (name, email, password separately)
+- [ ] Test preferences update
+- [ ] Test error cases (401, 403, 404, 422)
+- [ ] Verify passwords are never in responses
 
 ---
 
-## Example Implementation (FastAPI/Python)
+## 🧪 Example Test Cases
 
-```python
-from fastapi import FastAPI, Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel, EmailStr
-from typing import Optional
-import bcrypt
+### Test 1: Get Current User
+```bash
+curl -X GET http://127.0.0.1:8000/users/me \
+  -H "Authorization: Bearer <token>" \
+  -H "Accept: application/json"
+```
 
-app = FastAPI()
-security = HTTPBearer()
+**Expected:** User data without password field
 
-# Models
-class UserResponse(BaseModel):
-    id: int
-    name: str
-    email: str
-    role: str
-    status: str
-    joined: str
-    lastActive: str
-    purchase: str
-    google_id: Optional[str] = None
+### Test 2: Get Full Profile
+```bash
+curl -X GET http://127.0.0.1:8000/profile \
+  -H "Authorization: Bearer <token>" \
+  -H "Accept: application/json"
+```
 
-class ProfileUpdate(BaseModel):
-    name: Optional[str] = None
-    email: Optional[EmailStr] = None
-    password: Optional[str] = None
+**Expected:** Complete profile data with statistics, preferences, and activities
 
-class PreferencesUpdate(BaseModel):
-    favoriteGenre: str
-    preferredStore: str
+### Test 3: Update Profile Name
+```bash
+curl -X PUT http://127.0.0.1:8000/profile \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "New Name"}'
+```
 
-# Authentication dependency
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    token = credentials.credentials
-    # Verify token and get user
-    user = verify_token(token)
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    return user
+**Expected:** Success response, name updated in database
 
-# Endpoints
-@app.get("/users/me", response_model=UserResponse)
-async def get_current_user_info(current_user = Depends(get_current_user)):
-    # Return user without password
-    return UserResponse(**current_user.dict(exclude={"password"}))
+### Test 4: Update Password
+```bash
+curl -X PUT http://127.0.0.1:8000/profile \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"password": "newpassword123"}'
+```
 
-@app.get("/profile")
-async def get_profile(current_user = Depends(get_current_user)):
-    # Fetch and return complete profile data
-    profile_data = {
-        "profile": {...},
-        "statistics": {...},
-        "preferences": {...},
-        "activities": [...]
+**Expected:** Success response, password hashed and stored (verify hash in database, not plain text)
+
+### Test 5: Update Preferences
+```bash
+curl -X PUT http://127.0.0.1:8000/profile/preferences \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"favoriteGenre": "RPG", "preferredStore": "Steam"}'
+```
+
+**Expected:** Success response, preferences updated
+
+### Test 6: Verify No Password in Response
+```bash
+# Get profile and verify password field is NOT present
+curl -X GET http://127.0.0.1:8000/profile \
+  -H "Authorization: Bearer <token>" \
+  -H "Accept: application/json" | jq .
+```
+
+**Expected:** No `password` field in any part of the response
+
+---
+
+## 📝 Notes for Backend Developer
+
+1. **Password Security is Critical**: The frontend explicitly expects that passwords are NEVER returned. This is a security requirement, not optional.
+
+2. **Partial Updates**: The `PUT /profile` endpoint should support partial updates - only update fields that are provided in the request.
+
+3. **Fallback Behavior**: The frontend tries `/profile` first, then falls back to `/users/me` if `/profile` fails. Both endpoints should work, but `/profile` is preferred as it contains more complete data.
+
+4. **Statistics Calculation**: Statistics can be computed from other tables (wishlist, purchases, reviews, etc.) or stored separately and updated when relevant actions occur.
+
+5. **Activities**: Activities should be populated from user actions (adding to wishlist, making purchases, writing reviews, setting price alerts).
+
+6. **Default Values**: If user preferences don't exist, return sensible defaults:
+   - `favoriteGenre`: "Action"
+   - `preferredStore`: "Steam"
+
+7. **Date Formats**: All datetime fields should be in ISO 8601 format (e.g., "2024-01-20T14:22:00Z").
+
+8. **CORS**: Ensure CORS is configured to allow requests from the frontend origin.
+
+9. **Timeout**: Frontend has a 10-second timeout, so ensure backend responds within this time.
+
+10. **Error Messages**: Use consistent error message format with `detail` field:
+    ```json
+    {
+      "detail": "Error message here"
     }
-    return profile_data
-
-@app.put("/profile")
-async def update_profile(
-    update_data: ProfileUpdate,
-    current_user = Depends(get_current_user)
-):
-    # Hash password if provided
-    if update_data.password:
-        hashed = bcrypt.hashpw(update_data.password.encode(), bcrypt.gensalt())
-        update_data.password = hashed.decode()
-    
-    # Update user in database
-    # ...
-    
-    return {"message": "Profile updated successfully"}
-
-@app.put("/profile/preferences")
-async def update_preferences(
-    preferences: PreferencesUpdate,
-    current_user = Depends(get_current_user)
-):
-    # Update preferences in database
-    # ...
-    
-    return {"message": "Preferences updated successfully"}
-```
+    ```
 
 ---
 
-## Notes
+## 🚨 Common Mistakes to Avoid
 
-1. The frontend will try `/profile` first, then fall back to `/users/me` if `/profile` fails
-2. All dates should be in ISO 8601 format (e.g., `"2024-12-20T10:30:00.000Z"`)
-3. The frontend handles loading states, so backend can take reasonable time to respond
-4. Frontend timeout is set to 10 seconds
-5. Backend should return appropriate HTTP status codes for proper error handling
+1. ❌ **Returning password hashes in API responses** - NEVER do this
+2. ❌ **Storing plain text passwords** - Always hash before storing
+3. ❌ **Trying to decode/decrypt password hashes** - Use compare() function instead
+4. ❌ **Missing authentication checks** - All profile endpoints must verify token
+5. ❌ **Not validating email uniqueness** - Check when email is updated
+6. ❌ **Returning wrong data structure** - Match the exact interface structure
+7. ❌ **Missing fields in responses** - All required fields must be present
+8. ❌ **Wrong HTTP status codes** - Use appropriate codes (200, 204, 400, 401, 403, 422)
 
 ---
 
-## Questions?
+## 📞 Frontend Contact Points
 
-If you need clarification on any endpoint or requirement, please refer to:
-- Frontend API service files: `src/services/apis/profile.ts` and `src/services/apis/users.ts`
-- Frontend interfaces: `src/interfaces/profile.interface.ts` and `src/interfaces/user.interface.ts`
-- Frontend component: `src/components/Profile/Profile.tsx`
+If you need clarification on any endpoint or data structure, refer to:
+- `src/services/apis/profile.ts` - Profile API service
+- `src/services/apis/users.ts` - Users API service  
+- `src/interfaces/profile.interface.ts` - Profile data interfaces
+- `src/interfaces/user.interface.ts` - User data interfaces
+- `src/components/Profile/Profile.tsx` - Main profile component
+
+---
+
+**Last Updated:** Based on frontend code as of profile page implementation
+**Frontend Base URL:** `http://127.0.0.1:8000/`
+**Frontend Timeout:** 10 seconds
