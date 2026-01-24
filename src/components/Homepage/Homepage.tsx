@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Header } from '../Header/Header';
 import { Hero } from '../Hero/Hero';
 import { DealOfTheDay } from '../DealOfTheDay/DealOfTheDay';
 import { DealOfTheDaySkeleton } from '../DealOfTheDaySkeleton/DealOfTheDaySkeleton';
@@ -117,7 +116,6 @@ export const Homepage = () => {
 
   return (
       <div className={styles.homepage}>
-        <Header />
         <main className={styles.main}>
           {searchResults === null && <Hero />}
           {error && (
