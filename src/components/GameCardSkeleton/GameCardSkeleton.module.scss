@@ -1,0 +1,24 @@
+.gameCardSkeleton {
+  position: relative;
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.gameCardSkeleton__imageContainer {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; // 16:9 aspect ratio
+  overflow: hidden;
+  background-color: var(--bg-dark);
+}
+
+.gameCardSkeleton__content {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
