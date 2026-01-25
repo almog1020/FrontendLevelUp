@@ -86,6 +86,16 @@ export async function getMe(accessToken:string): Promise<UserResponse> {
                 'Authorization': `Bearer ${accessToken}`,
             },
         }).get('/users/me')).data;
+    } catch (e: unknown) {
+        if (e instanceof AxiosError) {
+            if (e.response?.status === 401) {
+                throw new Error('Unauthorized. Please log in again.');
+            }
+            throw new Error(e.response?.data?.detail || 'Failed to fetch user data');
+        }
+        throw e;
+    }
+}
 
 export async function logout(email:string,disable:UserStatus): Promise<void> {
     try {
