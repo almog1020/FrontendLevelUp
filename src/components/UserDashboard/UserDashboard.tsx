@@ -6,7 +6,6 @@ import type { UserResponse } from '../../interfaces/user.interface';
 import styles from './UserDashboard.module.scss';
 import { LastPurchases, type LastPurchaseGame } from './LastPurchases/LastPurchases';
 import { RecommendedGames, type RecommendedGame } from './RecommendedGames/RecommendedGames';
-import { UserProfile } from './UserProfile/UserProfile';
 
 export const UserDashboard = () => {
     const [user, setUser] = useState<UserResponse | null>(null);
@@ -231,9 +230,6 @@ export const UserDashboard = () => {
 
             {/* Recommended for You */}
             <RecommendedGames games={recommendedGames} />
-
-            {/* User Info Card */}
-            <UserProfile user={user} />
         </div>
     );
 };
