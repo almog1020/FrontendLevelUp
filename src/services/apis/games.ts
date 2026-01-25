@@ -45,6 +45,20 @@ export async function getLastPurchases(limit: number = 10): Promise<Purchase[]> 
       headers: {
         'Authorization': `Bearer ${token}`
       }
+    });
+    return response.data;
+  } catch (e: unknown) {
+    if (e instanceof AxiosError) {
+      if (e.response?.status === 401) {
+        throw new Error('Unauthorized. Please log in again.');
+      }
+      throw new Error(e.response?.data?.detail || 'Failed to fetch purchases');
+    }
+    throw e;
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function getAllGames(): Promise<Game[]> {
   try {
     const response = await instance.get<Game[]>('/games/');
@@ -98,10 +112,9 @@ export async function searchGames(query: string): Promise<Game[]> {
       if (e.response?.status === 401) {
         throw new Error('Unauthorized. Please log in again.');
       }
-      throw new Error(e.response?.data?.detail || 'Failed to fetch purchases');
       throw new Error(e.response?.data?.detail || 'Failed to search games');
     }
-    throw e;
+    throw new Error('Failed to search games');
   }
 }
 
