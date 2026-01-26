@@ -14,7 +14,7 @@ const LoginButton = () => {
                         try {
                             const user:UserResponse = (await instance.post("/auth/google", { token })).data
                             localStorage.setItem("user", user.email)
-                            navigate("/user");
+                            navigate("/");
                         } catch (error: unknown) {
                             toast.error((error as Error).message || "Authentication failed");
                         }
