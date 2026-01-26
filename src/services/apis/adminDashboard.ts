@@ -73,9 +73,10 @@ export async function fetchGamesCount(): Promise<number> {
 export async function fetchDashboardStats(): Promise<DashboardStats> {
   try {
     const usersCount = await fetchUsersCount();
-    // Get games count from admin endpoint which returns accurate count
-    const adminGamesResponse = await fetchAdminGames(undefined, 1);
-    const totalGames = adminGamesResponse.count;
+    // Get games count from /games endpoint with limit=500 (max available)
+    // Backend returns { count: number, games: [...] } where count is the total count
+    const gamesResponse = await getGamesResponse(500);
+    const totalGames = gamesResponse.total;
 
     return {
       totalUsers: usersCount,
@@ -84,7 +85,11 @@ export async function fetchDashboardStats(): Promise<DashboardStats> {
     };
   } catch (e: unknown) {
     if (e instanceof AxiosError) {
-      throw new Error(e.response?.data?.detail || "Failed to fetch dashboard stats");
+      const errorMessage = e.response?.data?.detail || "Failed to fetch dashboard stats";
+      console.error(`[fetchDashboardStats] Error: ${errorMessage}`, {
+        status: e.response?.status,
+      });
+      throw new Error(errorMessage);
     }
     throw e;
   }
@@ -110,17 +115,17 @@ export type GenreStatsResponse = {
 
 export async function fetchAdminGenreStats(): Promise<GenreStatsResponse> {
   try {
-
-
-    const response = await instance.get<GenreStatsResponse>("/admin/genres", {
-   
-    });
-
+    // Backend endpoint: GET /admin/genres
+    const response = await instance.get<GenreStatsResponse>("/admin/genres");
     return response.data;
   } catch (e: unknown) {
     if (e instanceof AxiosError) {
-    
-      throw new Error(e.response?.data?.detail || "Failed to fetch admin genre stats");
+      const errorMessage = e.response?.data?.detail || "Failed to fetch admin genre stats";
+      console.error(`[fetchAdminGenreStats] Error: ${errorMessage}`, {
+        endpoint: "/admin/genres",
+        status: e.response?.status,
+      });
+      throw new Error(errorMessage);
     }
     throw e;
   }
@@ -145,29 +150,60 @@ export type AdminGamesResponse = {
 };
 
 
+
 export async function fetchAdminGames(
   q?: string,
   page_size: number = 30
 ): Promise<AdminGamesResponse> {
-
-
-  const API_BASE_URL = instance.defaults.baseURL || "http://localhost:8000";
-  const url = new URL(`${API_BASE_URL}/games`);
-  if (q) url.searchParams.set("q", q);
-  url.searchParams.set("page_size", String(page_size));
-
-  const res = await fetch(url.toString(), {
-
-  });
-
-
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`${res.status} ${text}`);
+  try {
+    
+    const limit = Math.min(page_size, 500);
+    const response = await instance.get("/games/", {
+      params: { limit },
+    });
+    
+    const data = response.data;
+    // Map backend response { count: number, games: Game[] } to AdminGamesResponse
+    if (data && typeof data === "object" && Array.isArray(data.games)) {
+      // Client-side filtering if q is provided (backend doesn't support search)
+      let games = data.games as Game[];
+      if (q) {
+        const lowerQ = q.toLowerCase();
+        games = games.filter((game) => 
+          game.title?.toLowerCase().includes(lowerQ)
+        );
+      }
+      
+      const items: AdminGameItem[] = games.map((game) => ({
+        id: game.id,
+        title: game.title,
+        image_url: game.image_url,
+        genres: game.genre ? [game.genre] : [],
+        store: null,
+        price: null,
+        currency: null,
+        deal_url: null,
+      }));
+      
+      return {
+        items,
+        count: typeof data.count === "number" ? data.count : items.length,
+        genre_stats: {},
+      };
+    }
+    
+    return { items: [], count: 0, genre_stats: {} };
+  } catch (e: unknown) {
+    if (e instanceof AxiosError) {
+      const errorMessage = e.response?.data?.detail || "Failed to fetch admin games";
+      console.error(`[fetchAdminGames] Error: ${errorMessage}`, {
+        endpoint: "/games/",
+        status: e.response?.status,
+      });
+      throw new Error(errorMessage);
+    }
+    throw e;
   }
-
-  return res.json();
 }
 
 
@@ -177,13 +213,24 @@ export async function fetchTopDeals(
   sort: "discount" | "savings" | "price" = "discount"
 ): Promise<TopDeal[]> {
   try {
+    // Backend endpoint: GET /admin/top-deals (with 's')
     const response = await instance.get<{ deals: TopDeal[] }>("/admin/top-deals", {
-      params: { min_discount: minDiscount, limit, sort },
+      params: { 
+        min_discount: minDiscount, // Fixed: was min_discoun (typo)
+        limit, 
+        sort 
+      },
     });
     return response.data.deals ?? [];
   } catch (e: unknown) {
     if (e instanceof AxiosError) {
-      throw new Error(e.response?.data?.detail || "Failed to fetch top deals");
+      const errorMessage = e.response?.data?.detail || `Failed to fetch top deals from /admin/top-deals`;
+      console.error(`[fetchTopDeals] Error: ${errorMessage}`, {
+        endpoint: "/admin/top-deals",
+        params: { min_discount: minDiscount, limit, sort },
+        status: e.response?.status,
+      });
+      throw new Error(errorMessage);
     }
     throw e;
   }

@@ -1,6 +1,8 @@
 import { instance } from "./config.ts";
 import { AxiosError } from "axios";
+import type { Game as FullGame } from "../../interfaces/game.interface";
 
+// Simple game interface for API responses (different from full Game interface)
 export interface Game {
   id: string;
   title: string;
@@ -129,13 +131,34 @@ export async function getAllGames(limit: number = 30): Promise<Game[]> {
 export async function getGamesResponse(limit: number = 30): Promise<GamesResponse> {
   try {
     const url = `/games/?limit=${limit}`;
-    const response = await instance.get<GamesResponse>(url);
+    const response = await instance.get(url);
     
     const data = response.data;
     
-    // Return the response directly if it matches the expected format
-    if (data && typeof data === "object" && Array.isArray(data.games) && typeof data.total === "number") {
-      return data;
+    // Backend returns { count: number, games: Game[] }
+    // We need to map it to { games: Game[], total: number, limit: number }
+    if (data && typeof data === "object") {
+      // Handle backend format: { count: number, games: Game[] }
+      if (Array.isArray(data.games) && typeof data.count === "number") {
+        return {
+          games: data.games,
+          total: data.count, // Use count from backend
+          limit: data.games.length,
+        };
+      }
+      // Handle GamesResponse format: { games: Game[], total: number, limit: number }
+      if (Array.isArray(data.games) && typeof data.total === "number") {
+        return data as GamesResponse;
+      }
+      // Fallback: construct from items array
+      const dataWithItems = data as { games?: Game[]; items?: Game[]; count?: number };
+      const games = Array.isArray(dataWithItems.games) ? dataWithItems.games : 
+                   Array.isArray(dataWithItems.items) ? dataWithItems.items : [];
+      return {
+        games,
+        total: typeof dataWithItems.count === "number" ? dataWithItems.count : games.length,
+        limit: games.length,
+      };
     }
     
     // Fallback: construct response from array
@@ -147,31 +170,94 @@ export async function getGamesResponse(limit: number = 30): Promise<GamesRespons
       };
     }
     
-    // Fallback: construct from old format
-    if (data && typeof data === "object") {
-      const dataWithItems = data as { games?: Game[]; items?: Game[] };
-      const games = Array.isArray(dataWithItems.games) ? dataWithItems.games : 
-                   Array.isArray(dataWithItems.items) ? dataWithItems.items : [];
-      return {
-        games,
-        total: games.length,
-        limit: games.length,
-      };
-    }
-    
     return { games: [], total: 0, limit };
   } catch (e: unknown) {
     if (e instanceof AxiosError) {
       if (e.response?.status === 404) {
         try {
           const retryUrl = `/games?limit=${limit}`;
-          const retryResponse = await instance.get<GamesResponse>(retryUrl);
-          return retryResponse.data;
+          const retryResponse = await instance.get(retryUrl);
+          const retryData = retryResponse.data;
+          // Handle same format mapping
+          if (retryData && typeof retryData === "object" && Array.isArray(retryData.games)) {
+            return {
+              games: retryData.games,
+              total: typeof retryData.count === "number" ? retryData.count : 
+                     typeof retryData.total === "number" ? retryData.total : 
+                     retryData.games.length,
+              limit: retryData.games.length,
+            };
+          }
+          return retryData as GamesResponse;
         } catch (retryError) {
           // Fall through
         }
       }
-      throw new Error(e.response?.data?.detail || "Failed to fetch games");
+      const errorMessage = e.response?.data?.detail || `Failed to fetch games from /games/?limit=${limit}`;
+      console.error(`[getGamesResponse] Error: ${errorMessage}`, {
+        endpoint: `/games/?limit=${limit}`,
+        status: e.response?.status,
+      });
+      throw new Error(errorMessage);
+    }
+    throw e;
+  }
+}
+
+export async function getTrendingGames(): Promise<FullGame[]> {
+  try {
+    const response = await instance.get<FullGame[]>('/games/trending');
+    return response.data;
+  } catch (e: unknown) {
+    if (e instanceof AxiosError) {
+      throw new Error(e.response?.data?.detail || e.message || 'Failed to fetch trending games');
+    }
+    throw e;
+  }
+}
+
+export async function getDealOfTheDay(): Promise<FullGame | null> {
+  try {
+    const response = await instance.get<FullGame>('/games/deal-of-the-day');
+    return response.data;
+  } catch (e: unknown) {
+    if (e instanceof AxiosError) {
+      if (e.response?.status === 404) {
+        return null;
+      }
+      throw new Error(e.response?.data?.detail || e.message || 'Failed to fetch deal of the day');
+    }
+    throw e;
+  }
+}
+
+export async function searchGames(query: string): Promise<FullGame[]> {
+  try {
+    if (!query || !query.trim()) {
+      return [];
+    }
+    const response = await instance.get<FullGame[]>('/games/search', {
+      params: { q: query.trim() }
+    });
+    return response.data;
+  } catch (e: unknown) {
+    if (e instanceof AxiosError) {
+      throw new Error(e.response?.data?.detail || 'Failed to search games');
+    }
+    throw e;
+  }
+}
+
+export async function getGameById(id: string): Promise<FullGame | null> {
+  try {
+    const response = await instance.get<FullGame>(`/games/${id}`);
+    return response.data;
+  } catch (e: unknown) {
+    if (e instanceof AxiosError) {
+      if (e.response?.status === 404) {
+        return null;
+      }
+      throw new Error(e.response?.data?.detail || 'Failed to fetch game');
     }
     throw e;
   }

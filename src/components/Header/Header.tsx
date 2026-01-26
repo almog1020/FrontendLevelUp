@@ -1,34 +1,52 @@
-import { useState, useEffect } from 'react';
+import {useContext, useState} from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './Header.module.scss';
 import { SignIn } from '../SignIn/SignIn';
 import { ETLTrigger } from '../ETLTrigger/ETLTrigger';
+import { searchGames } from '../../services/apis/games';
+import UserPopup from "../UserPopup/UserPopup.tsx";
+import {AuthContext} from "../AuthProvider/AuthProvider.tsx";
 
 export const Header = () => {
+
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
   const cartItemCount = 0; // Mock cart count
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('authToken'));
-
-  // Listen for auth state changes
-  useEffect(() => {
-    const handleAuthChange = () => {
-      setIsAuthenticated(!!localStorage.getItem('authToken'));
-    };
-
-    window.addEventListener('auth-state-changed', handleAuthChange);
-    return () => {
-      window.removeEventListener('auth-state-changed', handleAuthChange);
-    };
-  }, []);
+  const auth = useContext(AuthContext);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
+  const handleSearchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Search query:', searchQuery);
-    // Future: Implement search functionality - could trigger ETL with search term
+    const query = searchQuery.trim();
+    
+    if (!query) {
+      // If empty, trigger normal refresh
+      window.dispatchEvent(new CustomEvent('games-refresh'));
+      return;
+    }
+
+    try {
+      setIsSearching(true);
+      const results = await searchGames(query);
+      
+      // Dispatch search results event
+      window.dispatchEvent(new CustomEvent('games-search', {
+        detail: { results, query }
+      }));
+    } catch (error) {
+      console.error('Search error:', error);
+      // Dispatch error event
+      window.dispatchEvent(new CustomEvent('games-search-error', {
+        detail: { error: error instanceof Error ? error.message : 'Search failed' }
+      }));
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   const handleETLSuccess = () => {
@@ -43,7 +61,25 @@ export const Header = () => {
     <header className={styles.header}>
       <div className={styles.header__container}>
         {/* Logo and Branding */}
-        <div className={styles.header__logo}>
+        <div 
+          className={styles.header__logo}
+          onClick={() => {
+            setSearchQuery(''); // Clear search query
+            window.dispatchEvent(new CustomEvent('games-refresh')); // Reset homepage
+            navigate('/');
+          }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setSearchQuery(''); // Clear search query
+              window.dispatchEvent(new CustomEvent('games-refresh')); // Reset homepage
+              navigate('/');
+            }
+          }}
+          aria-label="Go to homepage"
+        >
           <div className={styles.header__logoIcon}>
             <svg
               width="32"
@@ -86,20 +122,21 @@ export const Header = () => {
           <input
             type="text"
             className={styles.header__searchInput}
-            placeholder="Search for games..."
+            placeholder={isSearching ? "Searching..." : "Search for games..."}
             value={searchQuery}
             onChange={handleSearchChange}
+            disabled={isSearching}
             aria-label="Search for games"
           />
         </form>
 
         {/* Right Side Actions */}
         <div className={styles.header__actions}>
-          {isAuthenticated && (
-            <ETLTrigger 
-              searchTerm={searchQuery || undefined}
-              onSuccess={handleETLSuccess}
-            />
+          {auth?.token && (
+                <ETLTrigger
+                    searchTerm={searchQuery || undefined}
+                    onSuccess={handleETLSuccess}
+                />
           )}
           <button className={styles.header__cartButton} aria-label="Shopping cart">
             <svg
@@ -120,7 +157,7 @@ export const Header = () => {
               <span className={styles.header__cartBadge}>{cartItemCount}</span>
             )}
           </button>
-          <SignIn />
+          {auth?.user ? <UserPopup /> : <SignIn />}
         </div>
       </div>
     </header>

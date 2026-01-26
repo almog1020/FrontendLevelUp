@@ -1,0 +1,138 @@
+@use "sass:color";
+
+// ===== Colors (matched to screenshot) =====
+$bg-dialog: #0b1118;
+$bg-input: #0a0f15;
+
+$text-main: #e5e7eb;
+$text-muted: rgba(229, 231, 235, 0.75);
+$text-placeholder: #7b8796;
+
+$primary: #5aa6ff;
+$primary-hover: #4597ff;
+
+$star-filled: #f5b52a;
+$star-empty: #6f7b8a;
+
+// ===== Typography =====
+$font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+// ===== Dialog (Paper) =====
+.dialog {
+  background-color: $bg-dialog !important;
+  color: $text-main;
+  border-radius: 14px !important;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+// ===== Header =====
+.title {
+  font-family: $font-main;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 0.2px;
+  color: $text-main;
+  padding: 22px 56px 10px 26px;
+  position: relative;
+}
+
+.closeBtn {
+  position: absolute !important;
+  top: 18px;
+  right: 18px;
+  color: rgba(229, 231, 235, 0.65) !important;
+
+  &:hover {
+    color: $text-main !important;
+  }
+}
+
+// ===== Content =====
+.content {
+  padding: 0 26px 18px !important;
+}
+
+.section {
+  margin-top: 14px;
+}
+
+.label {
+  font-family: $font-main;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 0.2px;
+  color: white;
+  margin-bottom: 8px;
+}
+
+// ===== Rating =====
+.rating {
+  font-size: 30px;
+
+  .MuiRating-iconFilled {
+    color: $star-filled;
+  }
+
+  .MuiRating-iconEmpty {
+    color: $star-empty;
+  }
+}
+
+// ===== Textarea =====
+.textarea {
+  width: 95%;
+
+  background-color: #0a0f15;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 12px 14px;
+
+  color: #ffffff;
+  font-size: 14px;
+  line-height: 1.55;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  outline: none;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.22);
+  }
+
+  &:focus {
+    border-color: rgba(90, 166, 255, 0.85);
+  }
+
+  &::placeholder {
+    color: #7b8796;
+    opacity: 1;
+  }
+}
+
+// ===== Actions =====
+.actions {
+  padding: 10px 26px 26px !important;
+}
+
+// ===== Submit Button =====
+.submitBtn {
+  height: 46px;
+  border-radius: 8px !important;
+
+  font-family: $font-main !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  letter-spacing: 0.2px;
+
+  text-transform: none !important;
+
+  background-color: $primary !important;
+  color: #08111b !important;
+
+  &:hover {
+    background-color: $primary-hover !important;
+  }
+
+  &.Mui-disabled {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: rgba(229, 231, 235, 0.45) !important;
+  }
+}
