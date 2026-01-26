@@ -3,8 +3,11 @@ import styles from './UserDetails.module.scss'
 import dashboardIcon from '../../../assets/dashboard.png'
 import profileIcon from '../../../assets/profile.png'
 import logoutIcon from '../../../assets/logout.png'
+import {useNavigate} from "react-router-dom";
 
 export function UserDetails({name,role,onLogout}:{name:string, role:UserRole,onLogout():void}) {
+    const navigate = useNavigate();
+
     return (
         <div className={styles.user_menu}>
             <div className={styles.user_info}>
@@ -12,7 +15,7 @@ export function UserDetails({name,role,onLogout}:{name:string, role:UserRole,onL
                 <div className={styles.user_role}>{role}</div>
             </div>
             <div className={styles.menu_items}>
-                <button className={styles.menu_item}>
+                <button className={styles.menu_item} onClick={() => navigate('/user')}>
                     <img src={dashboardIcon} alt="Dashboard" className={styles.menu_item_icon}/>
                     <div className={styles.title}>Dashboard</div>
                 </button>
