@@ -22,15 +22,26 @@ export interface Purchase {
 
 export async function triggerETL(searchTerm?: string): Promise<ETLResponse> {
   try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+
     const endpoint = '/games/etl';
-    const config = searchTerm 
-      ? { params: { search: searchTerm } }
-      : {};
-    
+    const config = {
+      params: searchTerm ? { search: searchTerm } : undefined,
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    };
+
     const response = await instance.post(endpoint, {}, config);
     return response.data;
   } catch (e: unknown) {
     if (e instanceof AxiosError) {
+      if (e.response?.status === 401) {
+        throw new Error('Not authenticated');
+      }
       throw new Error(e.response?.data?.detail || 'Failed to trigger ETL');
     }
     throw e;

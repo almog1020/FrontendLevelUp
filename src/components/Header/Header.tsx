@@ -1,29 +1,20 @@
-import { useState, useEffect } from 'react';
+import {useContext, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Header.module.scss';
 import { SignIn } from '../SignIn/SignIn';
 import { ETLTrigger } from '../ETLTrigger/ETLTrigger';
 import { searchGames } from '../../services/apis/games';
+import UserPopup from "../UserPopup/UserPopup.tsx";
+import {AuthContext} from "../AuthProvider/AuthProvider.tsx";
 
 export const Header = () => {
+
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const cartItemCount = 0; // Mock cart count
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('authToken'));
-
-  // Listen for auth state changes
-  useEffect(() => {
-    const handleAuthChange = () => {
-      setIsAuthenticated(!!localStorage.getItem('authToken'));
-    };
-
-    window.addEventListener('auth-state-changed', handleAuthChange);
-    return () => {
-      window.removeEventListener('auth-state-changed', handleAuthChange);
-    };
-  }, []);
+  const auth = useContext(AuthContext);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -147,11 +138,11 @@ export const Header = () => {
 
         {/* Right Side Actions */}
         <div className={styles.header__actions}>
-          {isAuthenticated && (
-            <ETLTrigger 
-              searchTerm={searchQuery || undefined}
-              onSuccess={handleETLSuccess}
-            />
+          {auth?.token && (
+                <ETLTrigger
+                    searchTerm={searchQuery || undefined}
+                    onSuccess={handleETLSuccess}
+                />
           )}
           <button className={styles.header__cartButton} aria-label="Shopping cart">
             <svg
@@ -172,7 +163,7 @@ export const Header = () => {
               <span className={styles.header__cartBadge}>{cartItemCount}</span>
             )}
           </button>
-          <SignIn />
+          {auth?.user ? <UserPopup /> : <SignIn />}
         </div>
       </div>
     </header>

@@ -7,12 +7,13 @@ import {toast, ToastContainer} from "react-toastify";
 import {type SubmitHandler, useForm} from 'react-hook-form';
 import type {FormValues} from "../../interfaces/textField.interface.ts";
 import type {SignUpFormValues} from "../../interfaces/sign.interface.ts";
-import {register} from "../../services/apis/users.ts";
+import {getMe, login, register} from "../../services/apis/users.ts";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import LoginButton from "./LoginButton/LoginButton.tsx";
 import {AuthContext} from "../AuthProvider/AuthProvider.tsx";
 import {useDialog} from "../../contexts/DialogContext.tsx";
 import {TextFieldSignIn} from "../TextField/TextFieldSignIn.tsx";
+import {CircularProgress} from "@mui/material";
 
 type AuthMode = 'signin' | 'signup';
 
@@ -20,29 +21,30 @@ export const SignIn = () => {
     const dialog = useDialog();
     const [open, setOpen] = useState(false);
     const [mode, setMode] = useState<AuthMode>('signin');
-    
+    const {register: registerSignIn, handleSubmit: handleSignInSubmit, reset: resetSignIn} = useForm<FormValues>();
+    const {register: registerSignUp, handleSubmit: handleSignUpSubmit, reset: resetSignUp, watch, formState: {errors}} = useForm<SignUpFormValues>();
+    const auth = useContext(AuthContext);
+    const password = watch('password');
+    const [loading, setLoading] = useState<boolean>(false);
+
     // Sync with dialog context
     useEffect(() => {
         setOpen(dialog.isOpen);
         setMode(dialog.mode);
     }, [dialog.isOpen, dialog.mode]);
-    const {register: registerSignIn, handleSubmit: handleSignInSubmit, reset: resetSignIn} = useForm<FormValues>();
-    const {register: registerSignUp, handleSubmit: handleSignUpSubmit, reset: resetSignUp, watch, formState: {errors}} = useForm<SignUpFormValues>();
-    const auth = useContext(AuthContext);
-
-    const password = watch('password');
 
     const onSignInSubmit: SubmitHandler<FormValues> = async (data) => {
-        const {email, password} = data;
         try {
-            await auth!.loginAction(email, password);
-            // Close dialog on successful login
+            setLoading(true);
+            const {email, password} = data;
+            const accessToken = await login(email, password);
+            const user = await getMe(accessToken);
+            auth!.loginAction(user, accessToken);
             dialog.closeDialog();
             resetSignIn();
-        } catch (err) {
-            // Show error toast
-            toast.error((err as Error).message || 'Login failed');
-            resetSignIn();
+        } catch (error: unknown) {
+            setLoading(false);
+            toast.error((error as Error).message || 'Login failed');
         }
     };
 
@@ -101,35 +103,35 @@ export const SignIn = () => {
                             : 'Sign up to get started'}
                     </p>
                 </div>
-                
-                {isSignIn ? (
-                    <form className={styles.sign_in_dialog__form} onSubmit={handleSignInSubmit(onSignInSubmit)}>
-                        <TextFieldSignIn
-                            title={'Email'}
-                            type={'email'}
-                            required={true}
-                            name={'email'}
-                            register={registerSignIn}
-                        />
-                        <TextFieldSignIn
-                            title={'Password'}
-                            type={'password'}
-                            required={true}
-                            name={'password'}
-                            register={registerSignIn}
-                        />
-                        <div className={styles.sign_in_dialog__row}>
-                            <div className={styles.sign_in_dialog__forgot}>
-                                Forgot password?
+                {loading ? <CircularProgress/> : <>
+                    {isSignIn ? (
+                        <form className={styles.sign_in_dialog__form} onSubmit={handleSignInSubmit(onSignInSubmit)}>
+                            <TextFieldSignIn
+                                title={'Email'}
+                                type={'email'}
+                                required={true}
+                                name={'email'}
+                                register={registerSignIn}
+                            />
+                            <TextFieldSignIn
+                                title={'Password'}
+                                type={'password'}
+                                required={true}
+                                name={'password'}
+                                register={registerSignIn}
+                            />
+                            <div className={styles.sign_in_dialog__row}>
+                                <div className={styles.sign_in_dialog__forgot}>
+                                    Forgot password?
+                                </div>
                             </div>
-                        </div>
-                        <button className={styles.sign_in_dialog__submit} type="submit">
-                            Sign In
-                        </button>
-                        <div className={styles.sign_in_dialog__row} style={{justifyContent: 'center', marginTop: '12px'}}>
+                            <button className={styles.sign_in_dialog__submit} type="submit">
+                                Sign In
+                            </button>
+                            <div className={styles.sign_in_dialog__row} style={{justifyContent: 'center', marginTop: '12px'}}>
                             <span style={{color: '#9ca3af', fontSize: '13px'}}>
                                 Don't have an account?{' '}
-                                <span 
+                                <span
                                     className={styles.sign_in_dialog__forgot}
                                     onClick={toggleMode}
                                     style={{cursor: 'pointer'}}
@@ -137,54 +139,54 @@ export const SignIn = () => {
                                     Sign Up
                                 </span>
                             </span>
-                        </div>
-                    </form>
-                ) : (
-                    <form className={styles.sign_in_dialog__form} onSubmit={handleSignUpSubmit(onSignUpSubmit)}>
-                        <TextFieldSignUp
-                            title={'Name'}
-                            type={'text'}
-                            required={true}
-                            name={'name'}
-                            register={registerSignUp}
-                        />
-                        <TextFieldSignUp
-                            title={'Email'}
-                            type={'email'}
-                            required={true}
-                            name={'email'}
-                            register={registerSignUp}
-                        />
-                        <TextFieldSignUp
-                            title={'Password'}
-                            type={'password'}
-                            required={true}
-                            name={'password'}
-                            register={registerSignUp}
-                        />
-                        <div className={styles.sign_in_dialog__field}>
-                            <label className={styles.sign_in_dialog__label}>Confirm Password</label>
-                            <input
-                                className={styles.sign_in_dialog__input}
-                                type="password"
-                                required
-                                {...registerSignUp('confirmPassword', {
-                                    validate: (value) => value === password || 'Passwords do not match'
-                                })}
+                            </div>
+                        </form>
+                    ) : (
+                        <form className={styles.sign_in_dialog__form} onSubmit={handleSignUpSubmit(onSignUpSubmit)}>
+                            <TextFieldSignUp
+                                title={'Name'}
+                                type={'text'}
+                                required={true}
+                                name={'name'}
+                                register={registerSignUp}
                             />
-                            {errors.confirmPassword && (
-                                <span style={{color: '#ef4444', fontSize: '12px', marginTop: '4px'}}>
+                            <TextFieldSignUp
+                                title={'Email'}
+                                type={'email'}
+                                required={true}
+                                name={'email'}
+                                register={registerSignUp}
+                            />
+                            <TextFieldSignUp
+                                title={'Password'}
+                                type={'password'}
+                                required={true}
+                                name={'password'}
+                                register={registerSignUp}
+                            />
+                            <div className={styles.sign_in_dialog__field}>
+                                <label className={styles.sign_in_dialog__label}>Confirm Password</label>
+                                <input
+                                    className={styles.sign_in_dialog__input}
+                                    type="password"
+                                    required
+                                    {...registerSignUp('confirmPassword', {
+                                        validate: (value) => value === password || 'Passwords do not match'
+                                    })}
+                                />
+                                {errors.confirmPassword && (
+                                    <span style={{color: '#ef4444', fontSize: '12px', marginTop: '4px'}}>
                                     {errors.confirmPassword.message}
                                 </span>
-                            )}
-                        </div>
-                        <button className={styles.sign_in_dialog__submit} type="submit">
-                            Sign Up
-                        </button>
-                        <div className={styles.sign_in_dialog__row} style={{justifyContent: 'center', marginTop: '12px'}}>
+                                )}
+                            </div>
+                            <button className={styles.sign_in_dialog__submit} type="submit">
+                                Sign Up
+                            </button>
+                            <div className={styles.sign_in_dialog__row} style={{justifyContent: 'center', marginTop: '12px'}}>
                             <span style={{color: '#9ca3af', fontSize: '13px'}}>
                                 Already have an account?{' '}
-                                <span 
+                                <span
                                     className={styles.sign_in_dialog__forgot}
                                     onClick={toggleMode}
                                     style={{cursor: 'pointer'}}
@@ -192,23 +194,25 @@ export const SignIn = () => {
                                     Sign In
                                 </span>
                             </span>
+                            </div>
+                        </form>
+                    )}
+
+                    <div className={styles.sign_in_dialog__divider}>
+                        <div className={styles.sign_in_dialog__divider_line} />
+                        <div className={styles.sign_in_dialog__divider_text}>
+                            Or continue with
                         </div>
-                    </form>
-                )}
-
-                <div className={styles.sign_in_dialog__divider}>
-                    <div className={styles.sign_in_dialog__divider_line} />
-                    <div className={styles.sign_in_dialog__divider_text}>
-                        Or continue with
+                        <div className={styles.sign_in_dialog__divider_line} />
                     </div>
-                    <div className={styles.sign_in_dialog__divider_line} />
-                </div>
 
-                <div className={styles.sign_in_dialog__social}>
-                    <GoogleOAuthProvider clientId={import.meta.env.VITE_CLIENT_ID}>
-                        <LoginButton/>
-                    </GoogleOAuthProvider>
-                </div>
+                    <div className={styles.sign_in_dialog__social}>
+                        <GoogleOAuthProvider clientId={import.meta.env.VITE_CLIENT_ID}>
+                            <LoginButton/>
+                        </GoogleOAuthProvider>
+                    </div>
+                </>}
+
             </Dialog>
         </>
     )
