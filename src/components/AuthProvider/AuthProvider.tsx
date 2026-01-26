@@ -20,12 +20,14 @@ const AuthProvider = ({ children }:{children:ReactNode}) => {
     const loginAction = async (user:UserResponse,access_token:string) => {
         setToken(access_token)
         setUser(user)
-        navigate("/");
+        localStorage.setItem('token', access_token);
+        navigate("/user");
     };
 
     const logOut = async () => {
         setUser(null)
         setToken("");
+        localStorage.removeItem('token');
         navigate("/");
     };
 

@@ -37,13 +37,14 @@ export const SignIn = () => {
         try {
             setLoading(true);
             const {email, password} = data;
-            const token = await login(email, password);
-            const user = await getMe(token.access_token);
-            auth!.loginAction(user, token.access_token);
-            setOpen(false);
-        }catch(error:unknown) {
+            const accessToken = await login(email, password);
+            const user = await getMe(accessToken);
+            auth!.loginAction(user, accessToken);
+            dialog.closeDialog();
+            resetSignIn();
+        } catch (error: unknown) {
             setLoading(false);
-            toast.error((error as Error).message);
+            toast.error((error as Error).message || 'Login failed');
         }
     };
 
