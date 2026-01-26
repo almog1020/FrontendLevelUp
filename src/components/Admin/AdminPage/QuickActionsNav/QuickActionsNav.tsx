@@ -13,7 +13,7 @@ const QuickActionsNav: React.FC = () => {
       </div>
 
       <div className={styles.grid}>
-        <button type="button" className={styles.actionBtn} onClick={() => navigate("/admin/management")}>
+        <button type="button" className={styles.actionBtn} onClick={() => navigate("/admin/users")}>
           <Users className={styles.icon} />
           Manage Users
         </button>

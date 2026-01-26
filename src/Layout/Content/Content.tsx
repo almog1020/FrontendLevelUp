@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Route, Routes} from "react-router-dom";
+import {Route, Routes, Navigate} from "react-router-dom";
 import {Homepage} from "../../components/Homepage/Homepage.tsx";
 import {GameDetail} from "../../components/GameDetail/GameDetail.tsx";
 import UserManagement from "../../components/UserManagement/UserManagement.tsx";
@@ -23,9 +23,14 @@ const Content:React.FC = () => {
                     <Route path={"/login"} element={<SignIn/>}/>
                     <Route path={"/admin"} element={<AdminPage />} />
                     <Route path={"/admin/games"} element={<GameManagement />} />
+                    {/* Redirect /admin/management to /admin/users */}
+                    <Route path={"/admin/management"} element={<Navigate to="/admin/users" replace />} />
+                    {/* Protected admin routes */}
                     <Route element={<PrivateRoute />}>
-                        <Route path={"/admin/management/users"} element={<UserManagement/>}/>
-                        <Route path={"/admin/management/reviews"} element={<ReviewManagement/>}/>
+                        <Route path={"/admin/users"} element={<UserManagement/>}/>
+                        <Route path={"/admin/reviews"} element={<ReviewManagement/>}/>
+                        {/* Placeholder for stores - redirect to admin dashboard for now */}
+                        <Route path={"/admin/stores"} element={<Navigate to="/admin" replace />} />
                     </Route>
                 </Routes>
             </DialogProvider>
