@@ -1,8 +1,5 @@
 import {createContext, type ReactNode, useState} from "react";
 import { useNavigate } from "react-router-dom";
-import {login, logout, getMe} from "../../services/apis/users.ts";
-import {toast} from "react-toastify";
-import {googleLogout} from "@react-oauth/google";
 import type {UserResponse} from "../../interfaces/user.interface.ts";
 
 
@@ -17,17 +14,6 @@ export const AuthContext = createContext<undefined |
 
 const AuthProvider = ({ children }:{children:ReactNode}) => {
     const navigate = useNavigate();
-
-    const loginAction = async (email:string,password:string) => {
-        try {
-            const token = await login(email, password);
-            const user = await getMe(token);
-            localStorage.setItem("user", user.email)
-            localStorage.setItem("token", token)
-            navigate("/user");
-        } catch (err) {
-            toast.error((err as Error).message);
-        }
     const [token, setToken] = useState<string>("");
     const [user, setUser] = useState<UserResponse | null>(null);
 
@@ -46,7 +32,7 @@ const AuthProvider = ({ children }:{children:ReactNode}) => {
     };
 
     return (
-        <AuthContext value={{ loginAction, logOut,token,user }}>
+        <AuthContext value={{ loginAction, logOut, token, user }}>
             {children}
         </AuthContext>
     );

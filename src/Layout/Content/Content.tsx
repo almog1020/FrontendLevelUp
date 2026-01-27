@@ -7,7 +7,7 @@ import PrivateRoute from "../../components/PrivateRoute/PrivateRoute.tsx";
 import AuthProvider from "../../components/AuthProvider/AuthProvider.tsx";
 import {UserDashboard} from "../../components/UserDashboard/UserDashboard.tsx";
 import {DialogProvider} from "../../contexts/DialogContext.tsx";
-import {Catalog} from "../../components/Catalog";
+import {Catalog} from "../../components/Catalog/Catalog.tsx";
 import ReviewManagement from "../../components/ReviewManagement/ReviewManagement.tsx";
 import {Header} from "../../components/Header/Header.tsx";
 

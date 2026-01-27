@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { searchDeals, getDealUrl, type CatalogGame, type SortOption, type Platform } from '../../services/apis/cheapshark';
-import { getWishlistIds, addToWishlist, removeFromWishlist } from '../../services/apis/wishlist';
 import styles from './Catalog.module.scss';
 
 const PLATFORMS: { value: Platform; label: string }[] = [
@@ -23,28 +22,6 @@ export const Catalog = () => {
     const [search, setSearch] = useState('');
     const [sortBy, setSortBy] = useState<SortOption>('savings');
     const [platform, setPlatform] = useState<Platform>('all');
-    const [wishlist, setWishlist] = useState<Set<string>>(new Set());
-    const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
-
-    // Fetch wishlist on mount
-    useEffect(() => {
-        if (isLoggedIn) {
-            getWishlistIds()
-                .then(ids => setWishlist(new Set(ids)))
-                .catch(() => setWishlist(new Set()));
-        }
-    }, [isLoggedIn]);
-
-    // Listen for auth changes
-    useEffect(() => {
-        const handleAuthChange = () => {
-            const loggedIn = !!localStorage.getItem('token');
-            setIsLoggedIn(loggedIn);
-            if (!loggedIn) setWishlist(new Set());
-        };
-        window.addEventListener('auth-state-changed', handleAuthChange);
-        return () => window.removeEventListener('auth-state-changed', handleAuthChange);
-    }, []);
 
     const fetchGames = useCallback(async () => {
         setLoading(true);
@@ -71,55 +48,6 @@ export const Catalog = () => {
         if (platform === 'xbox') return title.includes('xbox');
         return true;
     });
-
-    const toggleWishlist = async (game: CatalogGame) => {
-        if (!isLoggedIn) {
-            alert('Please log in to add games to your wishlist');
-            return;
-        }
-
-        const inWishlist = wishlist.has(game.id);
-
-        // Optimistic update
-        setWishlist(prev => {
-            const next = new Set(prev);
-            if (inWishlist) {
-                next.delete(game.id);
-            } else {
-                next.add(game.id);
-            }
-            return next;
-        });
-
-        try {
-            if (inWishlist) {
-                await removeFromWishlist(game.id);
-            } else {
-                await addToWishlist({
-                    game_id: game.id,
-                    game_title: game.title,
-                    game_image_url: game.image,
-                    game_price: game.price,
-                    game_original_price: game.originalPrice,
-                    game_discount: game.discount,
-                    store_id: game.storeID,
-                    deal_id: game.dealID,
-                });
-            }
-        } catch (err) {
-            // Revert on error
-            setWishlist(prev => {
-                const next = new Set(prev);
-                if (inWishlist) {
-                    next.add(game.id);
-                } else {
-                    next.delete(game.id);
-                }
-                return next;
-            });
-            console.error('Failed to update wishlist:', err);
-        }
-    };
 
     const handleGameClick = (dealID: string) => {
         window.open(getDealUrl(dealID), '_blank');
@@ -186,13 +114,6 @@ export const Catalog = () => {
                                 {game.discount > 0 && (
                                     <span className={styles.discount}>-{game.discount}%</span>
                                 )}
-                                <button
-                                    className={`${styles.wishlistBtn} ${wishlist.has(game.id) ? styles.wishlisted : ''}`}
-                                    onClick={e => { e.stopPropagation(); toggleWishlist(game); }}
-                                    aria-label={wishlist.has(game.id) ? 'Remove from wishlist' : 'Add to wishlist'}
-                                >
-                                    {wishlist.has(game.id) ? '❤️' : '♡'}
-                                </button>
                             </div>
                             <div className={styles.info}>
                                 <h3 className={styles.gameTitle}>{game.title}</h3>
