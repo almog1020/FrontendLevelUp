@@ -15,7 +15,7 @@ export function UserDetails({name,role,onLogout}:{name:string, role:UserRole,onL
                 <div className={styles.user_role}>{role}</div>
             </div>
             <div className={styles.menu_items}>
-                <button className={styles.menu_item} onClick={() => navigate('/user')}>
+                <button className={styles.menu_item} onClick={() => navigate(`/${role}/dashboard`)}>
                     <img src={dashboardIcon} alt="Dashboard" className={styles.menu_item_icon}/>
                     <div className={styles.title}>Dashboard</div>
                 </button>
