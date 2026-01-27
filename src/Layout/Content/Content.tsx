@@ -7,19 +7,19 @@ import PrivateRoute from "../../components/PrivateRoute/PrivateRoute.tsx";
 import AuthProvider from "../../components/AuthProvider/AuthProvider.tsx";
 import {UserDashboard} from "../../components/UserDashboard/UserDashboard.tsx";
 import {DialogProvider} from "../../contexts/DialogContext.tsx";
-import ReviewManagement from "../../components/ReviewManagement/ReviewManagement.tsx";
+import ReviewManagement from "../../components/ReviewManagement/ReviewManagement.tsx"
 import {Header} from "../../components/Header/Header.tsx";
 
-const Content:React.FC = () => {
+const Content: React.FC = () => {
     return (
         <AuthProvider>
+            <Header/>
             <DialogProvider>
-                <Header/>
                 <Routes>
                     <Route path={"/"} element={<Homepage/>}/>
                     <Route path={"/game/:id"} element={<GameDetail/>}/>
-                    <Route element={<PrivateRoute />}>
-                        <Route path="/user" element={<UserDashboard />} />
+                    <Route element={<PrivateRoute/>}>
+                        <Route path="/user/dashboard" element={<UserDashboard/>}/>
                         <Route path={"/admin/management/users"} element={<UserManagement/>}/>
                         <Route path={"/admin/management/reviews"} element={<ReviewManagement/>}/>
                     </Route>

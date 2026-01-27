@@ -1,6 +1,5 @@
 import {useEffect, useState} from 'react';
 import { useLocation } from 'react-router-dom';
-import { Header } from '../Header/Header';
 import type {Game} from '../../interfaces/game.interface';
 import styles from './GameDetail.module.scss';
 import AddReview from "../AddReview/AddReview.tsx";
@@ -51,7 +50,6 @@ export const GameDetail = () => {
           gameTitle={game.title}
           onClose={() => setOpen(false)}
       />
-      <Header />
       <main className={styles.main}>
         <div className={styles.content}>
           {/* Left Side - Image Gallery */}

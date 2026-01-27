@@ -1,29 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getCurrentUser } from '../../services/apis/users';
 import { getLastPurchases, type Purchase } from '../../services/apis/games';
-import type { UserResponse } from '../../interfaces/user.interface';
 import styles from './UserDashboard.module.scss';
 import { LastPurchases, type LastPurchaseGame } from './LastPurchases/LastPurchases';
 import { RecommendedGames, type RecommendedGame } from './RecommendedGames/RecommendedGames';
 
 export const UserDashboard = () => {
-    const [user, setUser] = useState<UserResponse | null>(null);
     const [lastPurchases, setLastPurchases] = useState<LastPurchaseGame[]>([]);
     const [loadingPurchases, setLoadingPurchases] = useState(true);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        getCurrentUser()
-            .then(data => setUser(data))
-            .catch(err => {
-                if (err.message.includes('Unauthorized')) {
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('user');
-                    window.location.href = '/login';
-                }
-            });
-    }, []);
 
     useEffect(() => {
         // Fetch last purchases when component mounts
@@ -45,8 +30,6 @@ export const UserDashboard = () => {
                 setLoadingPurchases(false);
             });
     }, []);
-
-    if (!user) return <div className={styles.loading}>Loading...</div>;
 
     // Placeholder stats (will connect to backend later)
     const stats = {
@@ -112,9 +95,6 @@ export const UserDashboard = () => {
             <div className={styles.header}>
                 <div className={styles.headerContent}>
                     <h1 className={styles.title}>Dashboard</h1>
-                    <p className={styles.subtitle}>
-                        Welcome back, {user.name}! Here's what's new
-                    </p>
                 </div>
                 <button
                     onClick={() => navigate('/')}
