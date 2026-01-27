@@ -1,33 +1,28 @@
-import {createContext, type ReactNode, useState} from "react";
+import {createContext, type ReactNode} from "react";
 import { useNavigate } from "react-router-dom";
-import type {UserResponse} from "../../interfaces/user.interface.ts";
 
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext<undefined |
     {
-        token: string;
-        user: UserResponse | null;
-        loginAction(user:UserResponse,access_token:string):void,
+        // token: string;
+        // user: UserResponse | null;
+        loginAction(access_token:string,signInAction:"google" | "password"):void,
         logOut():void
     }>(undefined);
 
 const AuthProvider = ({ children }:{children:ReactNode}) => {
     const navigate = useNavigate();
-    const [token, setToken] = useState<string>("");
-    const [user, setUser] = useState<UserResponse | null>(null);
 
-    const loginAction = async (user:UserResponse,access_token:string) => {
-        setToken(access_token)
-        setUser(user)
+    const loginAction = async (access_token:string,signInAction:"google" | "password") => {
         localStorage.setItem('token', access_token);
-        navigate("/user");
+        localStorage.setItem('signInAction', signInAction);
+        navigate("/");
     };
 
     const logOut = async () => {
-        setUser(null)
-        setToken("");
         localStorage.removeItem('token');
+        localStorage.removeItem('signInAction');
         navigate("/");
     };
 

@@ -29,7 +29,8 @@ export default function AddReview({open, gameTitle, onClose}: ReviewDialogProps)
         if (!star) return;
         try {
             const token = localStorage.getItem("token") ?? "guest"
-            const userId = token === "guest" ? null : (await getMe(token)).id
+            const signInAction = localStorage.getItem("signIn");
+            const userId = (token === "guest" && !signInAction) ? null : (await getMe(token,signInAction!)).id
             await create_review(star,comment,gameTitle,userId)
             toast.success("Review added successfully.")
             setStar(1);
