@@ -2,8 +2,10 @@
 import { Navigate, Outlet } from "react-router-dom";
 
 const PrivateRoute = () => {
-    const isLogin = localStorage.getItem("token") ?? ""
-    if (!isLogin) return <Navigate to="/" />;
+    const token = localStorage.getItem("token");
+    const legacyUser = localStorage.getItem("user");
+    const isLogin = Boolean(token || legacyUser);
+    if (!isLogin) return <Navigate to="/" replace />;
     return <Outlet />;
 };
 

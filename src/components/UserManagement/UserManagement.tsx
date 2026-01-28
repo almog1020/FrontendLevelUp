@@ -9,7 +9,6 @@ import activeUser from "../../assets/activeUsers.png";
 import suspendedUsers from "../../assets/suspendedUsers.png";
 import admin from "../../assets/admin.png";
 import type {StatsCard} from "../../interfaces/statsCard.interface.ts";
-import {API_BASE_URL} from "../../services/apis/config.ts";
 
 
 const UserManagement: React.FC = () => {
@@ -17,7 +16,7 @@ const UserManagement: React.FC = () => {
     const wsRef = useRef<WebSocket | null>(null);
 
     useEffect(() => {
-        const ws = new WebSocket(`${API_BASE_URL}/users/ws`);
+        const ws = new WebSocket("ws://localhost:8000/users/ws");
         wsRef.current = ws;
 
         ws.onopen = () => console.log("WebSocket connected");

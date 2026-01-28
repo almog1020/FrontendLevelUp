@@ -1,0 +1,243 @@
+.card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.cardHeader {
+  margin-bottom: 12px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  opacity: 0.75;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.cardContent {
+  padding-top: 8px;
+  max-height: 250px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 8px;
+}
+
+.dealsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dealRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.dealRow:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.leftZone {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.thumbnailContainer {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+}
+
+.thumbnail {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.thumbnailPlaceholder {
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+
+.discountPercent {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--neon-green, #22c55e);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.middleZone {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gameTitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.storeName {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rightZone {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.salePrice {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.normalPrice {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: line-through;
+}
+
+.emptyState {
+  padding: 24px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+}
+
+.errorContainer {
+  padding: 16px;
+  text-align: center;
+}
+
+.errorMessage {
+  margin: 0 0 12px 0;
+  color: #ef4444;
+  font-size: 14px;
+}
+
+.retryButton {
+  padding: 8px 16px;
+  background: rgba(88, 166, 255, 0.1);
+  border: 1px solid rgba(88, 166, 255, 0.3);
+  border-radius: 6px;
+  color: #58a6ff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.retryButton:hover {
+  background: rgba(88, 166, 255, 0.2);
+}
+
+// Skeleton loading styles
+.skeletonRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.skeletonLeftZone {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.skeletonThumbnail {
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeletonDiscount {
+  width: 60px;
+  height: 28px;
+  background: rgba(34, 197, 94, 0.2);
+  border-radius: 4px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeletonContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.skeletonTitle {
+  height: 16px;
+  width: 60%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeletonStore {
+  height: 12px;
+  width: 40%;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeletonPrice {
+  width: 70px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+

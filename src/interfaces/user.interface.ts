@@ -12,8 +12,7 @@ export interface User {
     lastActive: string;
     purchase: string;
     google_id: string;
-}
-export interface UserResponse {
+}export interface UserResponse {
     id: number;
     name: string;
     email: string;
