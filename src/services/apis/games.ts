@@ -357,4 +357,3 @@ export async function triggerEtl(search?: string): Promise<EtlResult> {
 
 // Export alias for backward compatibility with ETLTrigger component
 export const triggerETL = triggerEtl;
-
