@@ -8,23 +8,68 @@ export interface ETLResponse {
   message?: string;
 }
 
+export interface Purchase {
+  id: number;
+  user_id: number;
+  game_id: string;
+  game_title: string;
+  game_image_url: string | null;
+  game_genre: string | null;
+  purchase_date: string;
+  price: number | null;
+  store: string | null;
+}
+
 export async function triggerETL(searchTerm?: string): Promise<ETLResponse> {
   try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+
     const endpoint = '/games/etl';
-    const config = searchTerm 
-      ? { params: { search: searchTerm } }
-      : {};
-    
+    const config = {
+      params: searchTerm ? { search: searchTerm } : undefined,
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    };
+
     const response = await instance.post(endpoint, {}, config);
     return response.data;
   } catch (e: unknown) {
     if (e instanceof AxiosError) {
+      if (e.response?.status === 401) {
+        throw new Error('Not authenticated');
+      }
       throw new Error(e.response?.data?.detail || 'Failed to trigger ETL');
     }
     throw e;
   }
 }
 
+export async function getLastPurchases(limit: number = 10): Promise<Purchase[]> {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await instance.get('/purchases/me', {
+      params: { limit },
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (e: unknown) {
+    if (e instanceof AxiosError) {
+      if (e.response?.status === 401) {
+        throw new Error('Unauthorized. Please log in again.');
+      }
+      throw new Error(e.response?.data?.detail || 'Failed to fetch purchases');
+    }
+    throw e;
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function getAllGames(): Promise<Game[]> {
   try {
     const response = await instance.get<Game[]>('/games/');
@@ -75,9 +120,12 @@ export async function searchGames(query: string): Promise<Game[]> {
     return response.data;
   } catch (e: unknown) {
     if (e instanceof AxiosError) {
+      if (e.response?.status === 401) {
+        throw new Error('Unauthorized. Please log in again.');
+      }
       throw new Error(e.response?.data?.detail || 'Failed to search games');
     }
-    throw e;
+    throw new Error('Failed to search games');
   }
 }
 
