@@ -4,6 +4,7 @@ import styles from './Header.module.scss';
 import { SignIn } from '../SignIn/SignIn';
 import { ETLTrigger } from '../ETLTrigger/ETLTrigger';
 import { searchGames } from '../../services/apis/games';
+import LevelUpLogo from '../../assets/remote.png'
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -90,20 +91,7 @@ export const Header = () => {
           aria-label="Go to homepage"
         >
           <div className={styles.header__logoIcon}>
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-              <line x1="8" y1="21" x2="16" y2="21"></line>
-              <line x1="12" y1="17" x2="12" y2="21"></line>
-            </svg>
+              <img src={LevelUpLogo} alt={'Level Up'} />
           </div>
           <div className={styles.header__branding}>
             <h1 className={styles.header__title}>LevelUp</h1>
