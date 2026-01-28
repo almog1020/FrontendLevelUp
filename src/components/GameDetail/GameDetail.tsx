@@ -7,6 +7,7 @@ import type {ReviewRecord} from "../../interfaces/review.interface.ts";
 import {getGameReviews} from "../../services/apis/reviews.ts";
 import {getGameById} from "../../services/apis/games.ts";
 import Stars from "../Stars/Stars.tsx";
+import { GameDetailSkeleton } from '../GameDetailSkeleton/GameDetailSkeleton';
 
 export const GameDetail = () => {
   const [activeTab, setActiveTab] = useState<'description' | 'price' | 'reviews'>('description');
@@ -78,11 +79,7 @@ export const GameDetail = () => {
   };
 
   if (loading) {
-    return (
-      <div className={styles.gameDetail}>
-        <div className={styles.loading}>Loading game details...</div>
-      </div>
-    );
+    return <GameDetailSkeleton />;
   }
 
   if (error || !game) {
