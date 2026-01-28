@@ -6,8 +6,6 @@ import type {UserResponse} from "../../interfaces/user.interface.ts";
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext<undefined |
     {
-        token: string;
-        user: UserResponse | null;
         loginAction(user:UserResponse,access_token:string):void,
         logOut():void
     }>(undefined);
@@ -32,7 +30,7 @@ const AuthProvider = ({ children }:{children:ReactNode}) => {
     };
 
     return (
-        <AuthContext value={{ loginAction, logOut, token, user }}>
+        <AuthContext value={{ loginAction, logOut }}>
             {children}
         </AuthContext>
     );

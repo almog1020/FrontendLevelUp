@@ -19,8 +19,6 @@ const Content:React.FC = () => {
                 <Routes>
                     <Route path={"/"} element={<Homepage/>}/>
                     <Route path={"/catalog"} element={<Catalog/>}/>
-                    <Route path={"/admin/management/user"} element={<UserManagement/>}/>
-                    <Route path={"/admin/management/review"} element={<ReviewManagement/>}/>
                     <Route path={"/game/:id"} element={<GameDetail/>}/>
                     <Route element={<PrivateRoute />}>
                         <Route path="/user" element={<UserDashboard />} />

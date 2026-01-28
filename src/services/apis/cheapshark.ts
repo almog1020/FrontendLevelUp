@@ -64,7 +64,6 @@ export async function searchDeals(params: SearchParams = {}): Promise<CatalogGam
         sortBy,
         pageNumber,
         pageSize,
-        onSale: 1,
     };
 
     if (search) queryParams.title = search;
