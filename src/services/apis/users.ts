@@ -1,5 +1,5 @@
-import {API_BASE_URL, instance, instanceAuth} from "./config.ts";
-import axios, {AxiosError} from "axios";
+import {instance, instanceAuth} from "./config.ts";
+import {AxiosError} from "axios";
 import type {RegisterResponse} from "../../interfaces/sign.interface.ts";
 import type {User, UserResponse, UserStatus} from "../../interfaces/user.interface.ts";
 
@@ -56,36 +56,16 @@ export async function updateUser(email:string,editUser:User): Promise<void> {
         throw e;
     }
 }
-export async function getCurrentUser(): Promise<UserResponse> {
+export async function getMe(token:string,signInAction:string): Promise<UserResponse> {
     try {
-        const token = localStorage.getItem('token');
-        return (await instance.get('/users/me', {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })).data;
-    } catch (e: unknown) {
-        if (e instanceof AxiosError) {
-            if (e.response?.status === 401) {
-                throw new Error('Unauthorized. Please log in again.');
-            }
-            throw new Error(e.response?.data?.detail || 'Failed to fetch user data');
-        }
-        throw e;
-    }
-}
-export async function getMe(accessToken:string): Promise<UserResponse> {
-    try {
-        return (await axios.create({
-            baseURL: API_BASE_URL,
-            timeout: 1000,
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Authorization': `Bearer ${accessToken}`,
-            },
-        }).get('/users/me')).data;
+        if(signInAction === "password")
+            return (await instance.get('/users/me', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })).data;
+        return (await instance.post('/auth/google/me',{token})).data;
+
     } catch (e: unknown) {
         if (e instanceof AxiosError) {
             if (e.response?.status === 401) {
