@@ -1,11 +1,9 @@
 import * as React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Users, Gamepad2, Store, MessageSquare } from "lucide-react";
 import styles from "./QuickActionsNav.module.scss";
 
 const QuickActionsNav: React.FC = () => {
-  const navigate = useNavigate();
-
   return (
     <section className={styles.card}>
       <div className={styles.cardHeader}>
@@ -13,25 +11,25 @@ const QuickActionsNav: React.FC = () => {
       </div>
 
       <div className={styles.grid}>
-        <button type="button" className={styles.actionBtn} onClick={() => navigate("/admin/users")}>
+        <Link className={styles.actionBtn} to="/admin/users">
           <Users className={styles.icon} />
           Manage Users
-        </button>
+        </Link>
 
-        <button type="button" className={styles.actionBtn} onClick={() => navigate("/admin/games")}>
+        <Link className={styles.actionBtn} to="/admin/games">
           <Gamepad2 className={styles.icon} />
           Manage Games
-        </button>
+        </Link>
 
-        <button type="button" className={styles.actionBtn} onClick={() => navigate("/admin/stores")}>
+        <Link className={styles.actionBtn} to="/admin/stores">
           <Store className={styles.icon} />
           Manage Stores
-        </button>
+        </Link>
 
-        <button type="button" className={styles.actionBtn} onClick={() => navigate("/admin/reviews")}>
+        <Link className={styles.actionBtn} to="/admin/reviews">
           <MessageSquare className={styles.icon} />
           Review Moderation
-        </button>
+        </Link>
       </div>
     </section>
   );

@@ -14,13 +14,8 @@ export async function login(username: string, password: string): Promise<string>
         return response.data.access_token;
     } catch (e: unknown) {
         if (e instanceof AxiosError) {
-<<<<<<< HEAD
-            if (e.response?.status === 422) {
-                throw new Error('Password incorrect');
-=======
             if (e.response?.status === 401 || e.response?.status === 422) {
                 throw new Error('Incorrect email or password');
->>>>>>> main
             }
             throw new Error(e.response?.data?.detail || 'Login failed');
         }

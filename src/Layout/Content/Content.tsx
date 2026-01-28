@@ -4,7 +4,6 @@ import {Homepage} from "../../components/Homepage/Homepage.tsx";
 import {GameDetail} from "../../components/GameDetail/GameDetail.tsx";
 import UserManagement from "../../components/UserManagement/UserManagement.tsx";
 import PrivateRoute from "../../components/PrivateRoute/PrivateRoute.tsx";
-import {SignIn} from "../../components/SignIn/SignIn.tsx";
 import AuthProvider from "../../components/AuthProvider/AuthProvider.tsx";
 import {DialogProvider} from "../../contexts/DialogContext.tsx";
 import AdminPage from "../../components/Admin/AdminPage/AdminPage.tsx";
@@ -20,7 +19,6 @@ const Content:React.FC = () => {
                 <Routes>
                     <Route path={"/"} element={<Homepage/>}/>
                     <Route path={"/game/:id"} element={<GameDetail/>}/>
-                    <Route path={"/login"} element={<SignIn/>}/>
                     <Route path={"/admin"} element={<AdminPage />} />
                     <Route path={"/admin/games"} element={<GameManagement />} />
                     {/* Redirect /admin/management to /admin/users */}
