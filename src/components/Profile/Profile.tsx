@@ -17,7 +17,8 @@
 
 import React, { useState, useEffect } from 'react';
 import type { ProfileData } from '../../interfaces/profile.interface';
-import { getProfile, updateProfile, updatePreferences } from '../../services/apis/profile';
+import type { UserResponse, UserBasePayload } from '../../interfaces/user.interface';
+import { updateProfileBackend, updatePreferences } from '../../services/apis/profile';
 import { getCurrentUser } from '../../services/apis/users';
 import { UserProfileCard } from './UserProfileCard/UserProfileCard';
 import { StatisticsCard } from './StatisticsCard/StatisticsCard';
@@ -29,112 +30,91 @@ import styles from './Profile.module.scss';
 import { toast } from 'react-toastify';
 
 export const Profile: React.FC = () => {
-    // State management for profile data, loading status, and error handling
     const [profileData, setProfileData] = useState<ProfileData | null>(null);
+    const [currentUser, setCurrentUser] = useState<UserResponse | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    // Load profile data when component mounts
     useEffect(() => {
         loadProfile();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     /**
-     * Loads user profile data from the API
-     * Fetches current user data from /users/me or /profile endpoint
-     * Note: Backend should NEVER return password (hashed or plain text) in the response
+     * Loads user data from GET /users/me only (backend single source of truth).
+     * Builds ProfileData for UI; stores currentUser for update payloads.
      */
     const loadProfile = async () => {
         try {
             setLoading(true);
             setError(null);
-            
-            // Try to fetch profile data - use getProfile first as it contains all data
-            // If that fails, try to get user data from /users/me as fallback
-            let data: ProfileData;
-            
-            try {
-                // Fetch full profile data from /profile endpoint
-                // Backend should return ProfileData WITHOUT any password fields
-                data = await getProfile();
-            } catch (profileError) {
-                // If /profile fails, try to get user data and create minimal profile
-                console.warn('Failed to fetch from /profile, trying /users/me:', profileError);
-                
-                try {
-                    const currentUser = await getCurrentUser();
-                    
-                    // Create minimal profile data structure
-                    // Note: currentUser does NOT contain password (UserResponse interface)
-                    data = {
-                        profile: {
-                            id: currentUser.id,
-                            name: currentUser.name,
-                            email: currentUser.email,
-                            role: currentUser.role,
-                            memberSince: currentUser.joined,
-                            lastLogin: currentUser.lastActive,
-                        },
-                        statistics: {
-                            wishlistItems: 0,
-                            totalSaved: 0,
-                            gamesTracked: 0,
-                            priceAlerts: 0,
-                            reviewsWritten: 0,
-                        },
-                        preferences: {
-                            favoriteGenre: 'Action',
-                            preferredStore: 'Steam',
-                        },
-                        activities: [],
-                    };
-                } catch (userError) {
-                    // Both endpoints failed - backend is likely not running
-                    const errorMsg = userError instanceof Error ? userError.message : 'Unknown error';
-                    if (errorMsg.includes('timeout') || errorMsg.includes('ECONNREFUSED') || errorMsg.includes('Cannot connect')) {
-                        throw new Error('Backend server is not running. Please start the backend server at http://127.0.0.1:8000');
-                    }
-                    throw userError;
-                }
-            }
-
+            const user = await getCurrentUser();
+            setCurrentUser(user);
+            const data: ProfileData = {
+                profile: {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+                    memberSince: user.joined,
+                    lastLogin: user.lastActive,
+                },
+                statistics: {
+                    wishlistItems: 0,
+                    totalSaved: 0,
+                    gamesTracked: 0,
+                    priceAlerts: 0,
+                    reviewsWritten: 0,
+                },
+                preferences: {
+                    favoriteGenre: 'Action',
+                    preferredStore: 'Steam',
+                },
+                activities: [],
+            };
             setProfileData(data);
-            setLoading(false);
         } catch (err) {
-            // Handle errors during profile loading
             const errorMessage = err instanceof Error ? err.message : 'Failed to load profile';
             setError(errorMessage);
             setLoading(false);
             toast.error(errorMessage);
             console.error('Profile loading error:', err);
+        } finally {
+            setLoading(false);
         }
     };
 
 
     /**
-     * Handles updating user's profile information
-     * Called when user saves changes in PersonalInfoCard
-     * @param profile - Partial profile object containing fields to update
+     * Handles profile update via PUT /users/{email} with UserBase payload.
+     * Uses backend UPDATE endpoint exactly: path, structure, and field names.
      */
-    const handleProfileUpdate = async (profile: Partial<ProfileData['profile']>) => {
-        if (!profileData) return;
+    const handleProfileUpdate = async (profile: Partial<ProfileData['profile']> & { password?: string }) => {
+        if (!profileData || !currentUser) return;
         try {
-            // Call API to update profile on backend
-            await updateProfile(profile);
-            // Update local state with new profile data
+            const payload: UserBasePayload = {
+                email: profile.email ?? currentUser.email,
+                name: profile.name ?? currentUser.name,
+                role: currentUser.role,
+                status: currentUser.status,
+                purchase: Number(currentUser.purchase),
+            };
+            if (profile.password && profile.password.trim() !== '') {
+                payload.password = profile.password;
+            }
+            if (currentUser.google_id != null) payload.google_id = currentUser.google_id;
+            if (currentUser.joined) payload.joined = currentUser.joined;
+            if (currentUser.lastActive) payload.last_active = currentUser.lastActive;
+
+            await updateProfileBackend(currentUser.email, payload);
+            const { password: _p, ...profileUpdates } = profile;
             setProfileData({
                 ...profileData,
-                profile: {
-                    ...profileData.profile,
-                    ...profile,
-                },
+                profile: { ...profileData.profile, ...profileUpdates },
             });
             toast.success('Profile updated successfully');
-            // Reload profile to ensure we have the latest data
             await loadProfile();
         } catch (err) {
-            // Handle errors during profile update
             toast.error(err instanceof Error ? err.message : 'Failed to update profile');
         }
     };

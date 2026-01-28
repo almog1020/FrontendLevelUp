@@ -2,6 +2,25 @@ export type UserRole = "admin" | "user"
 export type UserStatus = "active" | "suspended" | "inactive"
 
 /**
+ * UserBase payload for PUT /users/{email}.
+ * Matches backend UserBase exactly (paths, payload structure, field names).
+ * Use snake_case for last_active, favorite_genre, preferred_store.
+ */
+export interface UserBasePayload {
+    email: string;
+    name: string;
+    password?: string;
+    google_id?: string;
+    role: UserRole;
+    status: UserStatus;
+    purchase: number;
+    joined?: string;
+    last_active?: string;
+    favorite_genre?: string;
+    preferred_store?: string;
+}
+
+/**
  * User Interface
  * Represents the full user model in the database
  * NOTE: This interface includes password for internal/database use only

@@ -15,14 +15,12 @@
 import React, { useEffect } from 'react';
 import type { Profile } from '../../../interfaces/profile.interface';
 import styles from './PersonalInfoCard.module.scss';
-import { updateProfile } from '../../../services/apis/profile';
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
 
-
 interface PersonalInfoCardProps {
     profile: Profile;
-    onUpdate?: (profile: Partial<Profile>) => void;
+    onUpdate?: (profile: Partial<Profile> & { password?: string }) => void | Promise<void>;
 }
 
 export const PersonalInfoCard: React.FC<PersonalInfoCardProps> = ({ profile, onUpdate }) => {
@@ -37,29 +35,13 @@ export const PersonalInfoCard: React.FC<PersonalInfoCardProps> = ({ profile, onU
 
     const onSubmit = async (data: { name: string, email: string, password: string }) => {
         try {
-            // Only send fields that have been changed and are not empty
             const updateData: Partial<Profile & { password?: string }> = {};
-            if (data.name !== profile.name) {
-                updateData.name = data.name;
-            }
-            if (data.email !== profile.email) {
-                updateData.email = data.email;
-            }
-            // Only include password if user provided a new one
-            // Password is sent in plain text to backend, which will hash it before storing
-            // Backend should NEVER return password hashes to frontend
-            if (data.password && data.password.trim() !== '') {
-                updateData.password = data.password;
-            }
+            if (data.name !== profile.name) updateData.name = data.name;
+            if (data.email !== profile.email) updateData.email = data.email;
+            if (data.password && data.password.trim() !== '') updateData.password = data.password;
 
-            // Only make API call if there are changes
             if (Object.keys(updateData).length > 0) {
-                await updateProfile(updateData);
-                // Notify parent component to refresh profile data
-                if (onUpdate) {
-                    onUpdate(updateData);
-                }
-                // Reset password field after successful update
+                await onUpdate?.(updateData);
                 reset({ name: data.name, email: data.email, password: '' });
             } else {
                 toast.info('No changes to save');
