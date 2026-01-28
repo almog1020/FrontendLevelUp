@@ -5,8 +5,6 @@ import { useNavigate } from "react-router-dom";
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext<undefined |
     {
-        // token: string;
-        // user: UserResponse | null;
         loginAction(access_token:string,signInAction:"google" | "password"):void,
         logOut():void
     }>(undefined);
