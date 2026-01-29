@@ -2,7 +2,6 @@ import {useEffect, useRef, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import styles from './Header.module.scss';
 import {SignForm} from '../SignForm/SignForm.tsx';
-import {ETLTrigger} from '../ETLTrigger/ETLTrigger';
 import {searchGames} from '../../services/apis/games';
 import UserPopup from "../UserPopup/UserPopup.tsx";
 import LevelUpLogo from '../../assets/LevelUp.png'
@@ -13,8 +12,6 @@ export const Header = () => {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearching, setIsSearching] = useState(false);
-    const cartItemCount = 0; // Mock cart count
-    const [refreshTrigger, setRefreshTrigger] = useState(0);
     const token = localStorage.getItem('token');
     const prevToken = useRef<string | null>(null);
 
@@ -58,14 +55,6 @@ export const Header = () => {
         } finally {
             setIsSearching(false);
         }
-    };
-
-    const handleETLSuccess = () => {
-        console.log(refreshTrigger)
-        // Trigger a refresh of the homepage data
-        setRefreshTrigger((prev) => prev + 1);
-        // Dispatch custom event that Homepage can listen to
-        window.dispatchEvent(new CustomEvent('games-refresh'));
     };
 
     return (
@@ -128,37 +117,12 @@ export const Header = () => {
                         />
                     </form>
 
-                    {/* Right Side Actions */}
-                    <div className={styles.header__actions}>
-                        {token && (
-                            <ETLTrigger
-                                searchTerm={searchQuery || undefined}
-                                onSuccess={handleETLSuccess}
-                            />
-                        )}
-                        <button className={styles.header__cartButton} aria-label="Shopping cart">
-                            <svg
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                                <line x1="3" y1="6" x2="21" y2="6"></line>
-                                <path d="M16 10a4 4 0 0 1-8 0"></path>
-                            </svg>
-                            {cartItemCount > 0 && (
-                                <span className={styles.header__cartBadge}>{cartItemCount}</span>
-                            )}
-                        </button>
-                        {token ? <UserPopup/> : <SignForm/>}
-                    </div>
+                {/* Right Side Actions */}
+                <div className={styles.header__actions}>
+                    {token ? <UserPopup/> : <SignForm/>}
                 </div>
-            </header>
+            </div>
+        </header>
     );
 };
 
