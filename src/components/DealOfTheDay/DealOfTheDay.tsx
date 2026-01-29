@@ -51,11 +51,13 @@ export const DealOfTheDay = ({ game }: DealOfTheDayProps) => {
 
           <div className={styles.dealOfTheDay__pricing}>
             <span className={styles.dealOfTheDay__currentPrice}>
-              ${game.currentPrice.toFixed(2)}
+              {game.currentPrice === 0 ? 'FREE!' : `$${game.currentPrice.toFixed(2)}`}
             </span>
-            <span className={styles.dealOfTheDay__originalPrice}>
-              ${game.originalPrice.toFixed(2)}
-            </span>
+            {game.currentPrice > 0 && (
+              <span className={styles.dealOfTheDay__originalPrice}>
+                ${game.originalPrice.toFixed(2)}
+              </span>
+            )}
           </div>
 
           <button 

@@ -90,7 +90,12 @@ export const GameDetail = () => {
     );
   }
 
-  const bestPriceUrl = game.priceComparison?.find(item => item.url)?.url;
+  const bestPriceUrl =
+    game.priceComparison?.find(
+      (item) => item.price === game.currentPrice && item.url
+    )?.url ?? game.priceComparison?.find((item) => item.url)?.url;
+  const displayStoreName = game.storeName ?? game.priceComparison?.[0]?.store;
+  const isFree = game.currentPrice === 0;
 
   return (
     <div className={styles.gameDetail}>
@@ -101,18 +106,15 @@ export const GameDetail = () => {
       />
       <main className={styles.main}>
         <div className={styles.content}>
-          {/* Left Side - Image Gallery */}
           <div className={styles.imageSection}>
             <div className={styles.mainImageContainer}>
               <img src={game.image} alt={game.title} className={styles.mainImage} />
             </div>
           </div>
 
-          {/* Right Side - Game Info */}
           <div className={styles.infoSection}>
             <h1 className={styles.title}>{game.title}</h1>
 
-            {/* Genre Tags */}
             <div className={styles.genres}>
               {game.genres.map((genre, index) => (
                 <span key={index} className={styles.genreTag}>
@@ -121,21 +123,26 @@ export const GameDetail = () => {
               ))}
             </div>
 
-            {/* Price Box */}
             <div className={styles.priceBox}>
               <div className={styles.priceBoxLabel}>Best Price</div>
               <div className={styles.priceBoxContent}>
                 <div className={styles.priceRow}>
-                  <span className={styles.currentPrice}>${game.currentPrice.toFixed(2)}</span>
-                  {game.originalPrice > game.currentPrice && (
-                    <span className={styles.originalPrice}>${game.originalPrice.toFixed(2)}</span>
+                  {isFree ? (
+                    <span className={styles.currentPrice}>FREE!</span>
+                  ) : (
+                    <>
+                      <span className={styles.currentPrice}>${game.currentPrice.toFixed(2)}</span>
+                      {game.originalPrice > game.currentPrice && (
+                        <span className={styles.originalPrice}>${game.originalPrice.toFixed(2)}</span>
+                      )}
+                    </>
                   )}
                 </div>
                 {game.discount > 0 && (
                   <div className={styles.discountBadge}>Save {game.discount}%</div>
                 )}
-                {game.storeName && (
-                  <div className={styles.storeName}>at {game.storeName}</div>
+                {displayStoreName && (
+                  <div className={styles.storeName}>at {displayStoreName}</div>
                 )}
                 {bestPriceUrl ? (
                   <a
@@ -154,7 +161,6 @@ export const GameDetail = () => {
               </div>
             </div>
 
-            {/* Action Buttons */}
             <div className={styles.actionButtons}>
               <button
                 className={`${styles.wishlistButton} ${isWishlisted ? styles.wishlistButtonActive : ''}`}
@@ -173,7 +179,6 @@ export const GameDetail = () => {
               </button>
             </div>
 
-            {/* Game Details */}
             <div className={styles.gameDetails}>
               {game.releaseDate && (
                 <div className={styles.detailRow}>
@@ -191,7 +196,6 @@ export const GameDetail = () => {
           </div>
         </div>
 
-        {/* Bottom Section - Tabs */}
         <div className={styles.tabsSection}>
           <div className={styles.tabs}>
             <button
@@ -231,7 +235,9 @@ export const GameDetail = () => {
                       <div key={index} className={styles.priceRow}>
                         <div className={styles.priceInfo}>
                           <span className={styles.priceStore}>{priceItem.store}</span>
-                          <span className={styles.priceValue}>${priceItem.price.toFixed(2)}</span>
+                          <span className={styles.priceValue}>
+                            {priceItem.price === 0 ? 'FREE!' : `$${priceItem.price.toFixed(2)}`}
+                          </span>
                         </div>
                         {priceItem.url && (
                           <a
