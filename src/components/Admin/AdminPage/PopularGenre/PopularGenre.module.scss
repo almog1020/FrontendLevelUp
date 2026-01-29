@@ -1,0 +1,41 @@
+.card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.cardHeader {
+  margin-bottom: 12px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  opacity: 0.75;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.cardContent {
+  padding-top: 8px;
+}
+
+.chartContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyChartContainer {
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
