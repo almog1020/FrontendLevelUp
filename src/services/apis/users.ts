@@ -10,15 +10,10 @@ export async function login(username: string, password: string): Promise<string>
         params.append('username', username);
         params.append('password', password);
         
-        const response = await instanceAuth.post('/auth/token', params, {
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-        });
+        const response = await instanceAuth.post('/auth/token', params);
         return response.data.access_token;
     } catch (e: unknown) {
         if (e instanceof AxiosError) {
-            if (!e.response) {
-                throw new Error('Cannot connect to server. Please make sure the backend is running at http://127.0.0.1:8000');
-            }
             if (e.response?.status === 401 || e.response?.status === 422) {
                 throw new Error('Incorrect email or password');
             }
@@ -28,9 +23,6 @@ export async function login(username: string, password: string): Promise<string>
     }
 }
 
-/**
- * Registers a new user
- */
 export async function register(email: string, password: string, name: string): Promise<RegisterResponse> {
     try {
         return (
@@ -38,67 +30,32 @@ export async function register(email: string, password: string, name: string): P
         ).data;
     } catch (e: unknown) {
         if (e instanceof AxiosError) {
-            if (!e.response) {
-                throw new Error('Cannot connect to server. Please make sure the backend is running at http://127.0.0.1:8000');
+            if (e.response?.status === 400) {
+                throw new Error(e.response.data.detail || 'Email already registered');
             }
-            if (e.response.status === 400) {
-                throw new Error(e.response.data?.detail || 'Email already registered');
-            }
-            throw new Error(e.response.data?.detail || 'Registration failed');
+            throw new Error(e.response?.data?.detail || 'Registration failed');
         }
         throw e;
     }
 }
-
 export async function deleteUser(email:string): Promise<void> {
     try {
         await instance.delete(`/users/${email}`)
     }catch(e:unknown) {
-        if (e instanceof AxiosError) {
-            if (!e.response) {
-                throw new Error('Cannot connect to server. Please make sure the backend is running at http://127.0.0.1:8000');
-            }
-            throw new Error(e.response.data?.detail || 'Failed to delete user');
-        }
+        if (e instanceof AxiosError)
+            throw new Error(e.response!.data.detail);
         throw e;
     }
 }
-
 export async function updateUser(email:string,editUser:User): Promise<void> {
     try {
         await instance.put(`/users/${email}`,{...editUser})
     }catch(e:unknown) {
-        if (e instanceof AxiosError) {
-            if (!e.response) {
-                throw new Error('Cannot connect to server. Please make sure the backend is running at http://127.0.0.1:8000');
-            }
-            throw new Error(e.response.data?.detail || 'Failed to update user');
-        }
+        if (e instanceof AxiosError)
+            throw new Error(e.response!.data.detail);
         throw e;
     }
 }
-
-/**
- * Fetches the current authenticated user's data
- */
-export async function getCurrentUser(): Promise<UserResponse> {
-    try {
-        const response = await instanceAuth.get('/users/me');
-        return response.data;
-    } catch (e: unknown) {
-        if (e instanceof AxiosError) {
-            if (!e.response) {
-                throw new Error('Cannot connect to server. Please make sure the backend is running at http://127.0.0.1:8000');
-            }
-            if (e.response.status === 401 || e.response.status === 403) {
-                throw new Error('Authentication failed. Please log in again.');
-            }
-            throw new Error(e.response?.data?.detail || `Failed to fetch current user (${e.response.status})`);
-        }
-        throw e;
-    }
-}
-
 export async function getMe(token:string,signInAction:string): Promise<UserResponse> {
     try {
         if(signInAction === "password")

@@ -18,11 +18,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { ProfileData } from '../../interfaces/profile.interface';
-import type { UserResponse, UserBasePayload } from '../../interfaces/user.interface';
-import { updateProfileBackend, updatePreferences } from '../../services/apis/profile';
-import { getCurrentUser } from '../../services/apis/users';
+import type { UserResponse, User } from '../../interfaces/user.interface';
+import { updateUser, getMe } from '../../services/apis/users';
 import { UserProfileCard } from './UserProfileCard/UserProfileCard';
-import { StatisticsCard } from './StatisticsCard/StatisticsCard';
 import { PersonalInfoCard } from './PersonalInfoCard/PersonalInfoCard';
 import { PreferencesCard } from './PreferencesCard/PreferencesCard';
 import { UserReviewsCard } from './UserReviewsCard/UserReviewsCard';
@@ -49,7 +47,12 @@ export const Profile: React.FC = () => {
         try {
             setLoading(true);
             setError(null);
-            const user = await getCurrentUser();
+            const token = localStorage.getItem('token');
+            const signInAction = localStorage.getItem('signInAction') ?? 'password';
+            if (!token) {
+                throw new Error('Not logged in');
+            }
+            const user = await getMe(token, signInAction);
             setCurrentUser(user);
             const data: ProfileData = {
                 profile: {
@@ -58,7 +61,7 @@ export const Profile: React.FC = () => {
                     email: user.email,
                     role: user.role,
                     memberSince: user.joined,
-                    lastLogin: user.lastActive,
+                    lastLogin: user.joined,
                 },
                 statistics: {
                     wishlistItems: 0,
@@ -87,27 +90,25 @@ export const Profile: React.FC = () => {
 
 
     /**
-     * Handles profile update via PUT /users/{email} with UserBase payload.
-     * Uses backend UPDATE endpoint exactly: path, structure, and field names.
+     * Handles profile update via PUT /users/{email}.
      */
     const handleProfileUpdate = async (profile: Partial<ProfileData['profile']> & { password?: string }) => {
         if (!profileData || !currentUser) return;
         try {
-            const payload: UserBasePayload = {
+            const payload: User = {
+                id: currentUser.id,
                 email: profile.email ?? currentUser.email,
                 name: profile.name ?? currentUser.name,
+                password: profile.password ?? '',
                 role: currentUser.role,
                 status: currentUser.status,
-                purchase: Number(currentUser.purchase),
+                joined: currentUser.joined,
+                lastActive: '',
+                purchase: String(currentUser.purchase),
+                google_id: currentUser.google_id,
             };
-            if (profile.password && profile.password.trim() !== '') {
-                payload.password = profile.password;
-            }
-            if (currentUser.google_id != null) payload.google_id = currentUser.google_id;
-            if (currentUser.joined) payload.joined = currentUser.joined;
-            if (currentUser.lastActive) payload.last_active = currentUser.lastActive;
 
-            await updateProfileBackend(currentUser.email, payload);
+            await updateUser(currentUser.email, payload);
             const { password: _p, ...profileUpdates } = profile;
             setProfileData({
                 ...profileData,
@@ -128,8 +129,6 @@ export const Profile: React.FC = () => {
     const handlePreferencesUpdate = async (preferences: ProfileData['preferences']) => {
         if (!profileData) return;
         try {
-            // Call API to update preferences on backend
-            await updatePreferences(preferences);
             // Update local state with new preferences
             setProfileData({
                 ...profileData,
@@ -196,12 +195,10 @@ export const Profile: React.FC = () => {
             
             {/* Main content area with two columns */}
             <div className={styles.content}>
-                {/* Left column: User profile card and statistics */}
+                {/* Left column: User profile card */}
                 <div className={styles.leftColumn}>
                     {/* Displays user avatar, name, email, role badge, member since, and last login */}
                     <UserProfileCard profile={profileData.profile} />
-                    {/* Displays gaming statistics (wishlist items, total saved, games tracked, etc.) */}
-                    <StatisticsCard statistics={profileData.statistics} />
                 </div>
                 
                 {/* Right column: Information cards, activity feed, and quick actions */}

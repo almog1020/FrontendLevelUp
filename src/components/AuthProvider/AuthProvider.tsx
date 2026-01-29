@@ -1,35 +1,41 @@
 import {createContext, type ReactNode} from "react";
 import { useNavigate } from "react-router-dom";
+import {getMe, login, logout} from "../../services/apis/users.ts";
+import {toast} from "react-toastify";
+import {googleLogout} from "@react-oauth/google";
 
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext<undefined |
-    {
-        // token: string;
-        // user: UserResponse | null;
-        loginAction(access_token:string,signInAction:"google" | "password"):void,
-        logOut():void
-    }>(undefined);
+    {loginAction(email:string,password:string):void,logOut(email:string):void}>(undefined);
 
 const AuthProvider = ({ children }:{children:ReactNode}) => {
     const navigate = useNavigate();
 
-    const loginAction = async (access_token:string,signInAction:"google" | "password") => {
-        localStorage.setItem('token', access_token);
-        localStorage.setItem('signInAction', signInAction);
-        navigate("/");
+    const loginAction = async (email:string,password:string) => {
+        try {
+            const token = await login(email, password);
+            const user = await getMe(token.access_token);
+            localStorage.setItem("user", user.email)
+            localStorage.setItem("token", token.access_token)
+            navigate("/user");
+        } catch (err) {
+            toast.error((err as Error).message);
+        }
     };
 
-    const logOut = async () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('signInAction');
-        navigate("/");
+    const logOut = async (email:string) => {
+        await logout(email,"inactive")
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        googleLogout()
+        navigate("/login");
     };
 
     return (
-        <AuthContext.Provider value={{ loginAction, logOut }}>
+        <AuthContext value={{ loginAction, logOut }}>
             {children}
-        </AuthContext.Provider>
+        </AuthContext>
     );
 
 };

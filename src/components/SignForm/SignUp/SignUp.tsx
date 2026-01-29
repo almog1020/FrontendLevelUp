@@ -53,8 +53,8 @@ export function SignUp({loading, closeDialog}: { loading(value: boolean): void, 
                     required={true}
                     {...registerSignUp("password", {
                         pattern: {
-                            value:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,10}$\n/,
-                            message:'The password must be length 8-10 with letters,symbols and numbers'
+                            value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/,
+                            message: 'The password must be length 8-10 with letters, symbols and numbers'
                         }
                     })}
                 />

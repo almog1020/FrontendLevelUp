@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 export const instance =  axios.create({
     baseURL: API_BASE_URL,
     timeout: 30000,
@@ -15,21 +15,7 @@ export const instanceAuth =  axios.create({
     timeout: 30000,
     headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
         'Access-Control-Allow-Origin': '*',
     },
 });
-
-// Add request interceptor to include authentication token
-instanceAuth.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
