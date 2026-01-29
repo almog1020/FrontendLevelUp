@@ -90,7 +90,12 @@ export const GameDetail = () => {
     );
   }
 
-  const bestPriceUrl = game.priceComparison?.find(item => item.url)?.url;
+  const bestPriceUrl =
+    game.priceComparison?.find(
+      (item) => item.price === game.currentPrice && item.url
+    )?.url ?? game.priceComparison?.find((item) => item.url)?.url;
+  const displayStoreName = game.storeName ?? game.priceComparison?.[0]?.store;
+  const isFree = game.currentPrice === 0;
 
   return (
     <div className={styles.gameDetail}>
@@ -126,16 +131,22 @@ export const GameDetail = () => {
               <div className={styles.priceBoxLabel}>Best Price</div>
               <div className={styles.priceBoxContent}>
                 <div className={styles.priceRow}>
-                  <span className={styles.currentPrice}>${game.currentPrice.toFixed(2)}</span>
-                  {game.originalPrice > game.currentPrice && (
-                    <span className={styles.originalPrice}>${game.originalPrice.toFixed(2)}</span>
+                  {isFree ? (
+                    <span className={styles.currentPrice}>FREE!</span>
+                  ) : (
+                    <>
+                      <span className={styles.currentPrice}>${game.currentPrice.toFixed(2)}</span>
+                      {game.originalPrice > game.currentPrice && (
+                        <span className={styles.originalPrice}>${game.originalPrice.toFixed(2)}</span>
+                      )}
+                    </>
                   )}
                 </div>
                 {game.discount > 0 && (
                   <div className={styles.discountBadge}>Save {game.discount}%</div>
                 )}
-                {game.storeName && (
-                  <div className={styles.storeName}>at {game.storeName}</div>
+                {displayStoreName && (
+                  <div className={styles.storeName}>at {displayStoreName}</div>
                 )}
                 {bestPriceUrl ? (
                   <a
@@ -154,7 +165,6 @@ export const GameDetail = () => {
               </div>
             </div>
 
-            {/* Action Buttons */}
             <div className={styles.actionButtons}>
               <button
                 className={`${styles.wishlistButton} ${isWishlisted ? styles.wishlistButtonActive : ''}`}
@@ -231,7 +241,9 @@ export const GameDetail = () => {
                       <div key={index} className={styles.priceRow}>
                         <div className={styles.priceInfo}>
                           <span className={styles.priceStore}>{priceItem.store}</span>
-                          <span className={styles.priceValue}>${priceItem.price.toFixed(2)}</span>
+                          <span className={styles.priceValue}>
+                            {priceItem.price === 0 ? 'FREE!' : `$${priceItem.price.toFixed(2)}`}
+                          </span>
                         </div>
                         {priceItem.url && (
                           <a
