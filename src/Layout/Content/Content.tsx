@@ -18,10 +18,10 @@ const Content: React.FC = () => {
                 <Routes>
                     <Route path={"/"} element={<Homepage/>}/>
                     <Route path={"/game/:id"} element={<GameDetail/>}/>
+                    <Route path={"/admin/management/users"} element={<UserManagement/>}/>
+                    <Route path={"/admin/management/reviews"} element={<ReviewManagement/>}/>
                     <Route element={<PrivateRoute/>}>
                         <Route path="/user/dashboard" element={<UserDashboard/>}/>
-                        <Route path={"/admin/management/users"} element={<UserManagement/>}/>
-                        <Route path={"/admin/management/reviews"} element={<ReviewManagement/>}/>
                     </Route>
                 </Routes>
             </DialogProvider>

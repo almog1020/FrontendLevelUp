@@ -16,6 +16,7 @@
   display: flex;
   align-items: center;
   gap: 24px;
+  justify-content: space-between;
 }
 
 .header__logo {
@@ -45,8 +46,8 @@
   justify-content: center;
   color: white;
   img{
-    width: 35px;
-    height: 35px;
+    width: 30px;
+    height: 30px;
   }
 }
 

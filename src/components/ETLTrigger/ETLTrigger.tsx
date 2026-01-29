@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { triggerETL } from '../../services/apis/games';
 import styles from './ETLTrigger.module.scss';
 import 'react-toastify/dist/ReactToastify.css';
@@ -59,7 +59,6 @@ export const ETLTrigger = ({ onSuccess, searchTerm }: ETLTriggerProps) => {
           </>
         )}
       </button>
-      <ToastContainer />
     </>
   );
 };

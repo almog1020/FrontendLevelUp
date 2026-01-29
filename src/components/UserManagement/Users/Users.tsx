@@ -1,5 +1,4 @@
 import styles from "./Users.module.scss";
-import {ActionButton} from "./ActionButton/ActionButton.tsx";
 import editStatus from '../../../assets/editStatus.png'
 import protectButton from '../../../assets/protectButton.png'
 import deleteButton from '../../../assets/deleteButton.png'
@@ -9,40 +8,46 @@ import {useMemo, useState} from "react";
 import {deleteUser, updateUser} from "../../../services/apis/users.ts";
 import {toast} from "react-toastify";
 
-function Users({users}: {users: User[]}) {
-    const [text,setText] = useState<string>('');
+function Users({users, setLoading}: { users: User[], setLoading(value: boolean): void }) {
+    const [text, setText] = useState<string>('');
 
     const usersFilter = useMemo(() => {
-        if(text)
+        if (text)
             return users.filter(user => user.name.toLowerCase().includes(text))
         return users
-    }, [text,users]);
+    }, [text, users]);
 
-    const handleDelete = async (index:number) => {
+    const handleDelete = async (index: number) => {
         try {
+            setLoading(true);
             await deleteUser(users[index].email)
             toast.success("User Deleted Successfully!");
-        }catch(e){
+        } catch (e) {
+            setLoading(false);
             toast.error((e as Error).message);
         }
     }
-    const handleUpdate = async (index:number,fieldName:keyof User) => {
+
+    const handleUpdate = async (index: number, fieldName: keyof User) => {
         try {
+            setLoading(true);
             const editUser = {...users[index]};
-            if(fieldName === 'role')
+            if (fieldName === 'role')
                 editUser.role = users[index].role === 'admin' ? 'user' : 'admin'
 
-            if(fieldName === 'status')
+            if (fieldName === 'status')
                 editUser.status = users[index].status === 'suspended' ? 'active' : 'suspended'
 
-            await updateUser(users[index].email,editUser)
+            await updateUser(users[index].email, editUser)
 
-        }catch (e) {
+        } catch (e) {
+            setLoading(false);
             toast.error((e as Error).message);
         }
     }
+
     return (
-        <section className={styles.allUsers}>
+        <div className={styles.allUsers}>
             <div className={styles.topRow}>
                 <div>
                     <h3 className={styles.title}>All Users</h3>
@@ -67,25 +72,30 @@ function Users({users}: {users: User[]}) {
                     <th>Role</th>
                     <th>Status</th>
                     <th>Joined</th>
-                    <th>Purchases</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                {usersFilter.map((user,index:number) => (
-                    <tr>
-                        <td>
-                            <div className={styles.userCell}>
-                                <div className={styles.avatar}>
-                                    {user.name.charAt(0)}
-                                </div>
-                                <div className={styles.userText}>
-                                    <div className={styles.userName}>{user.name}</div>
-                                    <div className={styles.userEmail}>{user.email}</div>
-                                </div>
-                            </div>
+                <>
+                    {usersFilter.length === 0 && <tr>
+                        <td colSpan={5} className={styles.empty}>
+                            No users yet.
                         </td>
-                        <td>
+                    </tr>}
+                    {usersFilter.length > 0 && usersFilter.map((user, index: number) => (
+                        <tr>
+                            <td>
+                                <div className={styles.userCell}>
+                                    <div className={styles.avatar}>
+                                        {user.name.charAt(0)}
+                                    </div>
+                                    <div className={styles.userText}>
+                                        <div className={styles.userName}>{user.name}</div>
+                                        <div className={styles.userEmail}>{user.email}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
                             <span
                                 className={
                                     user.role === "admin"
@@ -94,33 +104,40 @@ function Users({users}: {users: User[]}) {
                                 }>
                               {user.role}
                             </span>
-                        </td>
-                        <td>
+                            </td>
+                            <td>
                             <span
                                 className={
                                     user.status === "active"
                                         ? `${styles.badge} ${styles.badgeActive}`
-                                        : `${styles.badge} ${styles.badgeSuspended}`
+                                        : user.status === "inactive" ?
+                                            `${styles.badge} ${styles.badgeInActive}` :
+                                            `${styles.badge} ${styles.badgeSuspended}`
                                 }>
                               {user.status}
                             </span>
-                        </td>
+                            </td>
 
-                        <td>{user.joined}</td>
-                        <td className={styles.purchase}>{user.purchase}</td>
-
-                        <td>
-                            <div className={styles.actions}>
-                                <ActionButton icon={editStatus} title={'role'} onClick={handleUpdate} index={index}/>
-                                <ActionButton icon={protectButton} title={'status'} onClick={handleUpdate} index={index}/>
-                                <ActionButton icon={deleteButton} title={'delete'} onClick={handleDelete} index={index} />
-                            </div>
-                        </td>
-                    </tr>
-                ))}
+                            <td>{user.joined}</td>
+                            <td>
+                                <div className={styles.actions}>
+                                    <button className={styles.iconButton} onClick={() => handleUpdate(index, 'role')}>
+                                        <img src={editStatus} alt={'icon'} className={styles.icon}/>
+                                    </button>
+                                    <button className={styles.iconButton} onClick={() => handleUpdate(index, 'status')}>
+                                        <img src={protectButton} alt={'icon'} className={styles.icon}/>
+                                    </button>
+                                    <button className={styles.iconButton} onClick={() => handleDelete(index)}>
+                                        <img src={deleteButton} alt={'icon'} className={styles.icon}/>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    ))}
+                </>
                 </tbody>
             </table>
-        </section>
+        </div>
     );
 }
 

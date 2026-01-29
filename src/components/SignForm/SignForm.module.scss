@@ -38,6 +38,10 @@ $social-border: #111827;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
   color: $text-main;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+
 }
 
 // X (close)
@@ -62,6 +66,7 @@ $social-border: #111827;
   flex-direction: column;
   align-items: center;
   margin-bottom: 20px;
+  width: 100%;
 }
 
 .sign_in_dialog__icon {
@@ -224,4 +229,23 @@ $social-border: #111827;
   color: #ef4444;
   font-size: 12px;
   margin-top: 4px;
+}
+.loading{
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  width: 56px !important;
+  height: 56px !important;
+  color: #60a5fa !important;
+
+  /* Glow */
+  filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.45));
+
+  /* Rounded stroke */
+  .MuiCircularProgress-circle {
+    stroke-linecap: round;
+  }
+}
+.content{
+  width: 100%;
 }
