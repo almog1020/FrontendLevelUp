@@ -8,6 +8,7 @@ import AuthProvider from "../../components/AuthProvider/AuthProvider.tsx";
 import {DialogProvider} from "../../contexts/DialogContext.tsx";
 import AdminPage from "../../components/Admin/AdminPage/AdminPage.tsx";
 import GameManagement from "../../components/Admin/GameManagement/GameManagement.tsx";
+import {Catalog} from "../../components/Catalog/Catalog.tsx";
 import ReviewManagement from "../../components/ReviewManagement/ReviewManagement.tsx";
 import {Header} from "../../components/Header/Header.tsx";
 
@@ -18,6 +19,7 @@ const Content:React.FC = () => {
                 <Header/>
                 <Routes>
                     <Route path={"/"} element={<Homepage/>}/>
+                    <Route path={"/catalog"} element={<Catalog/>}/>
                     <Route path={"/game/:id"} element={<GameDetail/>}/>
                     <Route path={"/admin"} element={<AdminPage />} />
                     <Route path={"/admin/games"} element={<GameManagement />} />
