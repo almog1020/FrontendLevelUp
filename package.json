@@ -19,6 +19,7 @@
     "@tailwindcss/vite": "^4.1.17",
     "axios": "^1.13.2",
     "lodash.throttle": "^4.1.1",
+    "lucide-react": "^0.562.0",
     "mui": "^0.0.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -26,6 +27,7 @@
     "react-router-dom": "^7.10.1",
     "react-toastify": "^11.0.5",
     "react-use-websocket": "^4.13.0",
+    "recharts": "^3.6.0",
     "scss": "^0.2.4",
     "tailwindcss": "^4.1.17",
     "ws": "^8.18.3"
