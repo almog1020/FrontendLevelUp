@@ -21,10 +21,7 @@ const QuickActionsNav: React.FC = () => {
           Manage Games
         </Link>
 
-        <Link className={styles.actionBtn} to="/admin/stores">
-          <Store className={styles.icon} />
-          Manage Stores
-        </Link>
+        
 
         <Link className={styles.actionBtn} to="/admin/reviews">
           <MessageSquare className={styles.icon} />

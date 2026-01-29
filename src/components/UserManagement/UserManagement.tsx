@@ -9,19 +9,26 @@ import activeUser from "../../assets/activeUsers.png";
 import suspendedUsers from "../../assets/suspendedUsers.png";
 import admin from "../../assets/admin.png";
 import type {StatsCard} from "../../interfaces/statsCard.interface.ts";
+import {API_BASE_URL} from "../../services/apis/config.ts";
+import {CircularProgress} from "@mui/material";
 
 
 const UserManagement: React.FC = () => {
     const [users,setUsers] = useState<User[]>([])
+    const [loading, setLoading] = useState<boolean>(true)
     const wsRef = useRef<WebSocket | null>(null);
 
     useEffect(() => {
-        const ws = new WebSocket("ws://localhost:8000/users/ws");
+        const ws = new WebSocket(`${API_BASE_URL}/users/ws`);
         wsRef.current = ws;
 
         ws.onopen = () => console.log("WebSocket connected");
-
-        ws.onmessage = (e) => setUsers(JSON.parse(e.data));
+        ws.onmessage = (e) => {
+            setTimeout(() => {
+                setLoading(false)
+                setUsers(JSON.parse(e.data))
+            }, 2000);
+        };
         ws.onerror = (e) => console.log("WebSocket error", e);
         ws.onclose = () => console.log("WebSocket closed");
 

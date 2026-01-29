@@ -18,7 +18,9 @@ export const UserDashboard = () => {
                 const convertedPurchases: LastPurchaseGame[] = purchases.map((purchase) => ({
                     id: purchase.game_id,
                     title: purchase.game_title,
-                    genre: purchase.game_genre ? purchase.game_genre.split(',').map((g: string) => g.trim()) : [],
+                    genre: purchase.game_genre
+                        ? purchase.game_genre.split(',').map((g: string) => g.trim())
+                        : [],
                     image: purchase.game_image_url || ''
                 }));
                 setLastPurchases(convertedPurchases);
