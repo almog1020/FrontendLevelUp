@@ -81,3 +81,21 @@ export async function logout(email:string,disable:UserStatus): Promise<void> {
         throw e;
     }
 }
+
+export async function updatePreferences(
+    token: string,
+    preferences: { favoriteGenre?: string; preferredStore?: string }
+): Promise<{ favoriteGenre: string; preferredStore: string }> {
+    try {
+        const response = await instance.put('/users/preferences', preferences, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (e: unknown) {
+        if (e instanceof AxiosError)
+            throw new Error(e.response?.data?.detail || 'Failed to update preferences');
+        throw e;
+    }
+}
