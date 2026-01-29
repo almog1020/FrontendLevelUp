@@ -26,3 +26,13 @@ export async function getGameReviews(game:string):Promise<ReviewRecord[]> {
 export async function getReviews():Promise<ReviewRecord[]> {
     return (await instance.get(`/reviews`)).data;
 }
+
+export async function getUserReviews(userId: number): Promise<{ id: number; star: number; comment: string; game: string }[]> {
+    try {
+        return (await instance.get(`/reviews/user/${userId}`)).data;
+    } catch (e: unknown) {
+        if (e instanceof AxiosError)
+            throw new Error(e.response?.data?.detail || 'Failed to fetch user reviews');
+        throw e;
+    }
+}

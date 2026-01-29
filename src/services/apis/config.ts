@@ -19,4 +19,3 @@ export const instanceAuth =  axios.create({
         'Access-Control-Allow-Origin': '*',
     },
 });
-
