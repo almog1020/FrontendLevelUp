@@ -32,11 +32,13 @@ export const UserProfileCard: React.FC<UserProfileCardProps> = ({ profile }) => 
     /**
      * Formats a date string into a readable format (e.g., "January 2024")
      * Used for displaying member since date
-     * @param dateString - ISO date string
-     * @returns Formatted date string
+     * @param dateString - ISO date string (optional)
+     * @returns Formatted date string or fallback
      */
-    const formatDate = (dateString: string): string => {
+    const formatDate = (dateString?: string | null): string => {
+        if (!dateString) return '—';
         const date = new Date(dateString);
+        if (isNaN(date.getTime())) return '—';
         return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
     };
 
@@ -44,11 +46,13 @@ export const UserProfileCard: React.FC<UserProfileCardProps> = ({ profile }) => 
      * Formats last login timestamp into a user-friendly format
      * If login was today, shows "Today at [time]"
      * Otherwise shows full date
-     * @param dateString - ISO date string of last login
-     * @returns Formatted last login string
+     * @param dateString - ISO date string of last login (optional)
+     * @returns Formatted last login string or fallback
      */
-    const formatLastLogin = (dateString: string): string => {
+    const formatLastLogin = (dateString?: string | null): string => {
+        if (!dateString) return 'Never';
         const date = new Date(dateString);
+        if (isNaN(date.getTime())) return 'Never';
         const now = new Date();
         const diffMs = now.getTime() - date.getTime();
         const diffHours = Math.floor(diffMs / (1000 * 60 * 60));

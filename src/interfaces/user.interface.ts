@@ -49,11 +49,9 @@ export interface UserResponse {
     email: string;
     role: UserRole;
     status: UserStatus;
-    joined: string;
-    lastActive: string;
-    purchase: string;
-    google_id: string;
-    status: UserStatus;
-    purchase: number;
-    joined: string;
+    joined?: string | null;
+    lastActive?: string | null;
+    purchase?: number | string;
+    google_id?: string | null;
+    avatar?: string | null;
 }

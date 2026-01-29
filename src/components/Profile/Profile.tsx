@@ -16,6 +16,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { ProfileData } from '../../interfaces/profile.interface';
 import type { UserResponse, UserBasePayload } from '../../interfaces/user.interface';
 import { updateProfileBackend, updatePreferences } from '../../services/apis/profile';
@@ -24,12 +25,12 @@ import { UserProfileCard } from './UserProfileCard/UserProfileCard';
 import { StatisticsCard } from './StatisticsCard/StatisticsCard';
 import { PersonalInfoCard } from './PersonalInfoCard/PersonalInfoCard';
 import { PreferencesCard } from './PreferencesCard/PreferencesCard';
-//import { RecentActivityCard } from './RecentActivityCard/RecentActivityCard';
-import { QuickActions } from './QuickActions/QuickActions';
+import { UserReviewsCard } from './UserReviewsCard/UserReviewsCard';
 import styles from './Profile.module.scss';
 import { toast } from 'react-toastify';
 
 export const Profile: React.FC = () => {
+    const navigate = useNavigate();
     const [profileData, setProfileData] = useState<ProfileData | null>(null);
     const [currentUser, setCurrentUser] = useState<UserResponse | null>(null);
     const [loading, setLoading] = useState(true);
@@ -186,6 +187,9 @@ export const Profile: React.FC = () => {
         <div className={styles.container}>
             {/* Page header with title and subtitle */}
             <div className={styles.header}>
+                <button className={styles.backButton} onClick={() => navigate('/')}>
+                    ← Back to Home
+                </button>
                 <h1 className={styles.title}>Profile</h1>
                 <p className={styles.subtitle}>Manage your account settings and preferences</p>
             </div>
@@ -206,16 +210,15 @@ export const Profile: React.FC = () => {
                     <PersonalInfoCard 
                         profile={profileData.profile}
                         onUpdate={handleProfileUpdate}
+                        isGoogleUser={!!currentUser?.google_id}
                     />
                     {/* Preferences card for managing gaming preferences */}
                     <PreferencesCard
                         preferences={profileData.preferences}
                         onUpdate={handlePreferencesUpdate}
                     />
-                    {/* Recent activity feed showing user's latest actions */}
-                    {/* <RecentActivityCard activities={profileData.activities} /> */}
-                    {/* Quick action buttons for navigation (Wishlist, Dashboard, Admin Panel, Support) */}
-                    <QuickActions userRole={profileData.profile.role} />
+                    {/* User's reviews */}
+                    <UserReviewsCard userId={profileData.profile.id} />
                 </div>
             </div>
         </div>

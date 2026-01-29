@@ -9,7 +9,6 @@ import {
     Button,
     IconButton,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import styles from "./AddReview.module.scss";
 import type {ReviewDialogProps} from "../../interfaces/review.interface.ts";
 import {useState} from "react";
@@ -29,7 +28,8 @@ export default function AddReview({open, gameTitle, onClose}: ReviewDialogProps)
         if (!star) return;
         try {
             const token = localStorage.getItem("token") ?? "guest"
-            const userId = token === "guest" ? null : (await getMe(token)).id
+            const signInAction = localStorage.getItem("signInAction") ?? "password"
+            const userId = token === "guest" ? null : (await getMe(token, signInAction)).id
             await create_review(star,comment,gameTitle,userId)
             toast.success("Review added successfully.")
             setStar(1);
@@ -52,8 +52,9 @@ export default function AddReview({open, gameTitle, onClose}: ReviewDialogProps)
                 Review for {gameTitle}
                 <IconButton
                     onClick={onClose}
-                    className={styles.closeBtn}>
-                    <CloseIcon />
+                    className={styles.closeBtn}
+                    aria-label="close">
+                    ×
                 </IconButton>
             </DialogTitle>
 

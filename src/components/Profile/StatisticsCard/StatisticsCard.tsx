@@ -1,8 +1,7 @@
 /**
  * StatisticsCard Component
  * Displays user's gaming statistics in a card format
- * Shows metrics like wishlist items, total saved, games tracked, price alerts, and reviews written
- * "Total Saved" is displayed in green to highlight savings
+ * Shows metrics like wishlist items, games tracked, and price alerts
  */
 
 import React from 'react';
@@ -14,14 +13,11 @@ interface StatisticsCardProps {
 }
 
 export const StatisticsCard: React.FC<StatisticsCardProps> = ({ statistics }) => {
-    // Array of statistics to display, each with icon, label, value, and optional styling
-    // isGreen flag makes "Total Saved" display in green color
+    // Array of statistics to display
     const stats = [
         { icon: '❤️', label: 'Wishlist Items', value: statistics.wishlistItems },
-        { icon: '🛒', label: 'Total Saved', value: `$${statistics.totalSaved}`, isGreen: true },
         { icon: '⭐', label: 'Games Tracked', value: statistics.gamesTracked },
         { icon: '📉', label: 'Price Alerts', value: statistics.priceAlerts },
-        { icon: '⭐', label: 'Reviews Written', value: statistics.reviewsWritten },
     ];
 
     return (
@@ -35,8 +31,8 @@ export const StatisticsCard: React.FC<StatisticsCardProps> = ({ statistics }) =>
                         <span className={styles.icon}>{stat.icon}</span>
                         {/* Label describing what the statistic represents */}
                         <span className={styles.label}>{stat.label}</span>
-                        {/* Value - green color applied if isGreen flag is true */}
-                        <span className={`${styles.value} ${stat.isGreen ? styles.green : ''}`}>
+                        {/* Value */}
+                        <span className={styles.value}>
                             {stat.value}
                         </span>
                     </div>

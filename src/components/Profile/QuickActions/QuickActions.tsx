@@ -7,6 +7,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import styles from './QuickActions.module.scss';
 
 interface QuickActionsProps {
@@ -20,18 +21,32 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ userRole }) => {
     // Admin Panel is only visible if userRole is 'admin'
     // Filter removes actions that shouldn't be visible to current user
     const actions = [
-        { icon: '❤️', label: 'View Wishlist', path: '/wishlist', visible: true },
-        { icon: '🛒', label: 'Dashboard', path: '/dashboard', visible: true },
-        { icon: '🛡️', label: 'Admin Panel', path: '/admin/management', visible: userRole === 'admin' },
-        { icon: '✉️', label: 'Support', path: '/support', visible: true },
+        { icon: '❤️', label: 'View Wishlist', path: '/wishlist', visible: true, implemented: false },
+        { icon: '🛒', label: 'Dashboard', path: '/', visible: true, implemented: true },
+        { icon: '🛡️', label: 'Admin Panel', path: '/admin/management/user', visible: userRole === 'admin', implemented: true },
     ].filter(action => action.visible);
 
     /**
      * Handles navigation when a quick action button is clicked
      * @param path - Route path to navigate to
+     * @param implemented - Whether the feature is implemented
      */
-    const handleAction = (path: string) => {
-        navigate(path);
+    const handleAction = (path: string, implemented: boolean) => {
+        if (implemented) {
+            navigate(path);
+        } else {
+            toast.info('Coming Soon!');
+        }
+    };
+
+    /**
+     * Handles sign out - clears token and redirects to home
+     */
+    const handleSignOut = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('signInAction');
+        toast.success('Signed out successfully');
+        navigate('/');
     };
 
     return (
@@ -43,7 +58,7 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ userRole }) => {
                     <button
                         key={index}
                         className={styles.actionButton}
-                        onClick={() => handleAction(action.path)}
+                        onClick={() => handleAction(action.path, action.implemented)}
                     >
                         {/* Icon for visual identification */}
                         <span className={styles.icon}>{action.icon}</span>
@@ -52,6 +67,9 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ userRole }) => {
                     </button>
                 ))}
             </div>
+            <button className={styles.signOutButton} onClick={handleSignOut}>
+                🚪 Sign Out
+            </button>
         </div>
     );
 };

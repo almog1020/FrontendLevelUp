@@ -5,13 +5,13 @@
  * Uses dropdown selects for easy preference selection
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { UserPreferences } from '../../../interfaces/profile.interface';
 import styles from './PreferencesCard.module.scss';
 
 interface PreferencesCardProps {
     preferences: UserPreferences; // Current user preferences
-    onUpdate?: (preferences: UserPreferences) => void; // Callback called when preferences are saved
+    onUpdate?: (preferences: UserPreferences) => void | Promise<void>; // Callback called when preferences are saved
 }
 
 export const PreferencesCard: React.FC<PreferencesCardProps> = ({ preferences, onUpdate }) => {
@@ -20,6 +20,11 @@ export const PreferencesCard: React.FC<PreferencesCardProps> = ({ preferences, o
     
     // Local form state for editing preferences before saving
     const [formData, setFormData] = useState(preferences);
+
+    // Sync formData when preferences prop changes
+    useEffect(() => {
+        setFormData(preferences);
+    }, [preferences.favoriteGenre, preferences.preferredStore]);
 
     // Available game genres for selection
     const genres = ['Action', 'Adventure', 'RPG', 'Strategy', 'Simulation', 'Sports', 'Racing', 'Puzzle'];
@@ -31,9 +36,9 @@ export const PreferencesCard: React.FC<PreferencesCardProps> = ({ preferences, o
      * Saves the updated preferences and exits edit mode
      * Calls onUpdate callback if provided
      */
-    const handleUpdate = () => {
+    const handleUpdate = async () => {
         if (onUpdate) {
-            onUpdate(formData);
+            await onUpdate(formData);
         }
         setIsEditing(false);
     };
@@ -95,13 +100,13 @@ export const PreferencesCard: React.FC<PreferencesCardProps> = ({ preferences, o
                 </button>
             ) : (
                 <div className={styles.actionButtons}>
-                    <button className={styles.cancelButton} onClick={() => {
+                    <button type="button" className={styles.cancelButton} onClick={() => {
                         setFormData(preferences);
                         setIsEditing(false);
                     }}>
                         Cancel
                     </button>
-                    <button className={styles.saveButton} onClick={handleUpdate}>
+                    <button type="button" className={styles.saveButton} onClick={handleUpdate}>
                         Save
                     </button>
                 </div>

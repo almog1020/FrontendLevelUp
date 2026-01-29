@@ -10,7 +10,9 @@ export async function login(username: string, password: string): Promise<string>
         params.append('username', username);
         params.append('password', password);
         
-        const response = await instanceAuth.post('/auth/token', params);
+        const response = await instanceAuth.post('/auth/token', params, {
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
         return response.data.access_token;
     } catch (e: unknown) {
         if (e instanceof AxiosError) {

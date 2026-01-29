@@ -18,8 +18,8 @@ export interface Profile {
     email: string;
     role: UserRole;
     avatar?: string;
-    memberSince: string;
-    lastLogin: string;
+    memberSince?: string | null;
+    lastLogin?: string | null;
 }
 
 /**
