@@ -1,15 +1,42 @@
-import * as React from "react";
 import {UserDetails} from "./UserDetails/UserDetails.tsx";
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import userIcon from '../../assets/user.png'
 import styles from "./UserPopup.module.scss"
 import {AuthContext} from "../AuthProvider/AuthProvider.tsx";
+import {toast} from "react-toastify";
+import {getMe, logout} from "../../services/apis/users.ts";
+import {googleLogout} from "@react-oauth/google";
+import type {UserResponse} from "../../interfaces/user.interface.ts";
 
-const UserPopup: React.FC = () => {
+export default function UserPopup(){
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const user  = localStorage.getItem("user") ?? ""
-
+    const token = localStorage.getItem('token');
+    const [user, setUser] = useState<UserResponse | null>(null);
     const auth = useContext(AuthContext);
+    const signInAction = localStorage.getItem("signInAction");
+
+    useEffect(() => {
+        if (token && signInAction) {
+            getMe(token,signInAction)
+                .then(data => setUser(data))
+            .catch(err => {
+                if (err.message.includes('Unauthorized')) {
+                    toast.error(err.message);
+                }
+            });
+        }
+    }, [token,signInAction]);
+
+    const handelLogout = async (email:string,googleId:string) => {
+        try {
+            if (googleId)
+                googleLogout()
+            await logout(email,"inactive")
+            auth?.logOut()
+        }catch (error) {
+            toast.error((error as Error).message);
+        }
+    }
 
     return (
         <div>
@@ -18,9 +45,12 @@ const UserPopup: React.FC = () => {
                     <img src={userIcon} alt={"user"} />
                 </button>
             </div>
-            {isOpen && user && <UserDetails name={user} role={'user'} onLogout={() => auth!.logOut()}/>}
+            {isOpen && user &&
+                <UserDetails
+                    name={user.name}
+                    role={'user'}
+                    onLogout={() => handelLogout(user!.email,user!.google_id)}
+                />}
         </div>
     )
 }
-
-export default UserPopup;
