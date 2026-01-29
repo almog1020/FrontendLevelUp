@@ -25,7 +25,7 @@ const Content:React.FC = () => {
                     <Route path={"/admin/management"} element={<Navigate to="/admin/users" replace />} />
                     {/* Protected admin routes */}
                     <Route element={<PrivateRoute />}>
-                        <Route path={"/admin/users"} element={<UserManagement/>}/>
+                        <Route path={"/users"} element={<UserManagement/>}/>
                         <Route path={"/admin/reviews"} element={<ReviewManagement/>}/>
                         {/* Placeholder for stores - redirect to admin dashboard for now */}
                         <Route path={"/admin/stores"} element={<Navigate to="/admin" replace />} />

@@ -64,6 +64,17 @@ export interface IgdbGamesResponse {
 }
 
 /**
+ * Recent purchase record for user dashboard
+ */
+export interface Purchase {
+  game_id: string;
+  game_title: string;
+  game_genre?: string | null;
+  game_image_url?: string | null;
+  purchased_at?: string | null;
+}
+
+/**
  * Get games from the backend with pagination
  * @param limit - Number of games to fetch (default: 30)
  * @returns Promise<Game[]> - Array of games
@@ -357,3 +368,43 @@ export async function triggerEtl(search?: string): Promise<EtlResult> {
 
 // Export alias for backward compatibility with ETLTrigger component
 export const triggerETL = triggerEtl;
+
+/**
+ * Fetch user's last purchases
+ * @param limit - Number of purchases to fetch (default: 10)
+ */
+export async function getLastPurchases(limit: number = 10): Promise<Purchase[]> {
+  const tryUrls = [
+    `/users/purchases?limit=${limit}`,
+    `/users/last-purchases?limit=${limit}`,
+  ];
+
+  const normalizePurchases = (data: unknown): Purchase[] => {
+    if (Array.isArray(data)) {
+      return data as Purchase[];
+    }
+    if (data && typeof data === "object") {
+      const asObj = data as { purchases?: Purchase[]; items?: Purchase[] };
+      if (Array.isArray(asObj.purchases)) return asObj.purchases;
+      if (Array.isArray(asObj.items)) return asObj.items;
+    }
+    return [];
+  };
+
+  for (const url of tryUrls) {
+    try {
+      const response = await instance.get(url);
+      return normalizePurchases(response.data);
+    } catch (e: unknown) {
+      if (e instanceof AxiosError && e.response?.status === 404) {
+        continue;
+      }
+      if (e instanceof AxiosError) {
+        throw new Error(e.response?.data?.detail || "Failed to fetch purchases");
+      }
+      throw e;
+    }
+  }
+
+  throw new Error("Purchases endpoint not found");
+}
