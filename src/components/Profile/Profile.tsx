@@ -19,7 +19,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { ProfileData } from '../../interfaces/profile.interface';
 import type { UserResponse, User } from '../../interfaces/user.interface';
-import { updateUser, getMe } from '../../services/apis/users';
+import { updateUser, getMe, updatePreferences } from '../../services/apis/users';
 import { UserProfileCard } from './UserProfileCard/UserProfileCard';
 import { PersonalInfoCard } from './PersonalInfoCard/PersonalInfoCard';
 import { PreferencesCard } from './PreferencesCard/PreferencesCard';
@@ -129,6 +129,15 @@ export const Profile: React.FC = () => {
     const handlePreferencesUpdate = async (preferences: ProfileData['preferences']) => {
         if (!profileData) return;
         try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('Not logged in');
+            }
+            // Call backend API to update preferences
+            await updatePreferences(token, {
+                favoriteGenre: preferences.favoriteGenre,
+                preferredStore: preferences.preferredStore,
+            });
             // Update local state with new preferences
             setProfileData({
                 ...profileData,
