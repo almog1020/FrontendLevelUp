@@ -106,15 +106,18 @@ export const GameDetail = () => {
       />
       <main className={styles.main}>
         <div className={styles.content}>
+          {/* Left Side - Image Gallery */}
           <div className={styles.imageSection}>
             <div className={styles.mainImageContainer}>
               <img src={game.image} alt={game.title} className={styles.mainImage} />
             </div>
           </div>
 
+          {/* Right Side - Game Info */}
           <div className={styles.infoSection}>
             <h1 className={styles.title}>{game.title}</h1>
 
+            {/* Genre Tags */}
             <div className={styles.genres}>
               {game.genres.map((genre, index) => (
                 <span key={index} className={styles.genreTag}>
@@ -123,6 +126,7 @@ export const GameDetail = () => {
               ))}
             </div>
 
+            {/* Price Box */}
             <div className={styles.priceBox}>
               <div className={styles.priceBoxLabel}>Best Price</div>
               <div className={styles.priceBoxContent}>
@@ -179,6 +183,7 @@ export const GameDetail = () => {
               </button>
             </div>
 
+            {/* Game Details */}
             <div className={styles.gameDetails}>
               {game.releaseDate && (
                 <div className={styles.detailRow}>
@@ -196,6 +201,7 @@ export const GameDetail = () => {
           </div>
         </div>
 
+        {/* Bottom Section - Tabs */}
         <div className={styles.tabsSection}>
           <div className={styles.tabs}>
             <button
