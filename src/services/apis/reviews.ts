@@ -23,3 +23,6 @@ export async function deleteReview(reviewId:number): Promise<void> {
 export async function getGameReviews(game:string):Promise<ReviewRecord[]> {
     return (await instance.get(`/reviews/${game}`)).data;
 }
+export async function getReviews():Promise<ReviewRecord[]> {
+    return (await instance.get(`/reviews`)).data;
+}
