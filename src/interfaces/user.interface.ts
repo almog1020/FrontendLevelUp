@@ -54,4 +54,6 @@ export interface UserResponse {
     purchase: string;
     google_id: string;
     status: UserStatus;
+    purchase: number;
+    joined: string;
 }

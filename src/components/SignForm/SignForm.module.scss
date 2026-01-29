@@ -1,4 +1,4 @@
-// SignIn.module.scss
+// SignForm.module.scss
 @use "sass:color";
 
 // === Colors ===
@@ -219,4 +219,9 @@ $social-border: #111827;
   &:hover {
     background-color: color.adjust($button-dark, $lightness: 4%);
   }
+}
+.error{
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 4px;
 }

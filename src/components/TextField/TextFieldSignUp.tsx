@@ -1,4 +1,4 @@
-import styles from "../SignIn/SignIn.module.scss";
+import styles from "../SignForm/SignForm.module.scss";
 import type {ITextFieldSignUp} from "../../interfaces/sign.interface.ts";
 
 export const TextFieldSignUp = (textField:ITextFieldSignUp) => {

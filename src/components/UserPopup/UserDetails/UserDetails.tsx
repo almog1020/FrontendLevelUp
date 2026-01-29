@@ -2,7 +2,6 @@
  * UserDetails Component
  * Displays user menu dropdown with user information and navigation options
  * Shows user name, role, and provides buttons for Dashboard, Profile, and Logout
- * This component is displayed when user clicks on their avatar/icon
  */
 
 import type {UserRole} from "../../../interfaces/user.interface.ts";
@@ -15,12 +14,8 @@ import logoutIcon from '../../../assets/logout.png'
 export function UserDetails({name,role,onLogout}:{name:string, role:UserRole,onLogout():void}) {
     const navigate = useNavigate();
 
-    /**
-     * Handles click on Profile button
-     * Navigates to the Profile page where users can view and edit their profile information
-     */
     const handleProfileClick = () => {
-        navigate('/profile');
+        navigate('/user/profile');
     };
 
     return (
@@ -33,20 +28,19 @@ export function UserDetails({name,role,onLogout}:{name:string, role:UserRole,onL
             
             {/* Navigation menu items */}
             <div className={styles.menu_items}>
-                {/* Dashboard button - navigates to dashboard (functionality to be implemented) */}
-                <button className={styles.menu_item}>
+                <button className={styles.menu_item} onClick={() => navigate(`/user/dashboard`)}>
                     <img src={dashboardIcon} alt="Dashboard" className={styles.menu_item_icon}/>
                     <div className={styles.title}>Dashboard</div>
                 </button>
                 
-                {/* Profile button - navigates to Profile page where users can manage their profile */}
+                {/* Profile button - navigates to Profile page */}
                 <button className={styles.menu_item} onClick={handleProfileClick}>
                     <img src={profileIcon} alt="Profile" className={styles.menu_item_icon}/>
                     <div className={styles.title}>Profile</div>
                 </button>
             </div>
             
-            {/* Logout button - calls onLogout callback to sign user out */}
+            {/* Logout button */}
             <button className={styles.menu_item} onClick={onLogout}>
                 <img src={logoutIcon} alt="Logout" className={styles.menu_item_icon}/>
                 <div className={styles.title}>Logout</div>
