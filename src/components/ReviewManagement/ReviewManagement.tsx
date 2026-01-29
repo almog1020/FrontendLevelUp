@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import styles from "./ReviewManagement.module.scss";
 import Stars from "../Stars/Stars";
 import StatCard from "../StatCard/StatCard.tsx";
@@ -9,37 +9,34 @@ import starYellow from '../../assets/star-yellow.png'
 import deleteIcon from '../../assets/deleteButton.png'
 import type {ReviewRecord} from "../../interfaces/review.interface.ts";
 import {toast} from "react-toastify";
-import {deleteReview} from "../../services/apis/reviews.ts";
-import {API_BASE_URL} from "../../services/apis/config.ts";
+import {deleteReview, getReviews} from "../../services/apis/reviews.ts";
 import {CircularProgress} from "@mui/material";
 
 
 export default function ReviewManagement() {
     const [results, setResults] = useState<ReviewRecord[]>([]);
-    const wsRef = useRef<WebSocket | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        const ws = new WebSocket(`${API_BASE_URL}/reviews/ws`);
-        wsRef.current = ws;
+        let alive = true;
 
-        ws.onopen = () => console.log("WebSocket connected");
-        ws.onmessage = (e) => {
-            setTimeout(() => {
+        const fetchReviews = async () => {
+            try {
+                const reviews = await getReviews()
+                if (alive) setResults(reviews);
                 setLoading(false)
-                setResults(JSON.parse(e.data));
-            }, 2000);
-        }
-        ws.onerror = (e) => console.log("WebSocket error", e);
-        ws.onclose = () => console.log("WebSocket closed");
+            } catch (e: unknown) {
+                setLoading(false)
+                toast.error((e as Error).message)
+            }
+        };
+        const id = setInterval(fetchReviews, 2000);
 
-        // runs ONLY when app/page actually unmounts
         return () => {
-            ws.close(1000, "component unmounted");
-            wsRef.current = null;
+            alive = false;
+            clearInterval(id);
         };
     }, []);
-
     const reviewsCard: StatsCard[] = useMemo(() => {
         const total = results.length;
         return [
@@ -76,7 +73,7 @@ export default function ReviewManagement() {
         <div className={styles.page}>
             <div className={styles.topRow}>
                 <div>
-                    <h1 className={styles.title}>Review Management</h1>
+                    <h1 className={styles.title}>Reviews Management</h1>
                     <p className={styles.subtitle}>Manage all user reviews</p>
                 </div>
             </div>

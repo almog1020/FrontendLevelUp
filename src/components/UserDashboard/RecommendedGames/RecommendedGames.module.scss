@@ -1,108 +1,136 @@
 .sectionCard {
-  background: #020617;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
-  margin-bottom: 30px;
+  background: rgba(15, 23, 42, 0.62);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 18px;
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(12px);
+  padding: 18px;
+  margin-top: 16px;
 }
 
 .sectionHeader {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
 .sectionTitle {
-  font-size: 20px;
-  color: #fff;
   margin: 0;
+  font-size: 16px;
+  font-weight: 900;
+  color: rgba(229, 231, 235, 0.96);
 }
 
 .sectionSubtitle {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.6);
-  margin: 0;
+  margin: 6px 0 0 0;
+  font-size: 13px;
+  font-weight: 750;
+  color: rgba(229, 231, 235, 0.62);
 }
 
 .ghostButton {
-  padding: 6px 12px;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.7);
-  transition: background 0.2s;
+  padding: 10px 12px;
+  border-radius: 12px;
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
+  background: rgba(148, 163, 184, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+
+  color: rgba(229, 231, 235, 0.92);
+  font-weight: 900;
+  cursor: pointer;
+
+  transition: background 140ms ease, border-color 140ms ease, transform 140ms ease;
+}
+
+.ghostButton:hover {
+  background: rgba(148, 163, 184, 0.10);
+  border-color: rgba(59, 130, 246, 0.35);
+  transform: translateY(-1px);
+}
+
+.ghostButton:active {
+  transform: translateY(0);
 }
 
 .gamesGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 16px;
 }
 
 .gameCard {
-  cursor: pointer;
-  transition: transform 0.2s;
+  border-radius: 16px;
+  overflow: hidden;
 
-  &:hover {
-    transform: scale(1.02);
-  }
+  background: rgba(2, 6, 23, 0.28);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  cursor: pointer;
+
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.gameCard:hover {
+  transform: translateY(-2px);
+  border-color: rgba(59, 130, 246, 0.35);
+  background: rgba(2, 6, 23, 0.42);
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.30);
 }
 
 .gameImageContainer {
   width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 12px;
-  background: rgba(255, 255, 255, 0.1);
+  aspect-ratio: 16 / 9;
+  background: rgba(2, 6, 23, 0.35);
 }
 
 .gameImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
 .gameTitle {
-  font-size: 16px;
-  font-weight: 500;
-  color: #fff;
-  margin: 0 0 8px 0;
+  margin: 10px 12px 10px;
+  font-size: 14px;
+  font-weight: 900;
+  color: rgba(229, 231, 235, 0.92);
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .gameRatingPrice {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 12px 14px;
 }
 
 .starRating {
-  display: flex;
+  display: inline-flex;
   gap: 2px;
-}
-
-.star {
   font-size: 14px;
 }
 
+.star {
+  line-height: 1;
+}
+
 .starFilled {
-  color: #f59e0b;
+  color: #fbbf24;
 }
 
 .starEmpty {
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(229, 231, 235, 0.25);
 }
 
 .gamePrice {
   font-size: 14px;
-  font-weight: 600;
-  color: #10b981;
+  font-weight: 900;
+  color: #ffffff;
 }

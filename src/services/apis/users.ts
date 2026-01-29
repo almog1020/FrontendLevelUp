@@ -81,6 +81,15 @@ export async function logout(email:string,disable:UserStatus): Promise<void> {
         throw e;
     }
 }
+export async function getUsers(): Promise<User[]> {
+    try {
+        return (await instance.get(`/users`)).data
+    }catch(e:unknown) {
+        if (e instanceof AxiosError)
+            throw new Error(e.response!.data.detail);
+        throw e;
+    }
+}
 
 export async function updatePreferences(
     token: string,

@@ -2,40 +2,39 @@ import * as React from "react";
 import styles from "./UserManagement.module.scss";
 import StatCard from "../StatCard/StatCard.tsx";
 import Users from "./Users/Users.tsx";
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import type {User} from "../../interfaces/user.interface.ts";
 import user from "../../assets/users.png";
 import activeUser from "../../assets/activeUsers.png";
 import suspendedUsers from "../../assets/suspendedUsers.png";
 import admin from "../../assets/admin.png";
 import type {StatsCard} from "../../interfaces/statsCard.interface.ts";
-import {API_BASE_URL} from "../../services/apis/config.ts";
 import {CircularProgress} from "@mui/material";
+import {getUsers} from "../../services/apis/users.ts";
+import {toast} from "react-toastify";
 
 
 const UserManagement: React.FC = () => {
     const [users,setUsers] = useState<User[]>([])
     const [loading, setLoading] = useState<boolean>(true)
-    const wsRef = useRef<WebSocket | null>(null);
-
     useEffect(() => {
-        const ws = new WebSocket(`${API_BASE_URL}/users/ws`);
-        wsRef.current = ws;
+        let alive = true;
 
-        ws.onopen = () => console.log("WebSocket connected");
-        ws.onmessage = (e) => {
-            setTimeout(() => {
+        const fetchReviews = async () => {
+            try {
+                const users = await getUsers()
+                if (alive) setUsers(users);
                 setLoading(false)
-                setUsers(JSON.parse(e.data))
-            }, 2000);
+            } catch (e:unknown) {
+                setLoading(false)
+                toast.error((e as Error).message)
+            }
         };
-        ws.onerror = (e) => console.log("WebSocket error", e);
-        ws.onclose = () => console.log("WebSocket closed");
+        const id = setInterval(fetchReviews, 2000);
 
-        // runs ONLY when app/page actually unmounts
         return () => {
-            ws.close(1000, "component unmounted");
-            wsRef.current = null;
+            alive = false;
+            clearInterval(id);
         };
     }, []);
     

@@ -20,8 +20,10 @@ import ReviewManagement from "../../components/ReviewManagement/ReviewManagement
 import {Header} from "../../components/Header/Header.tsx";
 import AdminPage from "../../components/Admin/AdminPage/AdminPage.tsx";
 import GameManagement from "../../components/Admin/GameManagement/GameManagement.tsx";
+import PrivateRouteUser from "../../components/PrivateRoute/PrivateRouteUser/PrivateRouteUser.tsx";
+import PrivateRouteAdmin from "../../components/PrivateRoute/PrivateRouteAdmin/PrivateRouteAdmin.tsx";
 
-const Content:React.FC = () => {
+const Content: React.FC = () => {
     return (
         <AuthProvider>
             <Header/>
@@ -30,16 +32,18 @@ const Content:React.FC = () => {
                     <Route path={"/"} element={<Homepage/>}/>
                     <Route path={"/catalog"} element={<Catalog/>}/>
                     <Route path={"/game/:id"} element={<GameDetail/>}/>
-                    <Route path={"/admin"} element={<AdminPage />} />
-                    <Route path={"/admin/games"} element={<GameManagement />} />
                     <Route element={<PrivateRoute/>}>
-                        <Route path="/user/profile" element={<Profile />} />
-                        <Route path="/user/dashboard" element={<UserDashboard/>}/>
-                        <Route path={"/admin/management/users"} element={<UserManagement/>}/>
-                        <Route path={"/admin/management/reviews"} element={<ReviewManagement/>}/>
+                        <Route path="/profile" element={<Profile/>}/>
+                        <Route element={<PrivateRouteUser/>}>
+                            <Route path="/user/dashboard" element={<UserDashboard/>}/>
+                        </Route>
+                        <Route element={<PrivateRouteAdmin/>}>
+                            <Route path={"/admin/dashboard"} element={<AdminPage/>}/>
+                            <Route path={"/admin/management/users"} element={<UserManagement/>}/>
+                            <Route path={"/admin/management/reviews"} element={<ReviewManagement/>}/>
+                            <Route path={"/admin/management/games"} element={<GameManagement/>}/>
+                        </Route>
                     </Route>
-                 
-                
                 </Routes>
             </DialogProvider>
         </AuthProvider>

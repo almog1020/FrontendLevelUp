@@ -1,26 +1,30 @@
 .card {
-  background: #0f172a;
-  border-radius: 14px;
-  padding: 24px;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 16px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(12px);
+
+  padding: 18px;
   color: #e5e7eb;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  width: 100%;
+  gap: 10px;
 }
 
 .avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 8px;
+  width: 96px;
+  height: 96px;
+  border-radius: 999px;
   overflow: hidden;
+
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: radial-gradient(circle at 30% 30%, rgba(88, 166, 255, 0.35), rgba(2, 6, 23, 0.2));
+
+  display: grid;
+  place-items: center;
 
   img {
     width: 100%;
@@ -30,53 +34,67 @@
 }
 
 .avatarInitials {
-  font-size: 36px;
-  font-weight: 600;
-  color: #ffffff;
+  font-size: 34px;
+  font-weight: 900;
+  color: rgba(229, 231, 235, 0.95);
 }
 
 .name {
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 900;
   color: #ffffff;
-  margin-top: 8px;
+  margin-top: 6px;
+  text-align: center;
 }
 
 .email {
-  font-size: 14px;
-  color: #9ca3af;
+  font-size: 13px;
+  color: rgba(229, 231, 235, 0.65);
   margin-top: -4px;
+  text-align: center;
 }
 
 .badge {
-  padding: 6px 16px;
-  border-radius: 20px;
+  padding: 7px 12px;
+  border-radius: 999px;
   font-size: 12px;
-  font-weight: 600;
-  margin-top: 4px;
+  font-weight: 900;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(2, 6, 23, 0.25);
+  color: rgba(229, 231, 235, 0.92);
 
   &.admin {
-    background: #f97316;
-    color: #ffffff;
+    border-color: rgba(249, 115, 22, 0.35);
+    background: rgba(249, 115, 22, 0.12);
+    color: #fed7aa;
   }
 
   &.user {
-    background: #16a34a;
-    color: #ffffff;
+    border-color: rgba(16, 185, 129, 0.35);
+    background: rgba(16, 185, 129, 0.12);
+    color: #d1fae5;
   }
 }
 
 .infoRow {
+  width: 100%;
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  color: #9ca3af;
-  margin-top: 4px;
-  width: 100%;
-  justify-content: flex-start;
+  gap: 10px;
+
+  margin-top: 6px;
+  padding: 10px 12px;
+
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  background: rgba(2, 6, 23, 0.25);
+
+  font-size: 13px;
+  color: rgba(229, 231, 235, 0.72);
 
   .icon {
     font-size: 16px;
+    opacity: 0.9;
   }
 }
+

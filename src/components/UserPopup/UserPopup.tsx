@@ -47,8 +47,9 @@ export default function UserPopup(){
             </div>
             {isOpen && user &&
                 <UserDetails
+                    setOpen={() => setIsOpen(false)}
                     name={user.name}
-                    role={'user'}
+                    role={user.role}
                     onLogout={() => handelLogout(user!.email,user!.google_id)}
                 />}
         </div>

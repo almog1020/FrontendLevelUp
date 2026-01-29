@@ -1,70 +1,267 @@
+/* ================= ROOT PAGE LAYOUT ================= */
+
 .page {
-  padding: 24px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 42px 24px 60px;
+
   display: flex;
   flex-direction: column;
   gap: 18px;
+
+  color: #e5e7eb;
+  font-family: Inter, system-ui, sans-serif;
 }
+
+/* Grid for PopularGenre + TopDeals */
+.chartsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  align-items: stretch;
+}
+
+/* Desktop layout like real admin panel */
+@media (min-width: 1024px) {
+  .chartsGrid {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+}
+
+/* Extra large screens */
+@media (min-width: 1400px) {
+  .page {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* ================= SHARED GLASS CARD STYLE ================= */
+
+.card {
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 16px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.card:hover {
+  border-color: rgba(88, 166, 255, 0.35);
+  background: rgba(15, 23, 42, 0.7);
+  transform: translateY(-2px);
+}
+
+/* ================= HEADER ================= */
 
 .header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
 }
 
 .title {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   margin: 0;
-  font-size: 28px;
-  font-weight: 700;
+  color: #60a5fa;
 }
 
 .subtitle {
-  margin: 6px 0 0 0;
-  opacity: 0.75;
+  font-size: 14px;
+  margin-top: 6px;
+  color: rgba(229, 231, 235, 0.7);
 }
 
 .badge {
-  padding: 6px 10px;
-  border-radius: 10px;
-  border: 1px solid #58a6ff;
-  color: #58a6ff;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(88, 166, 255, 0.6);
+  background: rgba(88, 166, 255, 0.12);
+  color: #93c5fd;
   font-size: 12px;
+  font-weight: 700;
   white-space: nowrap;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
+
+/* ================= STATS CARDS ================= */
+
+.cardsRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.statCard {
+  @extend .card;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 92px;
+}
+
+.statLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.statLabel {
+  font-size: 13px;
+  color: rgba(229, 231, 235, 0.75);
+  font-weight: 600;
+}
+
+.statValue {
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.statIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(2, 6, 23, 0.35);
+}
+
+/* ================= QUICK ACTIONS ================= */
+
+.actionsCard {
+  @extend .card;
+  padding: 14px;
+}
+
+.actionsTitle {
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.actionsRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.actionBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(2, 6, 23, 0.35);
+  color: rgba(229, 231, 235, 0.95);
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+
+  transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+
+.actionBtn:hover {
+  background: rgba(2, 6, 23, 0.55);
+  border-color: rgba(88, 166, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+/* ================= LIST / TOP DEALS ================= */
+
+.scrollArea {
+  max-height: 340px;
+  overflow: auto;
+  padding-right: 6px;
+}
+
+.listItem {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  gap: 12px;
+  align-items: center;
+
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(2, 6, 23, 0.2);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.listItem + .listItem {
+  margin-top: 10px;
+}
+
+.listItem:hover {
+  background: rgba(2, 6, 23, 0.4);
+  border-color: rgba(88, 166, 255, 0.25);
+}
+
+.itemTitle {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.itemMeta {
+  font-size: 12px;
+  color: rgba(229, 231, 235, 0.6);
+}
+
+.priceCol {
+  text-align: right;
+  font-weight: 800;
+}
+
+.oldPrice {
+  font-size: 12px;
+  color: rgba(229, 231, 235, 0.45);
+  text-decoration: line-through;
+}
+
+/* ================= NICE SCROLLBAR ================= */
+
+.scrollArea::-webkit-scrollbar {
+  width: 10px;
+}
+.scrollArea::-webkit-scrollbar-track {
+  background: rgba(2, 6, 23, 0.25);
+  border-radius: 999px;
+}
+.scrollArea::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.22);
+  border: 2px solid rgba(2, 6, 23, 0.25);
+  border-radius: 999px;
+}
+.scrollArea::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.35);
+}
+
+/* ================= ERROR / LOADING ================= */
 
 .error {
   padding: 12px;
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(239, 68, 68, 0.12);
   border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 8px;
-  color: #ef4444;
+  border-radius: 12px;
+  color: #fca5a5;
   font-size: 14px;
 }
 
 .loading {
   padding: 12px;
-  background: rgba(88, 166, 255, 0.1);
+  background: rgba(88, 166, 255, 0.12);
   border: 1px solid rgba(88, 166, 255, 0.3);
-  border-radius: 8px;
-  color: #58a6ff;
+  border-radius: 12px;
+  color: #93c5fd;
   font-size: 14px;
 }
-
-.cardsRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.chartsGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 18px;
-}
-
-@media (min-width: 1024px) {
-  .chartsGrid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-

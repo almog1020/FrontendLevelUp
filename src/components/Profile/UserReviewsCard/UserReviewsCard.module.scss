@@ -1,61 +1,95 @@
 .card {
-  background: #0f172a;
-  border-radius: 14px;
-  padding: 24px;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 16px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(12px);
+
+  padding: 18px;
   color: #e5e7eb;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
   width: 100%;
 }
 
 .title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #ffffff;
-  margin-bottom: 4px;
+  font-size: 15px;
+  font-weight: 900;
+  color: rgba(229, 231, 235, 0.95);
+  margin: 0 0 4px 0;
 }
 
 .subtitle {
-  font-size: 14px;
-  color: #9ca3af;
-  margin: 0 0 20px 0;
+  font-size: 13px;
+  color: rgba(229, 231, 235, 0.65);
+  margin: 0 0 14px 0;
 }
 
 .loading,
 .empty {
-  color: #9ca3af;
-  font-size: 14px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  background: rgba(2, 6, 23, 0.25);
+  color: rgba(229, 231, 235, 0.7);
   text-align: center;
-  padding: 20px;
+  font-weight: 700;
 }
 
 .reviewsList {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-height: 400px;
-  overflow-y: auto;
+  gap: 12px;
+
+  max-height: 420px;
+  overflow: auto;
+  padding-right: 6px;
+}
+
+/* nicer scrollbar */
+.reviewsList::-webkit-scrollbar {
+  width: 10px;
+}
+.reviewsList::-webkit-scrollbar-track {
+  background: rgba(2, 6, 23, 0.25);
+  border-radius: 999px;
+}
+.reviewsList::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.22);
+  border: 2px solid rgba(2, 6, 23, 0.25);
+  border-radius: 999px;
+}
+.reviewsList::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.35);
 }
 
 .reviewItem {
-  background: #1f2937;
-  border-radius: 8px;
-  padding: 16px;
-  border: 1px solid #374151;
+  border-radius: 14px;
+  padding: 14px;
+
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  background: rgba(2, 6, 23, 0.25);
+
+  transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    background: rgba(2, 6, 23, 0.40);
+    border-color: rgba(88, 166, 255, 0.25);
+  }
 }
 
 .reviewHeader {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
   align-items: center;
+  gap: 10px;
   margin-bottom: 8px;
-  gap: 12px;
 }
 
 .gameName {
-  font-size: 14px;
-  font-weight: 600;
-  color: #ffffff;
-  flex: 1;
+  font-size: 13px;
+  font-weight: 900;
+  color: rgba(229, 231, 235, 0.92);
+
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -63,28 +97,35 @@
 
 .stars {
   font-size: 14px;
-  flex-shrink: 0;
+  opacity: 0.95;
 }
 
 .deleteButton {
-  background: transparent;
-  border: none;
+  background: rgba(239, 68, 68, 0.10);
+  border: 1px solid rgba(239, 68, 68, 0.22);
+  color: rgba(252, 165, 165, 0.95);
+
+  border-radius: 10px;
+  padding: 6px 10px;
   cursor: pointer;
-  font-size: 16px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: all 0.2s;
-  opacity: 0.6;
+
+  transition: transform 140ms ease, background 140ms ease, border-color 140ms ease;
 
   &:hover {
-    opacity: 1;
-    background: #dc2626;
+    transform: translateY(-1px);
+    background: rgba(239, 68, 68, 0.18);
+    border-color: rgba(239, 68, 68, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 }
 
 .comment {
-  font-size: 13px;
-  color: #9ca3af;
   margin: 0;
-  line-height: 1.5;
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(229, 231, 235, 0.68);
 }
+
