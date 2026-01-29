@@ -30,14 +30,10 @@ const Content:React.FC = () => {
                     <Route path={"/"} element={<Homepage/>}/>
                     <Route path={"/catalog"} element={<Catalog/>}/>
                     <Route path={"/game/:id"} element={<GameDetail/>}/>
-<<<<<<< HEAD
                     <Route path={"/admin"} element={<AdminPage />} />
                     <Route path={"/admin/games"} element={<GameManagement />} />
-                    <Route element={<PrivateRoute />}>
-=======
                     <Route element={<PrivateRoute/>}>
                         <Route path="/user/profile" element={<Profile />} />
->>>>>>> origin
                         <Route path="/user/dashboard" element={<UserDashboard/>}/>
                         <Route path={"/admin/management/users"} element={<UserManagement/>}/>
                         <Route path={"/admin/management/reviews"} element={<ReviewManagement/>}/>

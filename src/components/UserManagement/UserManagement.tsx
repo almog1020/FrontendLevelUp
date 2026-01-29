@@ -25,10 +25,7 @@ const UserManagement: React.FC = () => {
         ws.onopen = () => console.log("WebSocket connected");
         ws.onmessage = (e) => {
             setTimeout(() => {
-<<<<<<< HEAD
-=======
                 setLoading(false)
->>>>>>> origin
                 setUsers(JSON.parse(e.data))
             }, 2000);
         };
