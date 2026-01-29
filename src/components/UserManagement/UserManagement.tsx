@@ -10,10 +10,12 @@ import suspendedUsers from "../../assets/suspendedUsers.png";
 import admin from "../../assets/admin.png";
 import type {StatsCard} from "../../interfaces/statsCard.interface.ts";
 import {API_BASE_URL} from "../../services/apis/config.ts";
+import {CircularProgress} from "@mui/material";
 
 
 const UserManagement: React.FC = () => {
     const [users,setUsers] = useState<User[]>([])
+    const [loading, setLoading] = useState<boolean>(true)
     const wsRef = useRef<WebSocket | null>(null);
 
     useEffect(() => {
@@ -23,6 +25,10 @@ const UserManagement: React.FC = () => {
         ws.onopen = () => console.log("WebSocket connected");
         ws.onmessage = (e) => {
             setTimeout(() => {
+<<<<<<< HEAD
+=======
+                setLoading(false)
+>>>>>>> origin
                 setUsers(JSON.parse(e.data))
             }, 2000);
         };
@@ -65,7 +71,7 @@ const UserManagement: React.FC = () => {
         <section className={styles.userOverview}>
             <div className={styles.headerRow}>
                 <div>
-                    <h2 className={styles.title}>User Management</h2>
+                    <h2 className={styles.title}>Users Management</h2>
                     <p className={styles.subtitle}>
                         Manage platform users and their permissions
                     </p>
@@ -77,7 +83,9 @@ const UserManagement: React.FC = () => {
                     <StatCard title={statCard.title} value={statCard.value} icon={statCard.icon} key={index}/>
                 )}
             </div>
-            <Users users={users} />
+            <div className={styles.contentRow}>
+                {loading ? <CircularProgress className={styles.loading} /> :<Users users={users} setLoading={setLoading}/>}
+            </div>
         </section>
     );
 };

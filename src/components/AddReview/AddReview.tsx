@@ -9,7 +9,6 @@ import {
     Button,
     IconButton,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import styles from "./AddReview.module.scss";
 import type {ReviewDialogProps} from "../../interfaces/review.interface.ts";
 import {useState} from "react";
@@ -54,7 +53,7 @@ export default function AddReview({open, gameTitle, onClose}: ReviewDialogProps)
                 <IconButton
                     onClick={onClose}
                     className={styles.closeBtn}>
-                    <CloseIcon />
+                    ×
                 </IconButton>
             </DialogTitle>
 

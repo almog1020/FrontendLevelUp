@@ -8,6 +8,8 @@
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
     color: #e5e7eb;
+    text-align: center;
+    width: 100%;
   }
 
   .topRow {
@@ -62,6 +64,7 @@
     border-collapse: collapse;
     font-size: 14px;
     margin-top: 8px;
+    align-content: center;
   }
 
   .table thead th {
@@ -80,7 +83,6 @@
   /* User cell */
   .userCell {
     display: flex;
-    align-items: center;
     gap: 12px;
   }
 
@@ -118,10 +120,11 @@
     border-radius: 999px;
     font-size: 12px;
     text-transform: lowercase;
+    font-weight: bold;
   }
 
   .badgeAdmin {
-    background: #1d4ed8;
+    background: #8B5CF6FF;
     color: #bfdbfe;
   }
 
@@ -131,24 +134,17 @@
   }
 
   .badgeActive {
-    background: #1d4ed8;
+    background: rgba(80, 186, 80, 0.78);
+    color: #bfdbfe;
+  }
+  .badgeInActive {
+    background: #374151;
     color: #bfdbfe;
   }
 
   .badgeSuspended {
     background: #dc2626;
     color: #fee2e2;
-  }
-
-  .purchase {
-    color: #9ca3af;
-  }
-
-  /* Actions */
-  .actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
   }
 
   .iconButton {

@@ -1,31 +1,67 @@
 import {useEffect, useState} from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import type {Game} from '../../interfaces/game.interface';
 import styles from './GameDetail.module.scss';
 import AddReview from "../AddReview/AddReview.tsx";
 import type {ReviewRecord} from "../../interfaces/review.interface.ts";
 import {getGameReviews} from "../../services/apis/reviews.ts";
+import {getGameById} from "../../services/apis/games.ts";
 import Stars from "../Stars/Stars.tsx";
+import { GameDetailSkeleton } from '../GameDetailSkeleton/GameDetailSkeleton';
 
 export const GameDetail = () => {
   const [activeTab, setActiveTab] = useState<'description' | 'price' | 'reviews'>('description');
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [open,setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const location = useLocation();
-  const { game }:{game:Game} = location.state || {};
+  const { id } = useParams<{ id: string }>();
+  const { game: initialGame }:{game?:Game} = location.state || {};
+  const [game, setGame] = useState<Game | null>(initialGame || null);
   const [results,setResults] = useState<ReviewRecord[]>([])
 
   useEffect(() => {
-    const fetchData = async () => {
-      const results = await getGameReviews(game.title);
-      setResults(results);
-    };
-    fetchData();
+    const fetchGameData = async () => {
+      if (!id) {
+        setError('Game ID is missing');
+        setLoading(false);
+        return;
+      }
 
+      try {
+        setLoading(true);
+        setError(null);
+        const gameData = await getGameById(id);
+        if (gameData) {
+          setGame(gameData);
+        } else {
+          setError('Game not found');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load game');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGameData();
+  }, [id]);
+
+  useEffect(() => {
+    if (game?.title) {
+      const fetchData = async () => {
+        const results = await getGameReviews(game.title);
+        setResults(results);
+      };
+      fetchData();
+    }
   }, [game?.title]);
 
 
   const handleShare = async () => {
+    if (!game) return;
+    
     if (navigator.share) {
       try {
         await navigator.share({
@@ -37,11 +73,24 @@ export const GameDetail = () => {
         console.error('Error sharing:', error);
       }
     } else {
-      // Fallback: copy to clipboard
       await navigator.clipboard.writeText(window.location.href);
       alert('Link copied to clipboard!');
     }
   };
+
+  if (loading) {
+    return <GameDetailSkeleton />;
+  }
+
+  if (error || !game) {
+    return (
+      <div className={styles.gameDetail}>
+        <div className={styles.loading}>{error || 'Game not found'}</div>
+      </div>
+    );
+  }
+
+  const bestPriceUrl = game.priceComparison?.find(item => item.url)?.url;
 
   return (
     <div className={styles.gameDetail}>
@@ -88,9 +137,9 @@ export const GameDetail = () => {
                 {game.storeName && (
                   <div className={styles.storeName}>at {game.storeName}</div>
                 )}
-                {game.priceComparison && game.priceComparison.length > 0 && game.priceComparison[0].url ? (
+                {bestPriceUrl ? (
                   <a
-                    href={game.priceComparison[0].url}
+                    href={bestPriceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={styles.buyButton}
@@ -98,7 +147,9 @@ export const GameDetail = () => {
                     Buy Now
                   </a>
                 ) : (
-                  <button className={styles.buyButton}>Buy Now</button>
+                  <button className={styles.buyButton}>
+                    Buy Now
+                  </button>
                 )}
               </div>
             </div>
