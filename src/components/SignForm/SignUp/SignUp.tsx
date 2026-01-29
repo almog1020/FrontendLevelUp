@@ -14,7 +14,7 @@ export function SignUp({loading, closeDialog}: { loading(value: boolean): void, 
         formState: {errors}
     } = useForm<SignUpFormValues>();
     const password = watch('password');
-
+    console.log(errors)
     const onSignUpSubmit: SubmitHandler<SignUpFormValues> = async (data) => {
         try {
             loading(true)
@@ -52,10 +52,12 @@ export function SignUp({loading, closeDialog}: { loading(value: boolean): void, 
                     type={'password'}
                     required={true}
                     {...registerSignUp("password", {
+                        minLength: { value: 8, message: "Password must be at least 8 characters." },
+                        maxLength: { value: 10, message: "Password must be at most 10 characters." },
                         pattern: {
-                            value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/,
-                            message: 'The password must be length 8-10 with letters, symbols and numbers'
-                        }
+                            value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/,
+                            message: "Password must include upper, lower, number, and symbol (@$!%*?&).",
+                        },
                     })}
                 />
                 {errors.password && (
