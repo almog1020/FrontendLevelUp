@@ -18,7 +18,7 @@ const UserPopup: React.FC = () => {
                     <img src={userIcon} alt={"user"} />
                 </button>
             </div>
-            {isOpen && user && <UserDetails name={user} role={'user'} onLogout={() => auth!.logOut(user)}/>}
+            {isOpen && user && <UserDetails name={user} role={'user'} onLogout={() => auth!.logOut()}/>}
         </div>
     )
 }
