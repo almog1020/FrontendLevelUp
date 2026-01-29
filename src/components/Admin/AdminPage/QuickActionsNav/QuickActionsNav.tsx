@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { Users, Gamepad2, Store, MessageSquare } from "lucide-react";
+import { Users, Gamepad2, MessageSquare } from "lucide-react";
 import styles from "./QuickActionsNav.module.scss";
 
 const QuickActionsNav: React.FC = () => {

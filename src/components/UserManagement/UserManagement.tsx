@@ -10,12 +10,10 @@ import suspendedUsers from "../../assets/suspendedUsers.png";
 import admin from "../../assets/admin.png";
 import type {StatsCard} from "../../interfaces/statsCard.interface.ts";
 import {API_BASE_URL} from "../../services/apis/config.ts";
-import {CircularProgress} from "@mui/material";
 
 
 const UserManagement: React.FC = () => {
     const [users,setUsers] = useState<User[]>([])
-    const [loading, setLoading] = useState<boolean>(true)
     const wsRef = useRef<WebSocket | null>(null);
 
     useEffect(() => {
@@ -25,7 +23,6 @@ const UserManagement: React.FC = () => {
         ws.onopen = () => console.log("WebSocket connected");
         ws.onmessage = (e) => {
             setTimeout(() => {
-                setLoading(false)
                 setUsers(JSON.parse(e.data))
             }, 2000);
         };

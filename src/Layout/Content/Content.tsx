@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Route, Routes, Navigate} from "react-router-dom";
+import {Route, Routes} from "react-router-dom";
 import {Homepage} from "../../components/Homepage/Homepage.tsx";
 import {GameDetail} from "../../components/GameDetail/GameDetail.tsx";
 import UserManagement from "../../components/UserManagement/UserManagement.tsx";
