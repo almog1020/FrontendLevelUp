@@ -6,6 +6,7 @@ import {searchGames} from '../../services/apis/games';
 import UserPopup from "../UserPopup/UserPopup.tsx";
 import LevelUpLogo from '../../assets/LevelUp.png'
 import {toast} from "react-toastify";
+import catalog from '../../assets/store.png'
 
 export const Header = () => {
 
@@ -58,69 +59,72 @@ export const Header = () => {
     };
 
     return (
-            <header className={styles.header}>
-                <div className={styles.header__container}>
-                    {/* Logo and Branding */}
-                    <div
-                        className={styles.header__logo}
-                        onClick={() => {
+        <header className={styles.header}>
+            <div className={styles.header__container}>
+                {/* Logo and Branding */}
+                <div
+                    className={styles.header__logo}
+                    onClick={() => {
+                        setSearchQuery(''); // Clear search query
+                        window.dispatchEvent(new CustomEvent('games-refresh')); // Reset homepage
+                        navigate('/');
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
                             setSearchQuery(''); // Clear search query
                             window.dispatchEvent(new CustomEvent('games-refresh')); // Reset homepage
                             navigate('/');
-                        }}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault();
-                                setSearchQuery(''); // Clear search query
-                                window.dispatchEvent(new CustomEvent('games-refresh')); // Reset homepage
-                                navigate('/');
-                            }
-                        }}
-                        aria-label="Go to homepage"
-                    >
-                        <div className={styles.header__logoIcon}>
-                            <img src={LevelUpLogo} alt="Level Up Logo"/>
-                        </div>
-                        <div className={styles.header__branding}>
-                            <h1 className={styles.header__title}>LevelUp</h1>
-                            <p className={styles.header__tagline}>Compare & Save</p>
-                        </div>
+                        }
+                    }}
+                    aria-label="Go to homepage"
+                >
+                    <div className={styles.header__logoIcon}>
+                        <img src={LevelUpLogo} alt="Level Up Logo"/>
                     </div>
+                    <div className={styles.header__branding}>
+                        <h1 className={styles.header__title}>LevelUp</h1>
+                        <p className={styles.header__tagline}>Compare & Save</p>
+                    </div>
+                </div>
 
-                    {/* Search Bar */}
-                    <form className={styles.header__search} onSubmit={handleSearchSubmit}>
-                        <div className={styles.header__searchIcon}>
-                            <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <path d="m21 21-4.35-4.35"></path>
-                            </svg>
-                        </div>
-                        <input
-                            type="text"
-                            className={styles.header__searchInput}
-                            placeholder={isSearching ? "Searching..." : "Search for games..."}
-                            value={searchQuery}
-                            onChange={handleSearchChange}
-                            disabled={isSearching}
-                            aria-label="Search for games"
-                        />
-                    </form>
-
+                {/* Search Bar */}
+                <form className={styles.header__search} onSubmit={handleSearchSubmit}>
+                    <div className={styles.header__searchIcon}>
+                        <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </div>
+                    <input
+                        type="text"
+                        className={styles.header__searchInput}
+                        placeholder={isSearching ? "Searching..." : "Search for games..."}
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        disabled={isSearching}
+                        aria-label="Search for games"
+                    />
+                </form>
                 {/* Right Side Actions */}
                 <div className={styles.header__actions}>
+                    <button className={styles.iconButton} onClick={() => navigate('/catalog')}>
+                        <img src={catalog} alt="catalog" className={styles.catalog}/>
+                    </button>
                     {token ? <UserPopup/> : <SignForm/>}
                 </div>
+
             </div>
         </header>
     );

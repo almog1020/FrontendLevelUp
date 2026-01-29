@@ -1,9 +1,9 @@
 import StatCard from "../../../StatCard/StatCard.tsx";
 import styles from "../AdminPage.module.scss";
 import user from "../../../../assets/users.png";
-import activeUser from "../../../../assets/activeUsers.png";
-import admin from "../../../../assets/admin.png";
+import gameIcon from "../../../../assets/game.png";
 import type { DashboardStats } from "../../../../services/apis/adminDashboard.ts";
+import reviewIcon from "../../../../assets/review.png";
 
 interface AdminDashboardStatsProps {
   stats: DashboardStats;
@@ -20,12 +20,12 @@ export function AdminDashboardStats({ stats, isLoading }: AdminDashboardStatsPro
     {
       title: "Total Games",
       value: isLoading ? 0 : stats.totalGames,
-      icon: activeUser,
+      icon: gameIcon,
     },
     {
-      title: "Pending Reviews",
+      title: "Reviews",
       value: isLoading ? 0 : stats.pendingReviews,
-      icon: admin,
+      icon: reviewIcon,
     },
   ];
 

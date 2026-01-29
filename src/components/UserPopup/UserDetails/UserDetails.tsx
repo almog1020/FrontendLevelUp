@@ -22,7 +22,7 @@ export function UserDetails({name,role,onLogout,setOpen}:{name:string, role:User
                     <img src={dashboardIcon} alt="Dashboard" className={styles.menu_item_icon}/>
                     <div className={styles.title}>Dashboard</div>
                 </button>
-                <button className={styles.menu_item}>
+                <button className={styles.menu_item} onClick={() => handleNavigate(`/profile`)}>
                     <img src={profileIcon} alt="Profile" className={styles.menu_item_icon}/>
                     <div className={styles.title}>Profile</div>
                 </button>

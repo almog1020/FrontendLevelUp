@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import QuickActionsNav from "./QuickActionsNav/QuickActionsNav.tsx";
 import { AdminDashboardHeader } from "./AdminDashboardHeader/AdminDashboardHeader.tsx";
 import { AdminDashboardStats } from "./AdminDashboardStats/AdminDashboardStats.tsx";
@@ -45,7 +45,7 @@ const AdminPage: React.FC = () => {
           fetchDashboardStats(),
           fetchAdminGenreStats(),
         ]);
-
+        console.log(genreStatsData.genre_stats)
         setStats(dashboardStats);
         setGenreStats(genreStatsData.genre_stats);
       } catch (err) {
