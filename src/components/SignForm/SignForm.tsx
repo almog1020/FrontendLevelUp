@@ -2,7 +2,6 @@ import Dialog from '@mui/material/Dialog';
 import {useState} from "react";
 import styles from './SignForm.module.scss'
 import remoteIcon from '../../assets/remote.png'
-import {ToastContainer} from "react-toastify";
 import LoginButton from "./LoginButton/LoginButton.tsx";
 import {CircularProgress} from "@mui/material";
 import {SignIn} from "./SignIn/SignIn.tsx";
@@ -17,7 +16,6 @@ export const SignForm = () => {
     return (
         <>
             <button onClick={() => setOpen(true)} className={styles.signInButton}>Sign In</button>
-            <ToastContainer/>
             <Dialog
                 open={open}
                 onClose={() => setOpen(false)}
@@ -36,7 +34,8 @@ export const SignForm = () => {
                             : 'Sign up to get started'}
                     </p>
                 </div>
-                {loading ? <CircularProgress/> : <>
+                {loading ? <CircularProgress className={styles.loading}/> :
+                    <div className={styles.content}>
                     {isSignIn ? <SignIn
                             loading={setLoading}
                             closeDialog={() => setOpen(false)}/> :
@@ -65,7 +64,7 @@ export const SignForm = () => {
                     <div className={styles.sign_in_dialog__social}>
                         <LoginButton loading={setLoading}/>
                     </div>
-                </>}
+                </div>}
             </Dialog>
         </>
     )

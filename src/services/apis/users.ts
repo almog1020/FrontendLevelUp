@@ -5,12 +5,7 @@ import type {User, UserResponse, UserStatus} from "../../interfaces/user.interfa
 
 export async function login(username: string, password: string): Promise<string> {
     try {
-        // OAuth2PasswordRequestForm expects form-urlencoded data
-        const params = new URLSearchParams();
-        params.append('username', username);
-        params.append('password', password);
-        
-        const response = await instanceAuth.post('/auth/token', params);
+        const response = await instanceAuth.post('/auth/token', {username: username, password: password});
         return response.data.access_token;
     } catch (e: unknown) {
         if (e instanceof AxiosError) {

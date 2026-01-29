@@ -11,7 +11,7 @@ export function UserDetails({name,role,onLogout}:{name:string, role:UserRole,onL
     return (
         <div className={styles.user_menu}>
             <div className={styles.user_info}>
-                <div className={styles.user_name}>{name}</div>
+                <div className={styles.user_name}>{name.slice(0,1).toUpperCase() + name.slice(1,)}</div>
                 <div className={styles.user_role}>{role}</div>
             </div>
             <div className={styles.menu_items}>

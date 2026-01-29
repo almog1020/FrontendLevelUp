@@ -6,7 +6,10 @@
   color: #e5e7eb;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
   text-align: left;
-
+  position: fixed;
+  top: 70px;
+  right: 250px;
+  z-index: 999999;
 }
 
 .user_info {
