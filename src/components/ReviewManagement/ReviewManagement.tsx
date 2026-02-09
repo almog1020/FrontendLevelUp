@@ -1,7 +1,7 @@
 import {useEffect, useMemo, useState} from "react";
 import styles from "./ReviewManagement.module.scss";
 import Stars from "../Stars/Stars";
-import StatCard from "../StatCard/StatCard.tsx";
+import StatCard from "../General/StatCard/StatCard.tsx";
 import type {StatsCard} from "../../interfaces/statsCard.interface.ts";
 import starBlue from '../../assets/star-blue.png'
 import starGreen from '../../assets/star-green.png'
@@ -37,6 +37,7 @@ export default function ReviewManagement() {
             clearInterval(id);
         };
     }, []);
+
     const reviewsCard: StatsCard[] = useMemo(() => {
         const total = results.length;
         return [
@@ -69,6 +70,7 @@ export default function ReviewManagement() {
             toast.error((e as Error).message);
         }
     }
+
     return (
         <div className={styles.page}>
             <div className={styles.topRow}>

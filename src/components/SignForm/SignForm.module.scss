@@ -1,251 +1,193 @@
-// SignForm.module.scss
 @use "sass:color";
 
-// === Colors ===
-$bg-main: #020617;      // רקע הכרטיס
-$bg-input: #020617;
-$border-input: #1f2937;
-$text-main: #e5e7eb;
-$text-muted: #9ca3af;
-$text-link: #60a5fa;
-$primary: #3b82f6;
-$primary-hover: #2563eb;
-$divider: #1f2937;
-$button-dark: #020617;
-$social-border: #111827;
+// === Gaming Purple Theme Colors ===
+$bg-card: #0f2040;
+$accent-purple: #9d4edd;
+$deep-violet: #a75cf3;
+$input-bg: rgba(255, 255, 255, 0.03);
+$text-main: #f8f0ff;
+$text-muted: white;
+$border-color: rgba(255, 255, 255, 0.1);
 
-.signInButton {
-  border: none ;
-  background: $bg-main ;
-  text-transform: none;
-  padding: 6px 14px ;
-  min-width: unset ;
-  font-size: 14px ;
-  color: white ;
-  &:hover {
-    border: none ;
-    background: #22c55e ;
-  }
-}
-
-// === Container ===
+// הדיאלוג הראשי - גובה ורוחב קשיחים
 .sign_in_dialog {
   position: relative;
-  width: 460px;
-  background-color: $bg-main !important;
-  border-radius: 16px;
-  padding: 28px 32px 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  width: 500px !important;
+  height: auto !important;
+  background-color: #0f172a !important;
+  border: 1px solid rgba($accent-purple, 0.3) !important;
+  border-radius: 12px !important;
+  padding: 15px 20px !important; // פדינג הדוק למניעת גלילה
   color: $text-main;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  align-items: center;
-  justify-content: center;
-  align-content: center;
-
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
 }
 
-// X (close)
+// כפתור ה-X לסגירה
 .sign_in_dialog__close {
   position: absolute;
-  top: 14px;
-  right: 18px;
-  background: transparent;
+  top: 10px;
+  right: 5px;
+  background: none;
   border: none;
   color: $text-muted;
   font-size: 18px;
   cursor: pointer;
-
-  &:hover {
-    color: color.adjust($text-muted, $lightness: 5%);
-  }
+  z-index: 10;
+  &:hover { color: #fff; }
 }
 
-// === Header ===
+// כותרת ולוגו בשורה אחת (חוסך גובה)
 .sign_in_dialog__header {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  margin-bottom: 20px;
-  width: 100%;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-shrink: 0;
 }
 
 .sign_in_dialog__icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #6366f1, #a855f7);
+  width: 40px;
+  height: 40px;
+  background: $deep-violet;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
-  margin-bottom: 14px;
-  img {
-    width: 32px;
-    height: 32px;
-    object-fit: contain;
-  }
+  img { width: 25px; height: 25px; }
 }
 
 .sign_in_dialog__title {
+  font-size: 16px;
+  font-weight: 800;
   margin: 0;
-  font-size: 24px;
-  font-weight: 600;
-  color: #ffffff;
+  letter-spacing: 0.5px;
+  color: $text-main;
 }
 
-.sign_in_dialog__subtitle {
-  margin-top: 6px;
-  font-size: 14px;
-  color: $text-muted;
-}
-
-// === Form ===
+// מערכת גריד לטפסים - 2 שדות בשורה ב-SignUp
 .sign_in_dialog__form {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin-top: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+  width: 100%;
+}
+
+// קלאס עזר לשדות שצריכים רוחב מלא (כמו ב-SignIn)
+.full_width {
+  grid-column: span 2;
 }
 
 .sign_in_dialog__field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .sign_in_dialog__label {
-  font-size: 13px;
-  font-weight: 500;
-  color: $text-main;
+  font-size: 11px;
+  text-transform: capitalize;
+  color: white;
 }
 
 .sign_in_dialog__input {
-  width: 100%;
-  padding: 10px 12px;
+  width: 90%;
+  padding: 7px 10px;
+  background: $input-bg;
+  border: 1px solid $border-color;
   border-radius: 6px;
-  border: 1px solid $border-input;
-  background-color: $bg-input;
-  color: $text-main;
-  font-size: 14px;
-
-  &::placeholder {
-    color: $text-muted;
-  }
-
+  color: #fff;
+  font-size: 13px;
+  transition: border-color 0.2s;
   &:focus {
     outline: none;
-    border-color: $primary;
+    border-color: $accent-purple;
   }
 }
 
-// remember + forgot
-.sign_in_dialog__row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 6px;
-  margin-bottom: 12px;
-  font-size: 13px;
-}
-
-.sign_in_dialog__forgot {
-  color: $text-link;
-  cursor: pointer;
-  font-weight: 500;
-
-  &:hover {
-    color: color.adjust($text-link, $lightness: 8%);
-  }
-}
-
-// === Sign in button ===
+// כפתור השליחה הסגול (SIGN UP / SIGN IN)
 .sign_in_dialog__submit {
   width: 100%;
-  margin-top: 4px;
-  padding: 10px 0;
-  border-radius: 6px;
+  grid-column: span 2;
+  padding: 9px;
+  background-color: $accent-purple;
+  color: white;
   border: none;
-  background-color: $primary;
-  color: #ffffff;
-  font-size: 15px;
-  font-weight: 600;
+  border-radius: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
   cursor: pointer;
-
-  &:hover {
-    background-color: $primary-hover;
-  }
+  margin-top: 4px;
+  font-size: 13px;
+  &:hover { background-color: color.adjust($accent-purple, $lightness: 5%); }
 }
 
-// === Divider: OR CONTINUE WITH ===
+// קו מפריד "Or continue with"
 .sign_in_dialog__divider {
+  grid-column: span 2;
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 18px 0 14px;
-  font-size: 11px;
-  text-transform: uppercase;
+  margin: 10px 0;
+  font-size: 10px;
   color: $text-muted;
+  text-transform: uppercase;
+  &::before, &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: $border-color;
+  }
+}
+.sign_in_dialog__row{
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
 }
 
-.sign_in_dialog__divider_line {
-  flex: 1;
-  height: 1px;
-  background-color: $divider;
-}
-
-.sign_in_dialog__divider_text {
-  letter-spacing: 0.08em;
-}
-
-// === Social buttons ===
+// אזור כפתור גוגל
 .sign_in_dialog__social {
   width: 100%;
 }
 
-.sign_in_dialog__social_btn {
-  flex: 1;
-  padding: 10px 0;
-  border-radius: 8px;
-  border: 1px solid $social-border;
-  background-color: $button-dark;
-  color: $text-main;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+// הודעות שגיאה
+.error {
+  color: #ff4d4d;
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+// כפתור פתיחת הדיאלוג (מחוץ לדיאלוג)
+.signInButton {
+  background: transparent;
+  border: 1px solid $accent-purple;
+  color: $accent-purple;
+  padding: 5px 15px;
+  border-radius: 4px;
   cursor: pointer;
-
-  img,
-  svg {
-    width: 20px;
-    height: 20px;
-    display: block;
-  }
-
+  font-size: 14px;
+  transition: all 0.2s;
   &:hover {
-    background-color: color.adjust($button-dark, $lightness: 4%);
+    background: $accent-purple;
+    color: #fff;
   }
 }
-.error{
-  color: #ef4444;
-  font-size: 12px;
-  margin-top: 4px;
-}
-.loading{
-  align-items: center;
-  justify-content: center;
-  align-content: center;
-  width: 56px !important;
-  height: 56px !important;
-  color: #60a5fa !important;
-
-  /* Glow */
-  filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.45));
-
-  /* Rounded stroke */
-  .MuiCircularProgress-circle {
-    stroke-linecap: round;
-  }
-}
-.content{
+.containerLoading {
   width: 100%;
+  text-align: center;
+  .loading{
+    width: 56px !important;
+    height: 56px !important;
+    color: $accent-purple !important;
+
+    /* Glow */
+    filter: drop-shadow(0 0 10px rgb(157, 78, 221));
+
+    /* Rounded stroke */
+    .MuiCircularProgress-circle {
+      stroke-linecap: round;
+    }
+  }
 }
