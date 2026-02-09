@@ -3,10 +3,11 @@ import {useNavigate} from 'react-router-dom';
 import styles from './Header.module.scss';
 import {SignForm} from '../SignForm/SignForm.tsx';
 import {searchGames} from '../../services/apis/games';
-import UserPopup from "../UserPopup/UserPopup.tsx";
 import LevelUpLogo from '../../assets/LevelUp.png'
 import {toast} from "react-toastify";
 import catalog from '../../assets/store.png'
+import UserDetails from "../UserPopup/UserDetails.tsx";
+import Action from "../General/Action/Action.tsx";
 
 export const Header = () => {
 
@@ -119,10 +120,8 @@ export const Header = () => {
                 </form>
                 {/* Right Side Actions */}
                 <div className={styles.header__actions}>
-                    <button className={styles.iconButton} onClick={() => navigate('/catalog')}>
-                        <img src={catalog} alt="catalog" className={styles.catalog}/>
-                    </button>
-                    {token ? <UserPopup/> : <SignForm/>}
+                    <Action onAction={() => navigate('/catalog')} label={"Catalog"} icon={catalog}/>
+                    {token ? <UserDetails/> : <SignForm/>}
                 </div>
 
             </div>

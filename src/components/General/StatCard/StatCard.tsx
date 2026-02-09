@@ -1,6 +1,6 @@
 import styles from "./StatCard.module.scss";
 import * as React from "react";
-import type {StatsCard} from "../../interfaces/statsCard.interface.ts";
+import type {StatsCard} from "../../../interfaces/statsCard.interface.ts";
 
 const StatCard: React.FC<StatsCard> = ({value,icon,title}) => {
     return (

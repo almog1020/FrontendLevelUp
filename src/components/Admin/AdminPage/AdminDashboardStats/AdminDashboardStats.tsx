@@ -1,4 +1,4 @@
-import StatCard from "../../../StatCard/StatCard.tsx";
+import StatCard from "../../../General/StatCard/StatCard.tsx";
 import styles from "../AdminPage.module.scss";
 import user from "../../../../assets/users.png";
 import gameIcon from "../../../../assets/game.png";

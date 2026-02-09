@@ -1,6 +1,6 @@
 import * as React from "react";
 import styles from "./UserManagement.module.scss";
-import StatCard from "../StatCard/StatCard.tsx";
+import StatCard from "../General/StatCard/StatCard.tsx";
 import Users from "./Users/Users.tsx";
 import {useEffect, useMemo, useState} from "react";
 import type {User} from "../../interfaces/user.interface.ts";
@@ -37,7 +37,7 @@ const UserManagement: React.FC = () => {
             clearInterval(id);
         };
     }, []);
-    
+
     const statCards:StatsCard[] = useMemo(() => {
         return [
             {
@@ -80,7 +80,8 @@ const UserManagement: React.FC = () => {
                 )}
             </div>
             <div className={styles.contentRow}>
-                {loading ? <CircularProgress className={styles.loading} /> :<Users users={users} setLoading={setLoading}/>}
+                {loading ? <CircularProgress className={styles.loading} /> :
+                    <Users users={users} setLoading={setLoading}/>}
             </div>
         </section>
     );

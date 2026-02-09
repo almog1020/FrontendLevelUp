@@ -1,0 +1,54 @@
+$accent-purple: #9d4edd;
+$neon-purple-glow: #b24bf3;
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 12px; // רווח בין הטקסט לאייקון
+  padding: 8px 16px; // פדינג רחב יותר כדי להכיל טקסט
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba($accent-purple, 0.2);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+
+  .label {
+    color: #e2e8f0; // צבע טקסט בהיר
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+  }
+
+  .icon {
+    width: 20px;
+    height: 20px;
+    /* אפקט סגול זוהר */
+    filter: invert(50%) sepia(90%) saturate(3000%) hue-rotate(250deg) brightness(110%) contrast(110%)
+    drop-shadow(0 0 5px rgba($neon-purple-glow, 0.8));
+    transition: all 0.3s ease;
+  }
+
+  &:hover {
+    background-color: rgba($accent-purple, 0.15);
+    border-color: $accent-purple;
+    box-shadow: 0 0 20px rgba($accent-purple, 0.3);
+    transform: translateY(-2px);
+
+    .label {
+      color: #fff;
+      text-shadow: 0 0 8px rgba($accent-purple, 0.8); // טקסט זוהר ב-Hover
+    }
+
+    .icon {
+      filter: invert(70%) sepia(50%) saturate(5000%) hue-rotate(260deg) brightness(120%)
+      drop-shadow(0 0 8px rgba($neon-purple-glow, 1));
+      transform: scale(1.1);
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
