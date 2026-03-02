@@ -1,10 +1,3 @@
-/**
- * Content Component
- * Main routing component that defines all application routes
- * Wraps routes with AuthProvider for authentication context
- * Uses PrivateRoute wrapper for protected routes that require authentication
- */
-
 import * as React from "react";
 import {Route, Routes, Navigate} from "react-router-dom";
 import {Homepage} from "../../components/Homepage/Homepage.tsx";
@@ -13,16 +6,16 @@ import UserManagement from "../../components/UserManagement/UserManagement.tsx";
 import PrivateRoute from "../../components/PrivateRoute/PrivateRoute.tsx";
 import Profile from "../../components/Profile/Profile.tsx";
 import AuthProvider from "../../components/AuthProvider/AuthProvider.tsx";
-import {UserDashboard} from "../../components/UserDashboard/UserDashboard.tsx";
 import {DialogProvider} from "../../contexts/DialogContext.tsx";
 import {Catalog} from "../../components/Catalog/Catalog.tsx";
 import ReviewManagement from "../../components/ReviewManagement/ReviewManagement.tsx";
 import {Header} from "../../components/Header/Header.tsx";
 import AdminPage from "../../components/Admin/AdminPage/AdminPage.tsx";
 import GameManagement from "../../components/Admin/GameManagement/GameManagement.tsx";
-import { Wishlist } from "../../components/Wishlist/Wishlist";
+import PrivateRouteAdmin from "../../components/PrivateRoute/PrivateRouteAdmin/PrivateRouteAdmin.tsx";
+import {Wishlist} from "../../components/Wishlist/Wishlist.tsx";
 
-const Content:React.FC = () => {
+const Content: React.FC = () => {
     return (
         <AuthProvider>
             <Header/>
@@ -31,19 +24,18 @@ const Content:React.FC = () => {
                     <Route path={"/"} element={<Homepage/>}/>
                     <Route path={"/catalog"} element={<Catalog/>}/>
                     <Route path={"/game/:id"} element={<GameDetail/>}/>
-                    <Route path={"/admin"} element={<AdminPage />} />
-                    <Route path={"/admin/games"} element={<GameManagement />} />
                     <Route element={<PrivateRoute/>}>
-                        <Route path="/user/profile" element={<Profile />} />
-                        <Route path="/user/dashboard" element={<UserDashboard/>}/>
+                        <Route path="/user/profile" element={<Profile/>}/>
+                        <Route path="/wishlist" element={<Wishlist/>}/>
+                    </Route>
+                    <Route element={<PrivateRouteAdmin/>}>
+                        <Route path={"/admin/dashboard"} element={<AdminPage/>}/>
                         <Route path={"/admin/management/users"} element={<UserManagement/>}/>
                         <Route path={"/admin/management/reviews"} element={<ReviewManagement/>}/>
-                        <Route path="/wishlist" element={<Wishlist />} />
+                        <Route path={"/admin/management/games"} element={<GameManagement/>}/>
                     </Route>
                     <Route path={"/admin/users"} element={<Navigate to="/admin/management/users" replace />} />
                     <Route path={"/admin/reviews"} element={<Navigate to="/admin/management/reviews" replace />} />
-                 
-                
                 </Routes>
             </DialogProvider>
         </AuthProvider>

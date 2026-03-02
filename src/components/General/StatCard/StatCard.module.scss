@@ -1,0 +1,62 @@
+$accent-purple: #9d4edd;
+$accent-blue: #3b82f6;
+
+.card {
+  // שמירה על הגודל המקורי פחות או יותר, אך עם גמישות
+  min-width: 240px;
+  height: 50px;
+  padding: 16px 20px;
+  border-radius: 18px;
+  background-color: rgba(15, 23, 42, 0.8);
+
+  // אפקט הבלטה (Emboss) - אור עליון וצל תחתון
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+          inset 0 1px 1px rgba(255, 255, 255, 0.1),
+          0 10px 20px rgba(0, 0, 0, 0.2);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: rgba($accent-blue, 0.3);
+    box-shadow:
+            inset 0 1px 2px rgba(255, 255, 255, 0.15),
+            0 15px 30px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5); // טקסט מעומעם למראה נקי
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.valueRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  // הוספת הילה סביב האייקון לפי צבעי המותג
+  filter: drop-shadow(0 0 8px rgba($accent-purple, 0.3));
+}
+
+.value {
+  font-size: 26px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+  // הבלטה קלה לטקסט
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}

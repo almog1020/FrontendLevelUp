@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { Users, Gamepad2, MessageSquare } from "lucide-react";
+import { Users, MessageSquare } from "lucide-react";
 import styles from "./QuickActionsNav.module.scss";
 
 const QuickActionsNav: React.FC = () => {
@@ -11,19 +11,17 @@ const QuickActionsNav: React.FC = () => {
       </div>
 
       <div className={styles.grid}>
-        <Link className={styles.actionBtn} to="/admin/users">
+        <Link className={styles.actionBtn} to="/admin/management/users">
           <Users className={styles.icon} />
           Manage Users
         </Link>
 
-        <Link className={styles.actionBtn} to="/admin/games">
-          <Gamepad2 className={styles.icon} />
-          Manage Games
-        </Link>
+        {/*<Link className={styles.actionBtn} to="/admin/management/games">*/}
+        {/*  <Gamepad2 className={styles.icon} />*/}
+        {/*  Manage Games*/}
+        {/*</Link>*/}
 
-        
-
-        <Link className={styles.actionBtn} to="/admin/reviews">
+        <Link className={styles.actionBtn} to="/admin/management/reviews">
           <MessageSquare className={styles.icon} />
           Review Moderation
         </Link>

@@ -48,7 +48,8 @@ body {
   height: 100%;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #0f172a;
+  background: radial-gradient(1200px 600px at 15% 0%, rgba(59, 130, 246, 0.12), transparent 55%),
+  radial-gradient(900px 500px at 90% 10%, rgba(157, 78, 221, 0.37), transparent 60%);
   overflow-x: hidden;
 }
 

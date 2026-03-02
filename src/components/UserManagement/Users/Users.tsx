@@ -49,10 +49,7 @@ function Users({users, setLoading}: { users: User[], setLoading(value: boolean):
     return (
         <div className={styles.allUsers}>
             <div className={styles.topRow}>
-                <div>
-                    <h3 className={styles.title}>All Users</h3>
-                    <p className={styles.subtitle}>A list of all users in the system</p>
-                </div>
+                <div className={styles.panelTitle}>All Users</div>
                 <div className={styles.searchWrapper}>
                     <span className={styles.searchIcon}>
                         <img src={search} alt="search icon" className={styles.icon}/>
@@ -64,38 +61,38 @@ function Users({users, setLoading}: { users: User[], setLoading(value: boolean):
                     />
                 </div>
             </div>
-
-            <table className={styles.table}>
-                <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Joined</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <>
-                    {usersFilter.length === 0 && <tr>
-                        <td colSpan={5} className={styles.empty}>
-                            No users yet.
-                        </td>
-                    </tr>}
-                    {usersFilter.length > 0 && usersFilter.map((user, index: number) => (
+            <div className={styles.panel}>
+                    <table className={styles.table}>
+                        <thead>
                         <tr>
-                            <td>
-                                <div className={styles.userCell}>
-                                    <div className={styles.avatar}>
-                                        {user.name.charAt(0)}
-                                    </div>
-                                    <div className={styles.userText}>
-                                        <div className={styles.userName}>{user.name}</div>
-                                        <div className={styles.userEmail}>{user.email}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Joined</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <>
+                            {usersFilter.length === 0 && <tr>
+                                <td colSpan={5} className={styles.empty}>
+                                    No users yet.
+                                </td>
+                            </tr>}
+                            {usersFilter.length > 0 && usersFilter.map((user, index: number) => (
+                                <tr>
+                                    <td>
+                                        <div className={styles.userCell}>
+                                            <div className={styles.avatar}>
+                                                {user.name.charAt(0)}
+                                            </div>
+                                            <div className={styles.userText}>
+                                                <div className={styles.userName}>{user.name}</div>
+                                                <div className={styles.userEmail}>{user.email}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
                             <span
                                 className={
                                     user.role === "admin"
@@ -104,8 +101,8 @@ function Users({users, setLoading}: { users: User[], setLoading(value: boolean):
                                 }>
                               {user.role}
                             </span>
-                            </td>
-                            <td>
+                                    </td>
+                                    <td>
                             <span
                                 className={
                                     user.status === "active"
@@ -116,27 +113,30 @@ function Users({users, setLoading}: { users: User[], setLoading(value: boolean):
                                 }>
                               {user.status}
                             </span>
-                            </td>
+                                    </td>
 
-                            <td>{user.joined}</td>
-                            <td>
-                                <div className={styles.actions}>
-                                    <button className={styles.iconButton} onClick={() => handleUpdate(index, 'role')}>
-                                        <img src={editStatus} alt={'icon'} className={styles.icon}/>
-                                    </button>
-                                    <button className={styles.iconButton} onClick={() => handleUpdate(index, 'status')}>
-                                        <img src={protectButton} alt={'icon'} className={styles.icon}/>
-                                    </button>
-                                    <button className={styles.iconButton} onClick={() => handleDelete(index)}>
-                                        <img src={deleteButton} alt={'icon'} className={styles.icon}/>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    ))}
-                </>
-                </tbody>
-            </table>
+                                    <td>{user.joined}</td>
+                                    <td>
+                                        <div className={styles.actions}>
+                                            <button className={styles.iconButton}
+                                                    onClick={() => handleUpdate(index, 'role')}>
+                                                <img src={editStatus} alt={'icon'} className={styles.icon}/>
+                                            </button>
+                                            <button className={styles.iconButton}
+                                                    onClick={() => handleUpdate(index, 'status')}>
+                                                <img src={protectButton} alt={'icon'} className={styles.icon}/>
+                                            </button>
+                                            <button className={styles.iconButton} onClick={() => handleDelete(index)}>
+                                                <img src={deleteButton} alt={'icon'} className={styles.icon}/>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </>
+                        </tbody>
+                    </table>
+            </div>
         </div>
     );
 }

@@ -1,102 +1,166 @@
+$accent-purple: #ba67ff;
+$accent-blue: rgb(68, 133, 225);
+$bg-dark: #0a0514;
+$panel-bg: rgba(15, 23, 42, 0.6);
+$border-light: rgba(255, 255, 255, 0.08);
 
+.panel {
+  width: 100%;
+  border-radius: 20px;
+  background: $panel-bg;
+  border: 1px solid $border-light;
+  backdrop-filter: blur(12px);
+
+  // אפקט Emboss יוקרתי
+  box-shadow:
+          inset 0 1px 2px rgba(255, 255, 255, 0.1),
+          0 15px 35px rgba(0, 0, 0, 0.4);
+}
+.panelTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  &::before {
+    content: "";
+    width: 4px;
+    height: 18px;
+    background: $accent-purple;
+    border-radius: 4px;
+  }
+}
   .allUsers {
-    margin-top: 24px;
-    background: #020617;
-    border-radius: 18px;
-    padding: 24px 26px;
-    border: 1px solid #1f2937;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-    color: #e5e7eb;
-    text-align: center;
-    width: 100%;
+    background: rgba(15, 23, 42, 0.4); // זכוכית מעושנת
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 30px;
+    backdrop-filter: blur(12px);
+    overflow-y: auto;
+    height: 100%;
   }
 
   .topRow {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 18px;
-    width: 100%;
-  }
-
-  .title {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-  }
-
-  .subtitle {
-    margin: 4px 0 0;
-    font-size: 14px;
-    color: #9ca3af;
-  }
-
-  .searchWrapper {
-    position: relative;
-  }
-
-  .searchIcon {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    .icon {
-      width: 15px;
-    }
-  }
-
-  .searchInput {
-    padding: 9px 12px 9px 30px;
-    border-radius: 10px;
-    border: 1px solid #1f2937;
-    background: #020617;
-    color: #e5e7eb;
-    font-size: 14px;
-
-    &::placeholder {
-      color: #6b7280;
-    }
+    margin-bottom: 24px;
   }
 
   .table {
     width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-    margin-top: 8px;
-    align-content: center;
+    border-spacing: 0 10px;
+    th {
+      padding: 12px 16px;
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 11px;
+      text-transform: uppercase;
+      text-align: left;
+
+      &:last-child { text-align: center; } // כותרת Actions באמצע
+    }
+
+    tbody tr {
+      background: rgba(255, 255, 255, 0.02);
+      transition: all 0.2s ease;
+
+      td {
+        padding: 16px;
+        vertical-align: middle;
+        color: #e5e7eb;
+        font-size: 14px;
+        &:first-child { border-radius: 12px 0 0 12px; }
+        &:last-child {
+          border-radius: 0 12px 12px 0;
+          text-align: center; // תוכן ה-Actions באמצע
+        }
+      }
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+    }
   }
 
-  .table thead th {
-    font-weight: 500;
-    color: #9ca3af;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #1f2937;
-  }
-
-  .table tbody td {
-    padding: 14px 0;
-    border-bottom: 1px solid #1f2937;
-  }
-
-
-  /* User cell */
-  .userCell {
+  /* מרכוז כפתורי הפעולה */
+  .actions {
     display: flex;
+    justify-content: center; // מרכוז אופקי מושלם
+    align-items: center;
     gap: 12px;
   }
 
-  .avatar {
+  .iconButton {
     width: 38px;
     height: 38px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 600;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    .icon {
+      width: 18px;
+      opacity: 0.6;
+    }
+
+    &:hover {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: #3b82f6;
+      .icon { opacity: 1; }
+    }
   }
 
+  /* כפתור מחיקה ספציפי (Trash) */
+  .iconButton:last-child:hover {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: #ef4444;
+  }
+
+  .searchWrapper {
+    position: relative;
+    .searchInput {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 10px 15px 10px 35px;
+      color: #fff;
+      width: 250px;
+    }
+    .searchIcon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.4;
+      width: 14px;
+      img{
+        width: 14px;
+        height: 14px;
+      }
+    }
+  }
+
+.userCell {
+  display: flex;
+  gap: 12px;
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
   .userText {
     display: flex;
     flex-direction: column;
@@ -111,56 +175,38 @@
     font-size: 13px;
     color: #9ca3af;
   }
+}
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  text-transform: lowercase;
+  font-weight: bold;
+}
 
-  /* Badges */
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 3px 10px;
-    border-radius: 999px;
-    font-size: 12px;
-    text-transform: lowercase;
-    font-weight: bold;
-  }
+.badgeAdmin {
+  background: #8B5CF6FF;
+  color: #bfdbfe;
+}
 
-  .badgeAdmin {
-    background: #8B5CF6FF;
-    color: #bfdbfe;
-  }
+.badgeUser {
+  background: #374151;
+  color: #e5e7eb;
+}
 
-  .badgeUser {
-    background: #374151;
-    color: #e5e7eb;
-  }
+.badgeActive {
+  background: rgba(80, 186, 80, 0.78);
+  color: #bfdbfe;
+}
+.badgeInActive {
+  background: #374151;
+  color: #bfdbfe;
+}
 
-  .badgeActive {
-    background: rgba(80, 186, 80, 0.78);
-    color: #bfdbfe;
-  }
-  .badgeInActive {
-    background: #374151;
-    color: #bfdbfe;
-  }
-
-  .badgeSuspended {
-    background: #dc2626;
-    color: #fee2e2;
-  }
-
-  .iconButton {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    padding: 0;
-    color: #e5e7eb;
-    transition: opacity 0.15s ease;
-    width: 40px;
-    height: 40px;
-  }
-  .icon{
-    width: 18px;
-  }
-  .iconButton:hover {
-    background: green;
-  }
+.badgeSuspended {
+  background: #dc2626;
+  color: #fee2e2;
+}
