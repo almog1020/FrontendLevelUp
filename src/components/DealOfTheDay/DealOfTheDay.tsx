@@ -43,7 +43,7 @@ export const DealOfTheDay = ({ game }: DealOfTheDayProps) => {
           <p className={styles.dealOfTheDay__description}>{game.description}</p>
           
           <div className={styles.dealOfTheDay__genres}>
-            {game.genres.map((genre, index) => (
+            {(game.genres ?? []).map((genre, index) => (
               <span key={index} className={styles.dealOfTheDay__genreTag}>
                 {genre}
               </span>

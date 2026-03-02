@@ -29,7 +29,44 @@
 .chartContainer {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 18px;
+}
+
+.chartWrapper {
+  width: 180px;
+  height: 180px;
+}
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 140px;
+}
+
+.legendItem {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.legendSwatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.08);
+}
+
+.legendLabel {
+  font-weight: 600;
+}
+
+.legendValue {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .emptyChartContainer {

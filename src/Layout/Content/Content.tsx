@@ -27,8 +27,10 @@ const Content: React.FC = () => {
                     <Route element={<PrivateRoute/>}>
                         <Route path="/user/profile" element={<Profile/>}/>
                         <Route path="/wishlist" element={<Wishlist/>}/>
+                        <Route path="/profile" element={<Navigate to="/user/profile" replace />} />
                     </Route>
                     <Route element={<PrivateRouteAdmin/>}>
+                        <Route path={"/admin"} element={<Navigate to="/admin/dashboard" replace />} />
                         <Route path={"/admin/dashboard"} element={<AdminPage/>}/>
                         <Route path={"/admin/management/users"} element={<UserManagement/>}/>
                         <Route path={"/admin/management/reviews"} element={<ReviewManagement/>}/>

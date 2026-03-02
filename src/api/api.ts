@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { AxiosError, AxiosRequestConfig } from "axios";
+import type { AxiosError, InternalAxiosRequestConfig } from "axios";
 
 export const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:8000";
@@ -22,13 +22,10 @@ export const apiAuthClient = axios.create({
   },
 });
 
-apiAuthClient.interceptors.request.use((config: AxiosRequestConfig) => {
+apiAuthClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = localStorage.getItem("token");
   if (token) {
-    config.headers = {
-      ...config.headers,
-      Authorization: `Bearer ${token}`,
-    };
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
