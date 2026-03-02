@@ -8,10 +8,13 @@ import {getGameReviews} from "../../services/apis/reviews.ts";
 import {getGameById} from "../../services/apis/games.ts";
 import Stars from "../Stars/Stars.tsx";
 import { GameDetailSkeleton } from '../GameDetailSkeleton/GameDetailSkeleton';
+import { WishlistButton } from "../WishlistButton/WishlistButton";
+import { useWishlist } from "../../contexts/WishlistContext";
+import { normalizeCsId } from '../../utils/gameId';
 
 export const GameDetail = () => {
   const [activeTab, setActiveTab] = useState<'description' | 'price' | 'reviews'>('description');
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const { wishlistSet } = useWishlist();
   const [open,setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +33,13 @@ export const GameDetail = () => {
       }
 
       try {
+        if (initialGame) {
+          setGame(initialGame);
+          setError(null);
+          setLoading(false);
+          return;
+        }
+
         setLoading(true);
         setError(null);
         const gameData = await getGameById(id);
@@ -46,7 +56,7 @@ export const GameDetail = () => {
     };
 
     fetchGameData();
-  }, [id]);
+  }, [id, initialGame]);
 
   useEffect(() => {
     if (game?.title) {
@@ -91,6 +101,8 @@ export const GameDetail = () => {
   }
 
   const bestPriceUrl = game.priceComparison?.find(item => item.url)?.url;
+  const normalizedId = normalizeCsId(game.id);
+  const isWishlisted = wishlistSet.has(normalizedId);
 
   return (
     <div className={styles.gameDetail}>
@@ -114,7 +126,7 @@ export const GameDetail = () => {
 
             {/* Genre Tags */}
             <div className={styles.genres}>
-              {game.genres.map((genre, index) => (
+              {(game.genres ?? []).map((genre, index) => (
                 <span key={index} className={styles.genreTag}>
                   {genre}
                 </span>
@@ -156,12 +168,13 @@ export const GameDetail = () => {
 
             {/* Action Buttons */}
             <div className={styles.actionButtons}>
-              <button
-                className={`${styles.wishlistButton} ${isWishlisted ? styles.wishlistButtonActive : ''}`}
-                onClick={() => setIsWishlisted(!isWishlisted)}
-              >
-                {isWishlisted ? '❤️' : '♡'} Add to Wishlist
-              </button>
+              <WishlistButton
+                gameId={normalizedId}
+                initialWishlisted={isWishlisted}
+                size="lg"
+                onChange={() => undefined}
+                snapshot={{ title: game.title, thumb: game.image }}
+              />
               <button className={styles.shareButton} onClick={handleShare}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="18" cy="5" r="3"></circle>

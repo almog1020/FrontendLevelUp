@@ -48,38 +48,20 @@
   position: absolute;
   top: 8px;
   left: 8px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: transparent;
   border: none;
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  color: white;
   z-index: 2;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition: transform 0.2s ease;
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.7);
     transform: scale(1.1);
   }
-
-  svg {
-    width: 18px;
-    height: 18px;
-  }
 }
 
-.gameCard__wishlist_active {
-  color: #ef4444;
-  background-color: rgba(239, 68, 68, 0.2);
-
-  &:hover {
-    background-color: rgba(239, 68, 68, 0.3);
-  }
-}
 
 .gameCard__content {
   padding: 12px;

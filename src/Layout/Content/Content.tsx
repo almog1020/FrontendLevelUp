@@ -6,7 +6,7 @@
  */
 
 import * as React from "react";
-import {Route, Routes} from "react-router-dom";
+import {Route, Routes, Navigate} from "react-router-dom";
 import {Homepage} from "../../components/Homepage/Homepage.tsx";
 import {GameDetail} from "../../components/GameDetail/GameDetail.tsx";
 import UserManagement from "../../components/UserManagement/UserManagement.tsx";
@@ -20,6 +20,7 @@ import ReviewManagement from "../../components/ReviewManagement/ReviewManagement
 import {Header} from "../../components/Header/Header.tsx";
 import AdminPage from "../../components/Admin/AdminPage/AdminPage.tsx";
 import GameManagement from "../../components/Admin/GameManagement/GameManagement.tsx";
+import { Wishlist } from "../../components/Wishlist/Wishlist";
 
 const Content:React.FC = () => {
     return (
@@ -37,7 +38,10 @@ const Content:React.FC = () => {
                         <Route path="/user/dashboard" element={<UserDashboard/>}/>
                         <Route path={"/admin/management/users"} element={<UserManagement/>}/>
                         <Route path={"/admin/management/reviews"} element={<ReviewManagement/>}/>
+                        <Route path="/wishlist" element={<Wishlist />} />
                     </Route>
+                    <Route path={"/admin/users"} element={<Navigate to="/admin/management/users" replace />} />
+                    <Route path={"/admin/reviews"} element={<Navigate to="/admin/management/reviews" replace />} />
                  
                 
                 </Routes>

@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, Link} from 'react-router-dom';
 import styles from './Header.module.scss';
 import {SignForm} from '../SignForm/SignForm.tsx';
 import {searchGames} from '../../services/apis/games';
@@ -119,6 +119,14 @@ export const Header = () => {
 
                 {/* Right Side Actions */}
                 <div className={styles.header__actions}>
+                    <nav className={styles.header__nav}>
+                        <Link className={styles.header__navLink} to="/catalog">Catalog</Link>
+                        {token && (
+                            <Link className={styles.header__navLink} to="/wishlist">
+                                Wishlist
+                            </Link>
+                        )}
+                    </nav>
                     {token ? <UserPopup/> : <SignForm/>}
                 </div>
             </div>

@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { searchDeals, getDealUrl, type CatalogGame, type SortOption, type Platform } from '../../services/apis/cheapshark';
 import styles from './Catalog.module.scss';
+import { WishlistButton } from '../WishlistButton/WishlistButton';
+import { normalizeCsId } from '../../utils/gameId';
 
 const PLATFORMS: { value: Platform; label: string }[] = [
     { value: 'all', label: 'All Platforms' },
@@ -114,6 +116,14 @@ export const Catalog = () => {
                                 {game.discount > 0 && (
                                     <span className={styles.discount}>-{game.discount}%</span>
                                 )}
+                                <div className={styles.wishlist} onClick={(e) => e.stopPropagation()}>
+                                    <WishlistButton
+                                        gameId={normalizeCsId(game.id)}
+                                        size="sm"
+                                        showLabel={false}
+                                        snapshot={{ title: game.title, thumb: game.image }}
+                                    />
+                                </div>
                             </div>
                             <div className={styles.info}>
                                 <h3 className={styles.gameTitle}>{game.title}</h3>
