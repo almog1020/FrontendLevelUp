@@ -44,13 +44,19 @@ const cheapsharkInstance = axios.create({
 });
 
 function mapDealToGame(deal: CheapSharkDeal): CatalogGame {
+    const price = parseFloat(deal.salePrice);
+    const originalPrice = parseFloat(deal.normalPrice);
+    const discount = originalPrice > 0
+        ? Math.round(((originalPrice - price) / originalPrice) * 100)
+        : 0;
+
     return {
         id: deal.gameID,
         title: deal.title,
         image: deal.thumb,
-        price: parseFloat(deal.salePrice),
-        originalPrice: parseFloat(deal.normalPrice),
-        discount: Math.round(parseFloat(deal.savings)),
+        price,
+        originalPrice,
+        discount,
         rating: parseInt(deal.steamRatingPercent) || parseInt(deal.metacriticScore) || 0,
         storeID: deal.storeID,
         dealID: deal.dealID,
