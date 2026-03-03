@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { searchDeals, getDealUrl, type CatalogGame, type SortOption, type Platform } from '../../services/apis/cheapshark';
+import { useNavigate } from 'react-router-dom';
+import { searchDeals, type CatalogGame, type SortOption, type Platform } from '../../services/apis/cheapshark';
 import styles from './Catalog.module.scss';
 
 const PLATFORMS: { value: Platform; label: string }[] = [
@@ -17,6 +18,7 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
 ];
 
 export const Catalog = () => {
+    const navigate = useNavigate();
     const [games, setGames] = useState<CatalogGame[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
@@ -49,8 +51,8 @@ export const Catalog = () => {
         return true;
     });
 
-    const handleGameClick = (dealID: string) => {
-        window.open(getDealUrl(dealID), '_blank');
+    const handleGameClick = (gameID: string) => {
+        navigate(`/game/cs_${gameID}`);
     };
 
     return (
@@ -108,7 +110,7 @@ export const Catalog = () => {
             ) : (
                 <div className={styles.grid}>
                     {filteredGames.map(game => (
-                        <article key={`${game.id}-${game.dealID}`} className={styles.card} onClick={() => handleGameClick(game.dealID)}>
+                        <article key={`${game.id}-${game.dealID}`} className={styles.card} onClick={() => handleGameClick(game.id)}>
                             <div className={styles.imageWrapper}>
                                 <img src={game.image} alt={game.title} className={styles.image} loading="lazy" />
                                 {game.discount > 0 && (
