@@ -44,23 +44,23 @@ export async function deleteUser(email:string): Promise<void> {
 }
 export async function updateUser(email:string,editUser:User): Promise<void> {
     try {
-        await instance.put(`/users/${email}`,{...editUser})
+        await instance.put(`/users/by-email/${email}`,{...editUser})
     }catch(e:unknown) {
         if (e instanceof AxiosError)
             throw new Error(e.response!.data.detail);
         throw e;
     }
 }
-export async function getMe(token:string,signInAction:string): Promise<UserResponse> {
+export async function getMe(token: string, signInAction: string): Promise<UserResponse> {
     try {
-        if(signInAction === "password")
+        if (signInAction === "password") {
             return (await instance.get('/users/me', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             })).data;
-        return (await instance.post('/auth/google/me',{token})).data;
-
+        }
+        return (await instance.post('/auth/google/me', { token })).data;
     } catch (e: unknown) {
         if (e instanceof AxiosError) {
             if (e.response?.status === 401) {
@@ -91,6 +91,20 @@ export async function getUsers(): Promise<User[]> {
     }
 }
 
+/** Exchange Google ID token for our JWT so Google users can call endpoints that require Bearer JWT (e.g. PUT /users/preferences). */
+export async function exchangeGoogleTokenForJwt(googleToken: string): Promise<string> {
+    try {
+        const res = await instance.post<{ access_token: string }>('/auth/google/token', { token: googleToken });
+        if (!res.data?.access_token) throw new Error('No access token returned');
+        return res.data.access_token;
+    } catch (e: unknown) {
+        if (e instanceof AxiosError) {
+            throw new Error(e.response?.data?.detail || 'Failed to get session token');
+        }
+        throw e;
+    }
+}
+
 export async function updatePreferences(
     token: string,
     preferences: { favoriteGenre?: string; preferredStore?: string }
@@ -103,8 +117,13 @@ export async function updatePreferences(
         });
         return response.data;
     } catch (e: unknown) {
-        if (e instanceof AxiosError)
-            throw new Error(e.response?.data?.detail || 'Failed to update preferences');
+        if (e instanceof AxiosError) {
+            const detail = (e.response?.data as any)?.detail;
+            if (Array.isArray(detail)) {
+                throw new Error(detail.map((d) => d?.msg).filter(Boolean).join(', ') || 'Failed to update preferences');
+            }
+            throw new Error(detail || 'Failed to update preferences');
+        }
         throw e;
     }
 }

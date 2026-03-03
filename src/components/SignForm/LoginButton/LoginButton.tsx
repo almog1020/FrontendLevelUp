@@ -15,8 +15,8 @@ const LoginButton = ({loading}:{loading(value:boolean):void}) => {
                         const token = credentialResponse.credential;
                         try {
                             loading(true);
-                            await instance.post("/auth/google", { token })
-                            auth!.loginAction(token!,"google");
+                            await instance.post("/auth/google", { token });
+                            auth!.loginAction(token!, "google");
                         } catch (error: unknown) {
                             loading(false);
                             toast.error((error as Error).message || "Authentication failed");

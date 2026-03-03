@@ -19,7 +19,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { ProfileData } from '../../interfaces/profile.interface';
 import type { UserResponse, User } from '../../interfaces/user.interface';
-import { updateUser, getMe, updatePreferences } from '../../services/apis/users';
+import { updateUser, getMe, updatePreferences, exchangeGoogleTokenForJwt } from '../../services/apis/users';
 import { UserProfileCard } from './UserProfileCard/UserProfileCard';
 import { PersonalInfoCard } from './PersonalInfoCard/PersonalInfoCard';
 import { PreferencesCard } from './PreferencesCard/PreferencesCard';
@@ -71,8 +71,8 @@ export const Profile: React.FC = () => {
                     reviewsWritten: 0,
                 },
                 preferences: {
-                    favoriteGenre: 'Action',
-                    preferredStore: 'Steam',
+                    favoriteGenre: user.favorite_genre ?? 'Action',
+                    preferredStore: user.preferred_store ?? 'Steam',
                 },
                 activities: [],
             };
@@ -130,11 +130,15 @@ export const Profile: React.FC = () => {
         if (!profileData) return;
         try {
             const token = localStorage.getItem('token');
+            const signInAction = localStorage.getItem('signInAction') ?? 'password';
             if (!token) {
                 throw new Error('Not logged in');
             }
-            // Call backend API to update preferences
-            await updatePreferences(token, {
+            // Google users: exchange Google token for JWT so PUT /users/preferences works
+            const jwt = signInAction === 'google'
+                ? await exchangeGoogleTokenForJwt(token)
+                : token;
+            await updatePreferences(jwt, {
                 favoriteGenre: preferences.favoriteGenre,
                 preferredStore: preferences.preferredStore,
             });

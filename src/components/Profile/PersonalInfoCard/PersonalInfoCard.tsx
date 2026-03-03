@@ -1,7 +1,7 @@
 /**
  * PersonalInfoCard Component
  * Displays user's personal information with edit functionality
- * Allows users to update their name, email address, and password
+ * Allows users to update their name and password (email cannot be changed)
  * Role field is read-only and cannot be edited
  * Google users cannot edit their profile (managed by Google)
  * 
@@ -39,12 +39,11 @@ export const PersonalInfoCard: React.FC<PersonalInfoCardProps> = ({ profile, onU
         try {
             const updateData: Partial<Profile & { password?: string }> = {};
             if (data.name !== profile.name) updateData.name = data.name;
-            if (data.email !== profile.email) updateData.email = data.email;
             if (data.password && data.password.trim() !== '') updateData.password = data.password;
 
             if (Object.keys(updateData).length > 0) {
                 await onUpdate?.(updateData);
-                reset({ name: data.name, email: data.email, password: '' });
+                reset({ name: data.name, email: profile.email, password: '' });
             } else {
                 toast.info('No changes to save');
             }
@@ -88,15 +87,10 @@ return (
                     />
                 </div>
 
-                {/* Email Address field - editable when in edit mode */}
+                {/* Email Address - read-only (cannot be changed) */}
                 <div className={styles.field}>
                     <label className={styles.label}>Email Address</label>
-                    <input
-                        type="email"
-                        className={`${styles.input} ${isGoogleUser ? styles.disabled : ''}`}
-                        disabled={isGoogleUser}
-                        {...register('email')}
-                    />
+                    <div className={styles.value}>{profile.email}</div>
                 </div>
                 {!isGoogleUser && (
                     <div className={styles.field}>
