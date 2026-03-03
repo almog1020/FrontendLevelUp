@@ -28,7 +28,6 @@ export interface CatalogGame {
 }
 
 export type SortOption = 'title' | 'price' | 'savings' | 'rating';
-export type Platform = 'all' | 'pc' | 'playstation' | 'xbox';
 
 interface SearchParams {
     search?: string;
