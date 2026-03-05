@@ -265,6 +265,15 @@ export async function getGameById(id: string): Promise<FullGame | null> {
     return response.data;
   } catch (e: unknown) {
     if (e instanceof AxiosError) {
+      if (e.response?.status === 404 && id.startsWith("cs_")) {
+        try {
+          const rawId = id.slice(3);
+          const retryResponse = await instance.get<FullGame>(`/games/${rawId}`);
+          return retryResponse.data;
+        } catch (retryError) {
+          // Fall through to default 404 handling
+        }
+      }
       if (e.response?.status === 404) {
         return null;
       }
@@ -334,22 +343,11 @@ export async function fetchIgdbGames(limit: number = 500): Promise<IgdbGamesResp
 
 export async function triggerEtl(search?: string): Promise<EtlResult> {
   try {
-    const token = localStorage.getItem("access_token");
     const url = search
       ? `/games/etl?search=${encodeURIComponent(search)}`
       : "/games/etl";
-    
-    console.log("[DEBUG] Requested URL: http://localhost:8000" + url);
 
-    const config = token
-      ? {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      : {};
-
-    const response = await instance.post(url, {}, config);
+    const response = await instance.post(url, {});
     console.log("[DEBUG] ETL response status:", response.status);
     return response.data;
   } catch (e: unknown) {

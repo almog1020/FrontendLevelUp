@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import styles from './DealOfTheDay.module.scss';
 import type { Game } from '../../interfaces/game.interface';
+import { normalizeCsId } from '../../utils/gameId';
 
 interface DealOfTheDayProps {
   game: Game;
@@ -10,7 +11,7 @@ export const DealOfTheDay = ({ game }: DealOfTheDayProps) => {
   const navigate = useNavigate();
 
   const handleViewDeal = () => {
-    navigate(`/game/${game.id}`);
+    navigate(`/game/${normalizeCsId(game.id)}`);
   };
 
   return (
@@ -42,7 +43,7 @@ export const DealOfTheDay = ({ game }: DealOfTheDayProps) => {
           <p className={styles.dealOfTheDay__description}>{game.description}</p>
           
           <div className={styles.dealOfTheDay__genres}>
-            {game.genres.map((genre, index) => (
+            {(game.genres ?? []).map((genre, index) => (
               <span key={index} className={styles.dealOfTheDay__genreTag}>
                 {genre}
               </span>

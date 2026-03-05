@@ -54,16 +54,13 @@ export async function updateUser(email:string,editUser:User): Promise<void> {
 export async function getMe(token:string,signInAction:string): Promise<UserResponse> {
     try {
         if(signInAction === "password")
-            return (await instance.get('/users/me', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })).data;
+            return (await instanceAuth.get('/users/me')).data;
         return (await instance.post('/auth/google/me',{token})).data;
 
     } catch (e: unknown) {
         if (e instanceof AxiosError) {
             if (e.response?.status === 401) {
+                localStorage.removeItem("token");
                 throw new Error('Unauthorized. Please log in again.');
             }
             throw new Error(e.response?.data?.detail || 'Failed to fetch user data');

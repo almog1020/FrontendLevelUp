@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { normalizeCsId } from '../../utils/gameId';
 
 const CHEAPSHARK_API = 'https://www.cheapshark.com/api/1.0';
 
@@ -45,7 +46,7 @@ const cheapsharkInstance = axios.create({
 
 function mapDealToGame(deal: CheapSharkDeal): CatalogGame {
     return {
-        id: deal.gameID,
+        id: normalizeCsId(deal.gameID),
         title: deal.title,
         image: deal.thumb,
         price: parseFloat(deal.salePrice),

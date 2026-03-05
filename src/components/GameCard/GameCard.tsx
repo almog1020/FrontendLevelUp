@@ -1,5 +1,6 @@
-import { useState } from 'react';
 import styles from './GameCard.module.scss';
+import { WishlistButton } from '../WishlistButton/WishlistButton';
+import { normalizeCsId } from '../../utils/gameId';
 
 export interface GameCardProps {
   id: string;
@@ -8,8 +9,6 @@ export interface GameCardProps {
   discount: number;
   price: number;
   originalPrice: number;
-  isWishlisted?: boolean;
-  onWishlistToggle?: (id: string) => void;
   onClick?: () => void;
 }
 
@@ -20,20 +19,9 @@ export const GameCard = ({
   discount,
   price,
   originalPrice,
-  isWishlisted = false,
-  onWishlistToggle,
   onClick,
 }: GameCardProps) => {
-  const [wishlisted, setWishlisted] = useState(isWishlisted);
-
-  const handleWishlistClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const newState = !wishlisted;
-    setWishlisted(newState);
-    if (onWishlistToggle) {
-      onWishlistToggle(id);
-    }
-  };
+  const normalizedId = normalizeCsId(id);
 
   const handleCardClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -59,13 +47,14 @@ export const GameCard = ({
             ~{discount}%
           </div>
         )}
-        <button
-          className={`${styles.gameCard__wishlist} ${wishlisted ? styles.gameCard__wishlist_active : ''}`}
-          onClick={handleWishlistClick}
-          aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
-        >
-          {wishlisted ? '❤️' : '♡'}
-        </button>
+        <div className={styles.gameCard__wishlist} onClick={(e) => e.stopPropagation()}>
+          <WishlistButton
+            gameId={normalizedId}
+            size="sm"
+            showLabel={false}
+            snapshot={{ title, thumb: image }}
+          />
+        </div>
       </div>
       <div className={styles.gameCard__content}>
         <h3 className={styles.gameCard__title}>{title}</h3>

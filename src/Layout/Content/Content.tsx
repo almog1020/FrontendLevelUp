@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Route, Routes} from "react-router-dom";
+import {Route, Routes, Navigate} from "react-router-dom";
 import {Homepage} from "../../components/Homepage/Homepage.tsx";
 import {GameDetail} from "../../components/GameDetail/GameDetail.tsx";
 import UserManagement from "../../components/UserManagement/UserManagement.tsx";
@@ -13,6 +13,7 @@ import {Header} from "../../components/Header/Header.tsx";
 import AdminPage from "../../components/Admin/AdminPage/AdminPage.tsx";
 import GameManagement from "../../components/Admin/GameManagement/GameManagement.tsx";
 import PrivateRouteAdmin from "../../components/PrivateRoute/PrivateRouteAdmin/PrivateRouteAdmin.tsx";
+import {Wishlist} from "../../components/Wishlist/Wishlist.tsx";
 
 const Content: React.FC = () => {
     return (
@@ -24,14 +25,19 @@ const Content: React.FC = () => {
                     <Route path={"/catalog"} element={<Catalog/>}/>
                     <Route path={"/game/:id"} element={<GameDetail/>}/>
                     <Route element={<PrivateRoute/>}>
-                        <Route path="/profile" element={<Profile/>}/>
-                        <Route element={<PrivateRouteAdmin/>}>
-                            <Route path={"/admin/dashboard"} element={<AdminPage/>}/>
-                            <Route path={"/admin/management/users"} element={<UserManagement/>}/>
-                            <Route path={"/admin/management/reviews"} element={<ReviewManagement/>}/>
-                            <Route path={"/admin/management/games"} element={<GameManagement/>}/>
-                        </Route>
+                        <Route path="/user/profile" element={<Profile/>}/>
+                        <Route path="/wishlist" element={<Wishlist/>}/>
+                        <Route path="/profile" element={<Navigate to="/user/profile" replace />} />
                     </Route>
+                    <Route element={<PrivateRouteAdmin/>}>
+                        <Route path={"/admin"} element={<Navigate to="/admin/dashboard" replace />} />
+                        <Route path={"/admin/dashboard"} element={<AdminPage/>}/>
+                        <Route path={"/admin/management/users"} element={<UserManagement/>}/>
+                        <Route path={"/admin/management/reviews"} element={<ReviewManagement/>}/>
+                        <Route path={"/admin/management/games"} element={<GameManagement/>}/>
+                    </Route>
+                    <Route path={"/admin/users"} element={<Navigate to="/admin/management/users" replace />} />
+                    <Route path={"/admin/reviews"} element={<Navigate to="/admin/management/reviews" replace />} />
                 </Routes>
             </DialogProvider>
         </AuthProvider>

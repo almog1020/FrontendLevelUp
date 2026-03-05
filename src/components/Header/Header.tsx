@@ -1,13 +1,11 @@
 import {useEffect, useRef, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, Link} from 'react-router-dom';
 import styles from './Header.module.scss';
 import {SignForm} from '../SignForm/SignForm.tsx';
 import {searchGames} from '../../services/apis/games';
 import LevelUpLogo from '../../assets/LevelUp.png'
 import {toast} from "react-toastify";
-import catalog from '../../assets/store.png'
 import UserDetails from "../UserPopup/UserDetails.tsx";
-import Action from "../General/Action/Action.tsx";
 
 export const Header = () => {
 
@@ -120,7 +118,14 @@ export const Header = () => {
                 </form>
                 {/* Right Side Actions */}
                 <div className={styles.header__actions}>
-                    <Action onAction={() => navigate('/catalog')} label={"Catalog"} icon={catalog}/>
+                    <nav className={styles.header__nav}>
+                        <Link className={styles.header__navLink} to="/catalog">Catalog</Link>
+                        {token && (
+                            <Link className={styles.header__navLink} to="/wishlist">
+                                Wishlist
+                            </Link>
+                        )}
+                    </nav>
                     {token ? <UserDetails/> : <SignForm/>}
                 </div>
 
