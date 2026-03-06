@@ -44,7 +44,7 @@ export async function deleteUser(email:string): Promise<void> {
 }
 export async function updateUser(email:string,editUser:User): Promise<void> {
     try {
-        await instance.put(`/users/by-email/${email}`,{...editUser})
+        await instance.put(`/users/${email}`,{...editUser})
     }catch(e:unknown) {
         if (e instanceof AxiosError)
             throw new Error(e.response!.data.detail);
