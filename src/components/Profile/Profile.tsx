@@ -71,8 +71,8 @@ export const Profile: React.FC = () => {
                     reviewsWritten: 0,
                 },
                 preferences: {
-                    favoriteGenre: 'Action',
-                    preferredStore: 'Steam',
+                    favoriteGenre: user.favorite_genre ?? 'Action',
+                    preferredStore: user.preferred_store ?? 'Steam',
                 },
                 activities: [],
             };
@@ -133,7 +133,6 @@ export const Profile: React.FC = () => {
             if (!token) {
                 throw new Error('Not logged in');
             }
-            // Call backend API to update preferences
             await updatePreferences(token, {
                 favoriteGenre: preferences.favoriteGenre,
                 preferredStore: preferences.preferredStore,

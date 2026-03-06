@@ -51,12 +51,16 @@ export async function updateUser(email:string,editUser:User): Promise<void> {
         throw e;
     }
 }
-export async function getMe(token:string,signInAction:string): Promise<UserResponse> {
+export async function getMe(token: string, signInAction: string): Promise<UserResponse> {
     try {
-        if(signInAction === "password")
-            return (await instanceAuth.get('/users/me')).data;
-        return (await instance.post('/auth/google/me',{token})).data;
-
+        if (signInAction === "password") {
+            return (await instance.get('/users/me', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })).data;
+        }
+        return (await instance.post('/auth/google/me', { token })).data;
     } catch (e: unknown) {
         if (e instanceof AxiosError) {
             if (e.response?.status === 401) {
@@ -100,8 +104,13 @@ export async function updatePreferences(
         });
         return response.data;
     } catch (e: unknown) {
-        if (e instanceof AxiosError)
-            throw new Error(e.response?.data?.detail || 'Failed to update preferences');
+        if (e instanceof AxiosError) {
+            const detail = (e.response?.data as any)?.detail;
+            if (Array.isArray(detail)) {
+                throw new Error(detail.map((d) => d?.msg).filter(Boolean).join(', ') || 'Failed to update preferences');
+            }
+            throw new Error(detail || 'Failed to update preferences');
+        }
         throw e;
     }
 }
