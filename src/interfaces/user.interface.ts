@@ -22,6 +22,7 @@ export interface UserResponse {
     status: UserStatus;
     purchase: number;
     joined: string;
+    last_login?: string | null;
     favorite_genre?: string | null;
     preferred_store?: string | null;
 }
