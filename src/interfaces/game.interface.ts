@@ -19,7 +19,7 @@ export interface Game {
   originalPrice: number;
   currentPrice: number;
   discount: number;
-  genres: string[];
+  genres?: string[];
   isTrending: boolean;
   isDealOfDay: boolean;
   rating?: number;

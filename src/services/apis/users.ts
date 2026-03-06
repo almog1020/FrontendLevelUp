@@ -64,6 +64,7 @@ export async function getMe(token: string, signInAction: string): Promise<UserRe
     } catch (e: unknown) {
         if (e instanceof AxiosError) {
             if (e.response?.status === 401) {
+                localStorage.removeItem("token");
                 throw new Error('Unauthorized. Please log in again.');
             }
             throw new Error(e.response?.data?.detail || 'Failed to fetch user data');

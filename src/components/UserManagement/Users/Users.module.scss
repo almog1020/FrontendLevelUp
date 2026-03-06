@@ -53,6 +53,7 @@ $border-light: rgba(255, 255, 255, 0.08);
   .table {
     width: 100%;
     border-spacing: 0 10px;
+  table-layout: fixed;
     th {
       padding: 12px 16px;
       color: rgba(255, 255, 255, 0.3);
@@ -62,6 +63,12 @@ $border-light: rgba(255, 255, 255, 0.08);
 
       &:last-child { text-align: center; } // כותרת Actions באמצע
     }
+
+  th:nth-child(2),
+  th:nth-child(3),
+  th:nth-child(5) {
+    text-align: center;
+  }
 
     tbody tr {
       background: rgba(255, 255, 255, 0.02);
@@ -83,6 +90,12 @@ $border-light: rgba(255, 255, 255, 0.08);
         background: rgba(255, 255, 255, 0.05);
       }
     }
+
+  td:nth-child(2),
+  td:nth-child(3),
+  td:nth-child(5) {
+    text-align: center;
+  }
   }
 
   /* מרכוז כפתורי הפעולה */
@@ -161,20 +174,21 @@ $border-light: rgba(255, 255, 255, 0.08);
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  .userText {
-    display: flex;
-    flex-direction: column;
-  }
+}
 
-  .userName {
-    font-size: 14px;
-    font-weight: 500;
-  }
+.userText {
+  display: flex;
+  flex-direction: column;
+}
 
-  .userEmail {
-    font-size: 13px;
-    color: #9ca3af;
-  }
+.userName {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.userEmail {
+  font-size: 13px;
+  color: #9ca3af;
 }
 /* Badges */
 .badge {

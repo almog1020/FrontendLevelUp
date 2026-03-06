@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './TrendingGames.module.scss';
 import { GameCard } from '../GameCard/GameCard';
 import type { Game } from '../../interfaces/game.interface';
+import { normalizeCsId } from '../../utils/gameId';
 
 interface TrendingGamesProps {
   games: Game[];
@@ -11,22 +11,10 @@ interface TrendingGamesProps {
 
 export const TrendingGames = ({ games, hideHeader = false }: TrendingGamesProps) => {
   const navigate = useNavigate();
-  const [wishlistedGames, setWishlistedGames] = useState<Set<string>>(new Set());
-
-  const handleWishlistToggle = (gameId: string) => {
-    setWishlistedGames((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(gameId)) {
-        newSet.delete(gameId);
-      } else {
-        newSet.add(gameId);
-      }
-      return newSet;
-    });
-  };
 
   const handleGameClick = (game: Game) => {
-    navigate(`/game/${game.id}`,{state:{game:game}});
+    const normalizedId = normalizeCsId(game.id);
+    navigate(`/game/${normalizedId}`, { state: { game } });
   };
 
   return (
@@ -47,14 +35,12 @@ export const TrendingGames = ({ games, hideHeader = false }: TrendingGamesProps)
         {games.map((game) => (
           <GameCard
             key={game.id}
-            id={game.id}
+            id={normalizeCsId(game.id)}
             title={game.title}
             image={game.image}
             discount={game.discount}
             price={game.currentPrice}
             originalPrice={game.originalPrice}
-            isWishlisted={wishlistedGames.has(game.id)}
-            onWishlistToggle={handleWishlistToggle}
             onClick={() => handleGameClick(game)}
           />
         ))}

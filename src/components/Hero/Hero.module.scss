@@ -1,3 +1,5 @@
+@use "sass:color";
+
 $accent-purple: #9d4edd;
 $accent-blue: #3b82f6;
 
@@ -42,7 +44,7 @@ $accent-blue: #3b82f6;
   span {
     font-size: 12px;
     font-weight: 600;
-    color: lighten($accent-purple, 20%);
+    color: color.adjust($accent-purple, $lightness: 20%);
     text-transform: uppercase;
   }
 }
