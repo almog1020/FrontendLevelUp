@@ -91,20 +91,6 @@ export async function getUsers(): Promise<User[]> {
     }
 }
 
-/** Exchange Google ID token for our JWT so Google users can call endpoints that require Bearer JWT (e.g. PUT /users/preferences). */
-export async function exchangeGoogleTokenForJwt(googleToken: string): Promise<string> {
-    try {
-        const res = await instance.post<{ access_token: string }>('/auth/google/token', { token: googleToken });
-        if (!res.data?.access_token) throw new Error('No access token returned');
-        return res.data.access_token;
-    } catch (e: unknown) {
-        if (e instanceof AxiosError) {
-            throw new Error(e.response?.data?.detail || 'Failed to get session token');
-        }
-        throw e;
-    }
-}
-
 export async function updatePreferences(
     token: string,
     preferences: { favoriteGenre?: string; preferredStore?: string }
