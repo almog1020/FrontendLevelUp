@@ -1,6 +1,7 @@
 
 import { Navigate, Outlet } from "react-router-dom";
 import {useCookies} from "react-cookie";
+import {AuthContext} from "../AuthProvider/AuthProvider.tsx";
 
 const PrivateRoute = () => {
     const [cookies] = useCookies()
