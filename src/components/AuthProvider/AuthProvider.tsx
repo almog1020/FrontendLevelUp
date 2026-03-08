@@ -2,7 +2,6 @@ import {createContext, type ReactNode, useEffect, useState} from "react";
 import {getMe} from "../../services/apis/users.ts";
 import type {User} from "../../interfaces/user.interface.ts";
 import {toast} from "react-toastify";
-import {useCookies} from "react-cookie";
 
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -15,12 +14,11 @@ export const AuthContext = createContext<undefined |
 
 const AuthProvider = ({ children }:{children:ReactNode}) => {
     const [user, setUser] = useState<User>();
-    const [cookies] = useCookies();
     useEffect(() => {
         getMe()
             .then(user => setUser(user))
             .catch(() => setUser(undefined));
-    }, [cookies.access_token]);
+    }, []);
 
     const fetchUser = async () => {
         try {

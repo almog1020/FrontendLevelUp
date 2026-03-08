@@ -1,10 +1,10 @@
-import { useMemo } from "react";
+import {useContext, useMemo} from "react";
 import { toast } from "react-toastify";
 import styles from "./WishlistButton.module.scss";
 import { useWishlist } from "../../contexts/WishlistContext";
 import { WishlistAuthError } from "../../services/apis/wishlist";
 import { useDialog } from "../../contexts/DialogContext";
-import {useCookies} from "react-cookie";
+import {AuthContext} from "../AuthProvider/AuthProvider.tsx";
 
 interface WishlistButtonProps {
   gameId: string;
@@ -25,7 +25,7 @@ export const WishlistButton = ({
 }: WishlistButtonProps) => {
   const dialog = useDialog();
   const { wishlistSet, toggleWishlist, pendingGameIds, isWishlistLoaded } = useWishlist();
-  const [cookies] = useCookies();
+  const auth = useContext(AuthContext);
 
   const isWishlisted = useMemo(() => {
     if (!isWishlistLoaded) {
@@ -37,7 +37,7 @@ export const WishlistButton = ({
   const isPending = pendingGameIds.has(gameId);
 
   const handleToggle = async () => {
-    if (!cookies.access_token) {
+    if (!auth?.user) {
       toast.info("Please sign in to save to wishlist.");
       dialog.openDialog("signin");
       return;
