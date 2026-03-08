@@ -45,7 +45,6 @@ const AdminPage: React.FC = () => {
           fetchDashboardStats(),
           fetchAdminGenreStats(),
         ]);
-        console.log(genreStatsData.genre_stats)
         setStats(dashboardStats);
         setGenreStats(genreStatsData.genre_stats);
       } catch (err) {

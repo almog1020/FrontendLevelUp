@@ -1,12 +1,11 @@
 import {instance, instanceAuth} from "./config.ts";
 import {AxiosError} from "axios";
 import type {RegisterResponse} from "../../interfaces/sign.interface.ts";
-import type {User, UserResponse, UserStatus} from "../../interfaces/user.interface.ts";
+import type {User, UserStatus} from "../../interfaces/user.interface.ts";
 
 export async function login(username: string, password: string): Promise<string> {
     try {
-        const response = await instanceAuth.post('/auth/token', {username: username, password: password});
-        return response.data.access_token;
+        return (await instanceAuth.post('/auth/token', {username: username, password: password})).data;
     } catch (e: unknown) {
         if (e instanceof AxiosError) {
             if (e.response?.status === 401 || e.response?.status === 422) {
@@ -51,24 +50,12 @@ export async function updateUser(email:string,editUser:User): Promise<void> {
         throw e;
     }
 }
-export async function getMe(token: string, signInAction: string): Promise<UserResponse> {
+export async function getMe(): Promise<User> {
     try {
-        if (signInAction === "password") {
-            return (await instance.get('/users/me', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })).data;
-        }
-        return (await instance.post('/auth/google/me', { token })).data;
+        return (await instance.get('/users/me')).data;
     } catch (e: unknown) {
-        if (e instanceof AxiosError) {
-            if (e.response?.status === 401) {
-                localStorage.removeItem("token");
-                throw new Error('Unauthorized. Please log in again.');
-            }
-            throw new Error(e.response?.data?.detail || 'Failed to fetch user data');
-        }
+        if (e instanceof AxiosError)
+            throw new Error(e.response!.data.detail);
         throw e;
     }
 }
@@ -88,29 +75,6 @@ export async function getUsers(): Promise<User[]> {
     }catch(e:unknown) {
         if (e instanceof AxiosError)
             throw new Error(e.response!.data.detail);
-        throw e;
-    }
-}
-
-export async function updatePreferences(
-    token: string,
-    preferences: { favoriteGenre?: string; preferredStore?: string }
-): Promise<{ favoriteGenre: string; preferredStore: string }> {
-    try {
-        const response = await instance.put('/users/preferences', preferences, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        return response.data;
-    } catch (e: unknown) {
-        if (e instanceof AxiosError) {
-            const detail = (e.response?.data as any)?.detail;
-            if (Array.isArray(detail)) {
-                throw new Error(detail.map((d) => d?.msg).filter(Boolean).join(', ') || 'Failed to update preferences');
-            }
-            throw new Error(detail || 'Failed to update preferences');
-        }
         throw e;
     }
 }

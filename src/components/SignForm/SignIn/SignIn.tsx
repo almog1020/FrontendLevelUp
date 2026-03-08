@@ -4,11 +4,10 @@ import {TextFieldSignIn} from "../../TextField/TextFieldSignIn.tsx";
 import {login} from "../../../services/apis/users.ts";
 import {toast} from "react-toastify";
 import styles from '../SignForm.module.scss'
-import {AuthContext} from "../../AuthProvider/AuthProvider.tsx";
-import {useContext} from "react";
+import {useNavigate} from "react-router-dom";
 
 export function SignIn({loading, closeDialog}: { loading(value: boolean): void, closeDialog(): void }) {
-    const auth = useContext(AuthContext);
+    const navigate = useNavigate();
     const {
         register: registerSignIn,
         handleSubmit: handleSignInSubmit,
@@ -19,10 +18,11 @@ export function SignIn({loading, closeDialog}: { loading(value: boolean): void, 
         try {
             loading(true)
             const {email, password} = data;
-            const accessToken = await login(email, password);
-            auth!.loginAction(accessToken,"password");
+            await login(email, password);
+            toast.success("Login successful");
             resetSignIn();
             closeDialog();
+            navigate("/")
         } catch (error: unknown) {
             loading(false)
             toast.error((error as Error).message || 'Login failed');

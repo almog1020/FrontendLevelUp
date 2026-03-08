@@ -19,7 +19,6 @@ export interface Profile {
     role: UserRole;
     avatar?: string;
     memberSince?: string | null;
-    lastLogin?: string | null;
 }
 
 /**

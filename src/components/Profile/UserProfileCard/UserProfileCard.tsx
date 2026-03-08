@@ -1,15 +1,9 @@
-/**
- * UserProfileCard Component
- * Displays the user's profile card with avatar, name, email, role badge, and account information
- * Shows member since date and last login time in a formatted, user-friendly way
- */
-
 import * as React from 'react';
-import type { Profile } from '../../../interfaces/profile.interface';
 import styles from './UserProfileCard.module.scss';
+import type {User} from "../../../interfaces/user.interface.ts";
 
 interface UserProfileCardProps {
-    profile: Profile;
+    profile: User;
 }
 
 export const UserProfileCard: React.FC<UserProfileCardProps> = ({ profile }) => {
@@ -42,38 +36,11 @@ export const UserProfileCard: React.FC<UserProfileCardProps> = ({ profile }) => 
         return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
     };
 
-    /**
-     * Formats last login timestamp into a user-friendly format
-     * If login was today, shows "Today at [time]"
-     * Otherwise shows full date
-     * @param dateString - ISO date string of last login (optional)
-     * @returns Formatted last login string or fallback
-     */
-    const formatLastLogin = (dateString?: string | null): string => {
-        if (!dateString) return 'Never';
-        const date = new Date(dateString);
-        if (isNaN(date.getTime())) return 'Never';
-        const now = new Date();
-        const diffMs = now.getTime() - date.getTime();
-        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-
-        // If login was within last 24 hours, show "Today at [time]"
-        if (diffHours < 24) {
-            return `Today at ${date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
-        }
-        // Otherwise show full date
-        return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-    };
-
     return (
         <div className={styles.card}>
             {/* Avatar section: shows image if available, otherwise displays initials */}
             <div className={styles.avatar}>
-                {profile.avatar ? (
-                    <img src={profile.avatar} alt={profile.name} />
-                ) : (
-                    <div className={styles.avatarInitials}>{getInitials(profile.name)}</div>
-                )}
+                <div className={styles.avatarInitials}>{getInitials(profile.name)}</div>
             </div>
             
             {/* User's full name */}
@@ -90,13 +57,7 @@ export const UserProfileCard: React.FC<UserProfileCardProps> = ({ profile }) => 
             {/* Member since date with calendar icon */}
             <div className={styles.infoRow}>
                 <span className={styles.icon}>📅</span>
-                <span>Member since {formatDate(profile.memberSince)}</span>
-            </div>
-            
-            {/* Last login information with user icon */}
-            <div className={styles.infoRow}>
-                <span className={styles.icon}>👤</span>
-                <span>Last login: {formatLastLogin(profile.lastLogin)}</span>
+                <span>Member since {formatDate(profile.joined)}</span>
             </div>
         </div>
     );

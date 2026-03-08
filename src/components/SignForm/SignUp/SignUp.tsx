@@ -2,10 +2,12 @@ import styles from '../SignForm.module.scss'
 import {TextFieldSignUp} from "../../TextField/TextFieldSignUp.tsx";
 import {type SubmitHandler, useForm} from "react-hook-form";
 import type {SignUpFormValues} from "../../../interfaces/sign.interface.ts";
-import {register} from "../../../services/apis/users.ts";
+import {login, register} from "../../../services/apis/users.ts";
 import {toast} from "react-toastify";
+import {useNavigate} from "react-router-dom";
 
 export function SignUp({loading, closeDialog}: { loading(value: boolean): void, closeDialog(): void }) {
+    const navigate = useNavigate();
     const {
         register: registerSignUp,
         handleSubmit: handleSignUpSubmit,
@@ -14,15 +16,17 @@ export function SignUp({loading, closeDialog}: { loading(value: boolean): void, 
         formState: {errors}
     } = useForm<SignUpFormValues>();
     const password = watch('password');
-    console.log(errors)
+
     const onSignUpSubmit: SubmitHandler<SignUpFormValues> = async (data) => {
         try {
             loading(true)
             const {email, password, name} = data;
             await register(email, password, name);
+            await login(email, password);
+            await new Promise((resolve) => setTimeout(resolve, 2500));
             resetSignUp();
-            toast.success('Account created successfully!');
             closeDialog();
+            navigate("/")
         } catch (error: unknown) {
             loading(false)
             toast.error((error as Error).message);

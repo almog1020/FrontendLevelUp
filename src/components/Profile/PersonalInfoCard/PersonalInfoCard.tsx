@@ -1,53 +1,40 @@
-/**
- * PersonalInfoCard Component
- * Displays user's personal information with edit functionality
- * Allows users to update their name and password (email cannot be changed)
- * Role field is read-only and cannot be edited
- * Google users cannot edit their profile (managed by Google)
- * 
- * Password Handling:
- * - Frontend NEVER receives or displays existing passwords (hashed or plain)
- * - Password field is only for setting a NEW password
- * - New password is sent to backend in plain text
- * - Backend hashes the password before storing it in the database
- * - If password field is left blank, no password update is sent
- */
-
-import React, { useEffect } from 'react';
-import type { Profile } from '../../../interfaces/profile.interface';
+import React, {useContext} from 'react';
 import styles from './PersonalInfoCard.module.scss';
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
+import {updateUser} from "../../../services/apis/users.ts";
+import type {User} from "../../../interfaces/user.interface.ts";
+import {AuthContext} from "../../AuthProvider/AuthProvider.tsx";
+
 
 interface PersonalInfoCardProps {
-    profile: Profile;
-    onUpdate?: (profile: Partial<Profile> & { password?: string }) => void | Promise<void>;
-    isGoogleUser?: boolean;
+    profile: User;
+    isGoogleUser: boolean;
+    onUpdate: (loading:boolean) => void;
 }
+interface UpdatePersonalInfo {
+    name: string,
+    password: string
+}
+export const PersonalInfoCard: React.FC<PersonalInfoCardProps> = ({ profile, isGoogleUser,onUpdate }) => {
 
-export const PersonalInfoCard: React.FC<PersonalInfoCardProps> = ({ profile, onUpdate, isGoogleUser = false }) => {
+    const { register, handleSubmit, formState: { errors } } = useForm<UpdatePersonalInfo>()
+    const auth = useContext(AuthContext);
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<{ name: string, email: string, password: string }>(
-        { defaultValues: { name: profile.name, email: profile.email, password: '' } })
-
-    // Update form when profile prop changes
-    useEffect(() => {
-        reset({ name: profile.name, email: profile.email, password: '' });
-    }, [profile.name, profile.email, reset]);
-
-    const onSubmit = async (data: { name: string, email: string, password: string }) => {
+    const onSubmit = async (data:UpdatePersonalInfo) => {
         try {
-            const updateData: Partial<Profile & { password?: string }> = {};
-            if (data.name !== profile.name) updateData.name = data.name;
-            if (data.password && data.password.trim() !== '') updateData.password = data.password;
-
-            if (Object.keys(updateData).length > 0) {
-                await onUpdate?.(updateData);
-                reset({ name: data.name, email: profile.email, password: '' });
-            } else {
-                toast.info('No changes to save');
-            }
+            onUpdate(true)
+            const {password,name} = data
+            if (password)
+                await updateUser(profile.email,{...profile,name:name,password:password})
+            else
+                await updateUser(profile.email,{...profile,name:name})
+            auth?.fetchUser()
+            await new Promise((resolve) => setTimeout(resolve, 2500));
+            toast.success('User update successfully!');
+            onUpdate(false)
         } catch (error: unknown) {
+            onUpdate(false)
             toast.error((error as Error).message);
         }
     };
@@ -78,19 +65,15 @@ return (
             <div className={styles.fields}>
                 {/* Full Name field - editable when in edit mode */}
                 <div className={styles.field}>
-                    <label className={styles.label}>Full Name</label>
+                    <label className={styles.label}>Name</label>
                     <input
                         type="text"
                         className={`${styles.input} ${isGoogleUser ? styles.disabled : ''}`}
                         disabled={isGoogleUser}
                         {...register('name')}
+                        defaultValue={profile.name}
+                        required={true}
                     />
-                </div>
-
-                {/* Email Address - read-only (cannot be changed) */}
-                <div className={styles.field}>
-                    <label className={styles.label}>Email Address</label>
-                    <div className={styles.value}>{profile.email}</div>
                 </div>
                 {!isGoogleUser && (
                     <div className={styles.field}>
@@ -99,12 +82,13 @@ return (
                             type="password"
                             className={styles.input}
                             placeholder="Leave blank to keep current password"
-                            {...register('password', {
-                                validate: (value) => {
-                                    if (!value || value.trim() === '') return true; // Allow empty (no change)
-                                    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/;
-                                    return regex.test(value) || 'Password must be 8-10 characters with uppercase, lowercase, number, and symbol (@$!%*?&)';
-                                }
+                            {...register("password", {
+                                minLength: { value: 8, message: "Password must be at least 8 characters." },
+                                maxLength: { value: 10, message: "Password must be at most 10 characters." },
+                                pattern: {
+                                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/,
+                                    message: "Password must include upper, lower, number, and symbol (@$!%*?&).",
+                                },
                             })}
                         />
                         {errors.password && (
@@ -112,13 +96,6 @@ return (
                         )}
                     </div>
                 )}
-                {/* Role field - read-only, cannot be edited */}
-                <div className={styles.field}>
-                    <label className={styles.label}>Role</label>
-                    <div className={styles.value}>
-                        {profile.role.charAt(0).toUpperCase() + profile.role.slice(1)}
-                    </div>   
-                </div>
             </div>
             {!isGoogleUser && (
                 <div className={styles.actionButtons}>

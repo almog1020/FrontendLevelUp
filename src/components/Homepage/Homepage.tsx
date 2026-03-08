@@ -14,12 +14,10 @@ export const Homepage = () => {
   const [searchResults, setSearchResults] = useState<Game[] | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const fetchGames = async () => {
     try {
       setLoading(true);
-      setError(null);
       setSearchResults(null); // Clear search results when fetching normal games
       setTrendingGames([]); // Clear existing games
       setDealOfTheDay(null); // Clear deal of the day
@@ -54,12 +52,10 @@ export const Homepage = () => {
             setTimeout(() => setLoading(false), trending.length * 30 + 100);
           })
           .catch((err) => {
-            setError(err instanceof Error ? err.message : 'Failed to load games');
             console.error('Error fetching trending games:', err);
             setLoading(false);
           });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load games');
       console.error('Error fetching games:', err);
       setLoading(false);
     }
@@ -81,7 +77,6 @@ export const Homepage = () => {
     const handleGamesSearch = (e: CustomEvent<{ results: Game[]; query: string }>) => {
       setSearchQuery(e.detail.query);
       setSearchResults([]); // Clear previous results
-      setError(null);
 
       // Add games one by one for progressive display
       const results = e.detail.results;
@@ -99,7 +94,6 @@ export const Homepage = () => {
     };
 
     const handleGamesSearchError = (e: CustomEvent<{ error: string }>) => {
-      setError(e.detail.error);
       setLoading(false);
     };
 
@@ -118,11 +112,6 @@ export const Homepage = () => {
       <div className={styles.homepage}>
         <main className={styles.main}>
           {searchResults === null && <Hero />}
-          {error && (
-              <div style={{ padding: '2rem', textAlign: 'center', color: 'red' }}>
-                Error: {error}
-              </div>
-          )}
           {searchResults !== null ? (
               // Show search results
               <>
