@@ -1,31 +1,40 @@
-import {createContext, type ReactNode} from "react";
-import { useNavigate } from "react-router-dom";
+import {createContext, type ReactNode, useEffect, useState} from "react";
+import {getMe} from "../../services/apis/users.ts";
+import type {User} from "../../interfaces/user.interface.ts";
+import {toast} from "react-toastify";
+import {useCookies} from "react-cookie";
 
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext<undefined |
     {
-        loginAction(access_token:string,signInAction:"google" | "password"):void,
-        logOut():void
+        user?:User,
+        fetchUser():Promise<void>,
+        logout():void,
     }>(undefined);
 
 const AuthProvider = ({ children }:{children:ReactNode}) => {
-    const navigate = useNavigate();
+    const [user, setUser] = useState<User>();
+    const [cookies] = useCookies();
+    useEffect(() => {
+        getMe()
+            .then(user => setUser(user))
+            .catch(() => setUser(undefined));
+    }, [cookies.access_token]);
 
-    const loginAction = async (access_token:string,signInAction:"google" | "password") => {
-        localStorage.setItem('token', access_token);
-        localStorage.setItem('signInAction', signInAction);
-        navigate("/");
-    };
-
-    const logOut = async () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('signInAction');
-        navigate("/");
-    };
-
+    const fetchUser = async () => {
+        try {
+            const user = await getMe();
+            setUser(user);
+        }catch(err:unknown){
+            toast.error(err instanceof Error ? err.message : 'Failed to load profile')
+        }
+    }
+    const logout = () => {
+        setUser(undefined)
+    }
     return (
-        <AuthContext value={{ loginAction, logOut }}>
+        <AuthContext value={{user,fetchUser,logout }}>
             {children}
         </AuthContext>
     );

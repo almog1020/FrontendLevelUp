@@ -1,9 +1,11 @@
 
 import { Navigate, Outlet } from "react-router-dom";
+import {useContext} from "react";
+import {AuthContext} from "../../AuthProvider/AuthProvider.tsx";
 
 const PrivateRouteAdmin = () => {
-    const role = localStorage.getItem("role")
-    if (role === "user") return <Navigate to="/" />;
+    const auth = useContext(AuthContext);
+    if (auth?.user?.role === "user") return <Navigate to="/" />;
     return <Outlet />;
 };
 

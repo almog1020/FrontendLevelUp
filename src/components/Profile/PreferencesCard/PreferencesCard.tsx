@@ -1,54 +1,38 @@
-/**
- * PreferencesCard Component
- * Allows users to view and edit their gaming preferences
- * Includes favorite genre and preferred game store/platform
- * Uses dropdown selects for easy preference selection
- */
-
-import React, { useState, useEffect } from 'react';
-import type { UserPreferences } from '../../../interfaces/profile.interface';
+import React, {useContext, useState} from 'react';
 import styles from './PreferencesCard.module.scss';
+import type {User} from "../../../interfaces/user.interface.ts";
+import {updateUser} from "../../../services/apis/users.ts";
+import {toast} from "react-toastify";
+import {AuthContext} from "../../AuthProvider/AuthProvider.tsx";
 
 interface PreferencesCardProps {
-    preferences: UserPreferences; // Current user preferences
-    onUpdate?: (preferences: UserPreferences) => void | Promise<void>; // Callback called when preferences are saved
+    profile: User;
+    onUpdate: (loading:boolean) => void;
 }
 
-export const PreferencesCard: React.FC<PreferencesCardProps> = ({ preferences, onUpdate }) => {
-    // State to track if card is in edit mode
+export const PreferencesCard: React.FC<PreferencesCardProps> = ({ profile,onUpdate }) => {
     const [isEditing, setIsEditing] = useState(false);
-    
-    // Local form state for editing preferences before saving
-    const [formData, setFormData] = useState(preferences);
+    const [formData, setFormData] = useState(profile);
+    const genres = ['action', 'adventure', 'RPG', 'strategy', 'simulation', 'sports', 'racing', 'puzzle'];
+    const stores = ['steam', 'uplay', 'desura', 'amazon', 'origin'];
+    const auth = useContext(AuthContext);
 
-    // Sync formData when preferences prop changes
-    useEffect(() => {
-        setFormData(preferences);
-    }, [preferences.favoriteGenre, preferences.preferredStore]);
-
-    // Available game genres for selection
-    const genres = ['Action', 'Adventure', 'RPG', 'Strategy', 'Simulation', 'Sports', 'Racing', 'Puzzle'];
-    
-    // Available game stores/platforms for selection
-    const stores = ['Steam', 'Epic Games', 'GOG', 'Ubisoft', 'Origin'];
-
-    /**
-     * Saves the updated preferences and exits edit mode
-     * Calls onUpdate callback if provided
-     */
     const handleUpdate = async () => {
-        if (onUpdate) {
-            await onUpdate(formData);
+        try {
+            onUpdate(true)
+            if (isEditing) await updateUser(formData.email,formData);
+            setIsEditing(false);
+            auth?.fetchUser()
+            await new Promise((resolve) => setTimeout(resolve, 3000));
+            toast.success('User update successfully!');
+            onUpdate(false)
+        }catch (error:unknown) {
+            onUpdate(false)
+            toast.error((error as Error).message);
         }
-        setIsEditing(false);
-    };
 
-    /**
-     * Updates form data when user selects a different option
-     * @param field - The preference field being updated ('favoriteGenre' or 'preferredStore')
-     * @param value - The new selected value
-     */
-    const handleChange = (field: keyof UserPreferences, value: string) => {
+    };
+    const handleChange = (field: keyof User, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
@@ -63,35 +47,29 @@ export const PreferencesCard: React.FC<PreferencesCardProps> = ({ preferences, o
             <div className={styles.fields}>
                 <div className={styles.field}>
                     <label className={styles.label}>Favorite Genre</label>
-                    {isEditing ? (
-                        <select
-                            className={styles.select}
-                            value={formData.favoriteGenre}
-                            onChange={(e) => handleChange('favoriteGenre', e.target.value)}
-                        >
-                            {genres.map(genre => (
-                                <option key={genre} value={genre}>{genre}</option>
-                            ))}
-                        </select>
-                    ) : (
-                        <div className={styles.value}>{preferences.favoriteGenre}</div>
-                    )}
+                    <select
+                        className={styles.select}
+                        defaultValue={profile.favorite_genre}
+                        onChange={(e) => handleChange('favorite_genre', e.target.value)}
+                        disabled={!isEditing}
+                    >
+                        {genres.map(genre => (
+                            <option key={genre} value={genre}>{genre}</option>
+                        ))}
+                    </select>
                 </div>
                 <div className={styles.field}>
                     <label className={styles.label}>Preferred Store</label>
-                    {isEditing ? (
-                        <select
-                            className={styles.select}
-                            value={formData.preferredStore}
-                            onChange={(e) => handleChange('preferredStore', e.target.value)}
-                        >
-                            {stores.map(store => (
-                                <option key={store} value={store}>{store}</option>
-                            ))}
-                        </select>
-                    ) : (
-                        <div className={styles.value}>{preferences.preferredStore}</div>
-                    )}
+                    <select
+                        className={styles.select}
+                        defaultValue={formData.preferred_store}
+                        onChange={(e) => handleChange('preferred_store', e.target.value)}
+                        disabled={!isEditing}
+                    >
+                        {stores.map(store => (
+                            <option key={store} value={store}>{store}</option>
+                        ))}
+                    </select>
                 </div>
             </div>
             {!isEditing ? (
@@ -101,7 +79,7 @@ export const PreferencesCard: React.FC<PreferencesCardProps> = ({ preferences, o
             ) : (
                 <div className={styles.actionButtons}>
                     <button type="button" className={styles.cancelButton} onClick={() => {
-                        setFormData(preferences);
+                        setFormData(profile);
                         setIsEditing(false);
                     }}>
                         Cancel

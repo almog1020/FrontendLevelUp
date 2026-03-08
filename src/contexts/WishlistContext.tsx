@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { WishlistGame, WishlistGameInput, WishlistItem } from "../interfaces/wishlist.interface";
 import { addToWishlist, getWishlist, removeFromWishlist, WishlistAuthError } from "../services/apis/wishlist";
+import {useCookies} from "react-cookie";
 
 interface WishlistContextValue {
   wishlistSet: Set<string>;
@@ -39,10 +40,9 @@ export const WishlistProvider = ({ children }: { children: React.ReactNode }) =>
   const [isWishlistLoaded, setIsWishlistLoaded] = useState<boolean>(false);
   const [pendingGameIds, setPendingGameIds] = useState<Set<string>>(new Set());
   const cacheRef = useRef<Map<string, WishlistGame>>(new Map());
-
+  const [cookies] = useCookies();
   const refreshWishlist = useCallback(async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
+    if (!cookies.access_token) {
       setWishlistGames([]);
       setWishlistSet(new Set());
       setIsWishlistLoaded(true);
@@ -86,7 +86,7 @@ export const WishlistProvider = ({ children }: { children: React.ReactNode }) =>
   }, []);
 
   useEffect(() => {
-    if (localStorage.getItem("token")) {
+    if (cookies.access_token) {
       refreshWishlist();
     } else {
       setIsWishlistLoaded(true);
@@ -94,12 +94,10 @@ export const WishlistProvider = ({ children }: { children: React.ReactNode }) =>
   }, [refreshWishlist]);
 
   const toggleWishlist = useCallback(async (gameId: string, snapshot?: { title?: string; thumb?: string | null }) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
+    if (!cookies.access_token) {
       throw new WishlistAuthError("Please sign in to use your wishlist.");
     }
 
-    console.log("toggle wishlist for", gameId);
     setPendingGameIds((prev) => new Set(prev).add(gameId));
     const wasWishlisted = wishlistSet.has(gameId);
     const prevGames = wishlistGames;

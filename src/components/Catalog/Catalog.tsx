@@ -1,15 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import { searchDeals, getDealUrl, type CatalogGame, type SortOption, type Platform } from '../../services/apis/cheapshark';
+import { searchDeals, type CatalogGame, type SortOption } from '../../services/apis/cheapshark';
 import styles from './Catalog.module.scss';
 import { WishlistButton } from '../WishlistButton/WishlistButton';
 import { normalizeCsId } from '../../utils/gameId';
-
-const PLATFORMS: { value: Platform; label: string }[] = [
-    { value: 'all', label: 'All Platforms' },
-    { value: 'pc', label: 'PC' },
-    { value: 'playstation', label: 'PlayStation' },
-    { value: 'xbox', label: 'Xbox' },
-];
+import {useNavigate} from "react-router-dom";
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
     { value: 'savings', label: 'Best Deals' },
@@ -23,7 +17,7 @@ export const Catalog = () => {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [sortBy, setSortBy] = useState<SortOption>('savings');
-    const [platform, setPlatform] = useState<Platform>('all');
+    const navigate = useNavigate();
 
     const fetchGames = useCallback(async () => {
         setLoading(true);
@@ -31,7 +25,6 @@ export const Catalog = () => {
             const results = await searchDeals({ search: search || undefined, sortBy });
             setGames(results);
         } catch (err) {
-            console.error('Failed to fetch games:', err);
             setGames([]);
         } finally {
             setLoading(false);
@@ -43,16 +36,8 @@ export const Catalog = () => {
         return () => clearTimeout(debounce);
     }, [fetchGames]);
 
-    const filteredGames = games.filter(game => {
-        if (platform === 'all') return true;
-        const title = game.title.toLowerCase();
-        if (platform === 'playstation') return title.includes('ps4') || title.includes('ps5') || title.includes('playstation');
-        if (platform === 'xbox') return title.includes('xbox');
-        return true;
-    });
-
-    const handleGameClick = (dealID: string) => {
-        window.open(getDealUrl(dealID), '_blank');
+    const handleGameClick = (gameID: string) => {
+        navigate(`/game/cs_${gameID}`);
     };
 
     return (
@@ -72,15 +57,6 @@ export const Catalog = () => {
                 />
 
                 <div className={styles.filters}>
-                    <select
-                        value={platform}
-                        onChange={e => setPlatform(e.target.value as Platform)}
-                        className={styles.select}
-                    >
-                        {PLATFORMS.map(p => (
-                            <option key={p.value} value={p.value}>{p.label}</option>
-                        ))}
-                    </select>
 
                     <select
                         value={sortBy}
@@ -95,22 +71,22 @@ export const Catalog = () => {
             </div>
 
             <p className={styles.resultCount}>
-                {loading ? 'Loading...' : `${filteredGames.length} games found`}
+                {loading ? 'Loading...' : `${games.length} games found`}
             </p>
 
             {loading ? (
                 <div className={styles.loading}>Loading games...</div>
-            ) : filteredGames.length === 0 ? (
+            ) : games.length === 0 ? (
                 <div className={styles.empty}>
                     <p>No games found</p>
-                    <button onClick={() => { setSearch(''); setPlatform('all'); }} className={styles.resetBtn}>
+                    <button onClick={() => { setSearch(''); }} className={styles.resetBtn}>
                         Clear Filters
                     </button>
                 </div>
             ) : (
                 <div className={styles.grid}>
-                    {filteredGames.map(game => (
-                        <article key={`${game.id}-${game.dealID}`} className={styles.card} onClick={() => handleGameClick(game.dealID)}>
+                    {games.map(game => (
+                        <article key={`${game.id}-${game.dealID}`} className={styles.card} onClick={() => handleGameClick(game.id)}>
                             <div className={styles.imageWrapper}>
                                 <img src={game.image} alt={game.title} className={styles.image} loading="lazy" />
                                 {game.discount > 0 && (

@@ -29,7 +29,6 @@ export interface CatalogGame {
 }
 
 export type SortOption = 'title' | 'price' | 'savings' | 'rating';
-export type Platform = 'all' | 'pc' | 'playstation' | 'xbox';
 
 interface SearchParams {
     search?: string;
@@ -72,8 +71,4 @@ export async function searchDeals(params: SearchParams = {}): Promise<CatalogGam
 
     const response = await cheapsharkInstance.get<CheapSharkDeal[]>('/deals', { params: queryParams });
     return response.data.map(mapDealToGame);
-}
-
-export function getDealUrl(dealID: string): string {
-    return `https://www.cheapshark.com/redirect?dealID=${dealID}`;
 }

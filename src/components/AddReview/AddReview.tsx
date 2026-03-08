@@ -11,10 +11,10 @@ import {
 } from "@mui/material";
 import styles from "./AddReview.module.scss";
 import type {ReviewDialogProps} from "../../interfaces/review.interface.ts";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {create_review} from "../../services/apis/reviews.ts";
 import {toast} from "react-toastify";
-import {getMe} from "../../services/apis/users.ts";
+import {AuthContext} from "../AuthProvider/AuthProvider.tsx";
 
 
 
@@ -22,14 +22,11 @@ export default function AddReview({open, gameTitle, onClose}: ReviewDialogProps)
 
     const [star, setStar] = useState<number | null>(1);
     const [comment, setComment] = useState("");
-
-
+    const auth = useContext(AuthContext);
     const handleSubmit = async () => {
         if (!star) return;
         try {
-            const token = localStorage.getItem("token") ?? "guest"
-            const signInAction = localStorage.getItem("signIn");
-            const userId = (token === "guest" && !signInAction) ? null : (await getMe(token,signInAction!)).id
+            const userId = auth?.user ? auth?.user?.id : null;
             await create_review(star,comment,gameTitle,userId)
             toast.success("Review added successfully.")
             setStar(1);
