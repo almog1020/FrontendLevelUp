@@ -4,7 +4,8 @@ import {useCookies} from "react-cookie";
 
 const PrivateRoute = () => {
     const [cookies] = useCookies()
-    if (!cookies.access_token) return <Navigate to="/" />;
+    const auth = useContext(AuthContext);
+    if (!cookies.access_token && !auth?.user) return <Navigate to="/" />;
     return <Outlet />;
 };
 
