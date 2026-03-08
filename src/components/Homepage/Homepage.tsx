@@ -93,7 +93,7 @@ export const Homepage = () => {
       });
     };
 
-    const handleGamesSearchError = (e: CustomEvent<{ error: string }>) => {
+    const handleGamesSearchError = () => {
       setLoading(false);
     };
 
