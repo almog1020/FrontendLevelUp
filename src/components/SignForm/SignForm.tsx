@@ -59,7 +59,7 @@ export const SignForm = () => {
                                 <div className={styles.sign_in_dialog__divider_line}/>
                             </div>
                             <div className={styles.sign_in_dialog__social}>
-                                <LoginButton loading={setLoading}/>
+                                <LoginButton loading={setLoading} closeDialog={() => setOpen(false)}/>
                             </div>
                         </div>}
                 </div>

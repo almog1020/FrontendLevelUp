@@ -1,10 +1,8 @@
 import {GoogleLogin, GoogleOAuthProvider} from "@react-oauth/google";
 import {instance} from "../../../services/apis/config.ts";
 import {toast} from "react-toastify";
-import {useNavigate} from "react-router-dom";
 
-const LoginButton = ({loading}:{loading(value:boolean):void}) => {
-    const navigate = useNavigate();
+const LoginButton = ({loading,closeDialog}:{loading(value:boolean):void,closeDialog(): void}) => {
     return (
         <GoogleOAuthProvider clientId={import.meta.env.VITE_CLIENT_ID}>
             <GoogleLogin
@@ -14,9 +12,10 @@ const LoginButton = ({loading}:{loading(value:boolean):void}) => {
                         try {
                             loading(true);
                             await instance.post("/auth/google", { token });
+                            await new Promise((resolve) => setTimeout(resolve, 3000));
                             toast.success("Login successful");
                             loading(false);
-                            navigate("/")
+                            closeDialog()
                         } catch (error: unknown) {
                             loading(false);
                             toast.error((error as Error).message || "Authentication failed");
