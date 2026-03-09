@@ -37,8 +37,7 @@ export const Header = () => {
                 {/* Right Side Actions */}
                 <div className={styles.header__actions}>
                     <nav className={styles.header__nav}>
-                        <Action icon={storeIcon} onAction={() => navigate(`/catalog`)} label={'Catalog'}
-                                disabled={false}/>
+                        <Action icon={storeIcon} onAction={() => navigate(`/catalog`)} label={'Catalog'}/>
                     </nav>
                     {userNav}
                 </div>

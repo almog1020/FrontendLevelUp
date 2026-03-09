@@ -12,7 +12,7 @@ export const Profile: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const auth = useContext(AuthContext);
     const currentUser = auth?.user
-    console.log(currentUser)
+
     function handleLoading(flag:boolean) {
         setLoading(flag);
     }
