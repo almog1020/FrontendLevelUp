@@ -4,7 +4,7 @@ import heartIcon from '../../assets/heart.png'
 import styles from "./UserDetails.module.scss"
 import {AuthContext} from "../AuthProvider/AuthProvider.tsx";
 import {toast} from "react-toastify";
-import { logout} from "../../services/apis/users.ts";
+import {logout} from "../../services/apis/users.ts";
 import {googleLogout} from "@react-oauth/google";
 import dashboardIcon from '../../assets/dashboard.png'
 import logoutIcon from '../../assets/logout.png'
@@ -15,14 +15,13 @@ import {useNavigate} from "react-router-dom";
 export default function UserDetails() {
     const auth = useContext(AuthContext);
     const navigate = useNavigate();
-
     const handelLogout = async (email?: string, googleId?: string) => {
         try {
             if (googleId)
                 googleLogout()
             if (email) {
-                await logout(email, "inactive")
                 auth?.logout()
+                await logout(email, "inactive")
                 toast.info("Logout successful");
                 navigate("/")
             }
@@ -52,9 +51,10 @@ export default function UserDetails() {
     return (
         <div>
             <div className={styles.container}>
-                {actions.map(action => <Action icon={action.icon} onAction={action.path} label={action.label}/>)}
+                {actions.map(action => <Action icon={action.icon} onAction={action.path} label={action.label}
+                                               />)}
                 {auth?.user?.role === "admin" &&
-                    <Action icon={dashboardIcon} onAction={() => navigate("/admin/dashboard")} label={"Dashboard"}/>}
+                    <Action icon={dashboardIcon} onAction={() => navigate("/admin/dashboard")} label={"Dashboard"} />}
             </div>
         </div>
     )

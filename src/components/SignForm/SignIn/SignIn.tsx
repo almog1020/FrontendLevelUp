@@ -4,10 +4,8 @@ import {TextFieldSignIn} from "../../TextField/TextFieldSignIn.tsx";
 import {login} from "../../../services/apis/users.ts";
 import {toast} from "react-toastify";
 import styles from '../SignForm.module.scss'
-import {useNavigate} from "react-router-dom";
 
 export function SignIn({loading, closeDialog}: { loading(value: boolean): void, closeDialog(): void }) {
-    const navigate = useNavigate();
     const {
         register: registerSignIn,
         handleSubmit: handleSignInSubmit,
@@ -19,10 +17,11 @@ export function SignIn({loading, closeDialog}: { loading(value: boolean): void, 
             loading(true)
             const {email, password} = data;
             await login(email, password);
+            await new Promise((resolve) => setTimeout(resolve, 3000));
             toast.success("Login successful");
+            loading(false);
             resetSignIn();
             closeDialog();
-            navigate("/")
         } catch (error: unknown) {
             loading(false)
             toast.error((error as Error).message || 'Login failed');

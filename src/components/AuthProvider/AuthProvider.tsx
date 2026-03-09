@@ -14,6 +14,7 @@ export const AuthContext = createContext<undefined |
 
 const AuthProvider = ({ children }:{children:ReactNode}) => {
     const [user, setUser] = useState<User>();
+
     useEffect(() => {
         getMe()
             .then(user => setUser(user))

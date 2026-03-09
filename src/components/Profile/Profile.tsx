@@ -18,7 +18,7 @@ export const Profile: React.FC = () => {
     }
     return (
         <>
-            {loading ?
+            {loading || !currentUser?
                 <div className={styles.container}>
                     <div className={styles.loading}>Loading profile...</div>
                 </div>

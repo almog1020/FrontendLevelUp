@@ -9,7 +9,6 @@ export class WishlistAuthError extends Error {
 const normalizeError = (e: unknown): Error => {
   if (e instanceof AxiosError) {
     if (e.response?.status === 401) {
-      localStorage.removeItem("token");
       return new WishlistAuthError("Please sign in to use your wishlist.");
     }
     if (e.response?.status === 422) {
